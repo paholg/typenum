@@ -4,14 +4,14 @@ use std::marker::PhantomData;
 use ::{Same, Add, And, Xor};
 use ::bit::{Bit, B0, B1};
 
-/// This trait is implemented for the all things that a UInt can take as a parameter,
-/// which is just UInt and UTerm (used to terminate the UInt). It should not be
+/// This trait is implemented for the all things that a `UInt` can take as a parameter,
+/// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
 /// implemented for anything outside this crate.
 pub trait Unsigned {
     fn to_int() -> u64;
 }
 
-/// The terminating type for UInt, it always comes after the most significant bit.
+/// The terminating type for `UInt`, it always comes after the most significant bit.
 pub struct UTerm;
 
 impl Unsigned for UTerm {
@@ -20,7 +20,7 @@ impl Unsigned for UTerm {
 
 /// UInt is defined recursevly, where B is the least significant bit and U is the rest
 /// of the number. U can be another UInt or UTerm. In order to keep numbers unique, leading
-/// zeros are not allowed: UInt<UInt<UTerm, B0>, B1> is not allowed, and UInt<UTerm, B1>
+/// zeros are not allowed: `UInt<UInt<UTerm, B0>, B1>` is not allowed, and `UInt<UTerm, B1>`
 /// should be used instead to represent the number 1.
 pub struct UInt<U: Unsigned, B: Bit> {
     _marker: PhantomData<(U, B)>
