@@ -1,6 +1,6 @@
 
-mod bit;
-mod uint;
+pub mod bit;
+pub mod uint;
 
 pub trait Same<Rhs = Self> {
     /// `Output` should always be `Self`
