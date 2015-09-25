@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Add, And, Xor};
+use ::{Same, And, Xor, Add, Sub};
 use ::bit::{Bit, B0, B1};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
@@ -102,20 +102,20 @@ fn confirm_nums() {
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
-/// Adding the 0 bit to any Unsigned: U + B0 = U
-impl<U> Add<B0> for U where U: Unsigned {
+/// Adding the 0 bit to any `Unsigned`: `U + B0 = U`
+impl<U: Unsigned> Add<B0> for U {
     type Output = U;
 }
-/// Adding the 1 bit to a UTerm: UTerm + B1 = UInt<UTerm, B1>
+/// Adding the 1 bit to a `UTerm`: `UTerm + B1 = UInt<UTerm, B1>`
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
 }
-/// Adding the 1 bit to a UInt with final bit 0: UInt<U, B0> + B1 = UInt<U + B1>
-impl<U> Add<B1> for UInt<U, B0> where U: Unsigned {
+/// Adding the 1 bit to a `UInt` with final bit 0: `UInt<U, B0> + B1 = UInt<U + B1>`
+impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
 }
-/// Adding the 1 bit to a UInt with final bit 1: UInt<U, B1> + B1 = UInt<U + B1, B0>
-impl<U> Add<B1> for UInt<U, B1> where U: Unsigned + Add<B1>, <U as Add<B1>>::Output: Unsigned {
+/// Adding the 1 bit to a `UInt` with final bit 1: `UInt<U, B1> + B1 = UInt<U + B1, B0>`
+impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Output: Unsigned {
     type Output = UInt<<U as Add<B1>>::Output, B0>;
 }
 
@@ -146,23 +146,23 @@ fn add_bits_to_uints() {
 }
 // Adding unsigned integers --------------------------------------------------------------
 
-/// Adding UTerm to UTerm: UTerm + UTerm = UTerm
+/// Adding `UTerm` to `UTerm`: `UTerm + UTerm = UTerm`
 impl Add<UTerm> for UTerm {
     type Output = UTerm;
 }
-/// Adding UInt to UTerm: UTerm + UInt<U, B> = UInt<U, B>
-impl<U, B> Add<UInt<U, B>> for UTerm where U: Unsigned, B: Bit {
+/// Adding `UInt` to `UTerm`: `UTerm + UInt<U, B> = UInt<U, B>`
+impl<U: Unsigned, B: Bit> Add<UInt<U, B>> for UTerm {
     type Output = UInt<U, B>;
 }
-/// Adding UTerm to UInt: UInt<U, B> + UTerm = UInt<U, B>
-impl<U, B> Add<UTerm> for UInt<U, B> where U: Unsigned, B: Bit {
+/// Adding `UTerm` to `UInt`: `UInt<U, B> + UTerm = UInt<U, B>`
+impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
-/// Adding unsigned integers: UInt<Ul, Bl> + UInt<Ur, Br> = UInt<Ul + (Ur + Bl & Br), Bl ^ Br>
-impl<Bl, Ul, Ur, Br> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Bl: Bit + And<Br> + Xor<Br>, Ul: Unsigned, Br: Bit,
-          Ur: Unsigned + Add<<Bl as And<Br>>::Output>,
+/// Adding unsigned integers: `UInt<Ul, Bl> + UInt<Ur, Br> = UInt<Ul + (Ur + Bl & Br), Bl ^ Br>`
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Bl: And<Br> + Xor<Br>,
           Ul: Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>,
+          Ur: Add<<Bl as And<Br>>::Output>,
           <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output: Unsigned,
           <Bl as Xor<Br>>::Output: Bit
 {
@@ -206,4 +206,124 @@ fn add_uints() {
     // assert_eq!(4096, <U4096 as Unsigned>::to_int());
     // assert_eq!(8192, <U8192 as Unsigned>::to_int());
 
+}
+
+// Subtracting bits from unsigned integers -----------------------------------------------
+
+/// Subtracting the 0 bit from any `Unsigned`: `U - B0 = U`
+impl<U: Unsigned> Sub<B0> for U {
+    type Output = U;
+}
+/// Subtracting the 1 bit from a `UInt` with final bit 1: `UInt<U, B1> - B1 = UInt<U, B0>`
+impl<U: Unsigned> Sub<B1> for UInt<U, B1> {
+    type Output = UInt<U, B0>;
+}
+/// Subtracting the 1 bit from a `UInt` with final bit 0: `UInt<U, B0> - B1 = UInt<U - B1, B1>`
+impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
+    type Output = UInt<<U as Sub<B1>>::Output, B1>;
+}
+
+#[test]
+fn sub_bits_from_uints() {
+    // Uncomment for error
+    // type TestN1 = <U0 as Sub<B1>>::Output;
+    // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
+
+    type Test7 = <U8 as Sub<B1>>::Output;
+    type Test8 = <U9 as Sub<B1>>::Output;
+    type Test9 = <U10 as Sub<B1>>::Output;
+    type Test10 = <U11 as Sub<B1>>::Output;
+    type Test11 = <U12 as Sub<B1>>::Output;
+    type Test12 = <U13 as Sub<B1>>::Output;
+    type Test13 = <U14 as Sub<B1>>::Output;
+    type Test14 = <U15 as Sub<B1>>::Output;
+    type Test15 = <U16 as Sub<B1>>::Output;
+
+    type Test17 = <U17 as Sub<B0>>::Output;
+
+    assert_eq!(7, <Test7 as Unsigned>::to_int());
+    assert_eq!(8, <Test8 as Unsigned>::to_int());
+    assert_eq!(9, <Test9 as Unsigned>::to_int());
+    assert_eq!(10, <Test10 as Unsigned>::to_int());
+    assert_eq!(11, <Test11 as Unsigned>::to_int());
+    assert_eq!(12, <Test12 as Unsigned>::to_int());
+    assert_eq!(13, <Test13 as Unsigned>::to_int());
+    assert_eq!(14, <Test14 as Unsigned>::to_int());
+    assert_eq!(15, <Test15 as Unsigned>::to_int());
+
+    assert_eq!(17, <Test17 as Unsigned>::to_int());
+}
+// Subtracting unsigned integers ---------------------------------------------------------
+/// A trait used to determine when to borrow for subtraction.
+trait Borrow<Rhs> {
+    type Output;
+}
+/// We only borrow in this case; when we have `B0 - B1`
+impl Borrow<B1> for B0 {
+    type Output = B1;
+}
+/// We do not borrow in this case.
+impl Borrow<B1> for B1 {
+    type Output = B0;
+}
+/// We do not borrow in this case.
+impl Borrow<B0> for B1 {
+    type Output = B0;
+}
+/// We do not borrow in this case.
+impl Borrow<B0> for B0 {
+    type Output = B0;
+}
+
+/// Subtracting `UTerm` from `UTerm`: `UTerm - UTerm = UTerm`
+impl Sub<UTerm> for UTerm {
+    type Output = UTerm;
+}
+/// Subtracting `UTerm` from `UInt`: `UInt<U, B> - UTerm = UInt<U, B>`
+impl<U, B> Sub<UTerm> for UInt<U, B> where U: Unsigned, B: Bit {
+    type Output = UInt<U, B>;
+}
+/// Subtracting unsigned integers:
+/// `UInt<Ul, Bl> - UInt<Ur, Br> = UInt<(Ul - Bl Borrow Br) - Ur, Bl ^ Br>`
+/// where `Borrow` is a trait operation that only returns `B1` when
+/// we need to borrow; `Bl = 0` and `Br = 1`. The rest of the time it returns `B0`.
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Sub<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Bl: Xor<Br> + Borrow<Br>,
+          Ul: Sub<<Bl as Borrow<Br>>::Output>,
+          <Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output: Sub<Ur>,
+          <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as Sub<Ur>>::Output: Unsigned,
+          <Bl as Xor<Br>>::Output: Bit
+{
+    type Output = UInt<
+        <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as Sub<Ur>>::Output,
+        <Bl as Xor<Br>>::Output>;
+}
+#[test]
+fn sub_uints() {
+    // Uncomment for error:
+    // type TestN1 = <U0 as Sub<U1>>::Output;
+    // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
+
+    type Test0 = <U0 as Sub<U0>>::Output;
+    assert_eq!(0, <Test0 as Unsigned>::to_int());
+    type Test1 = <U1 as Sub<U0>>::Output;
+    assert_eq!(1, <Test1 as Unsigned>::to_int());
+    type Test0b = <U1 as Sub<U1>>::Output;
+    assert_eq!(0, <Test0b as Unsigned>::to_int());
+    type Test2 = <U2 as Sub<U0>>::Output;
+    assert_eq!(2, <Test2 as Unsigned>::to_int());
+    type Test1b = <U2 as Sub<U1>>::Output;
+    assert_eq!(1, <Test1b as Unsigned>::to_int());
+    type Test0c = <U2 as Sub<U2>>::Output;
+    assert_eq!(0, <Test0c as Unsigned>::to_int());
+
+
+    type Test32 = <U64 as Sub<U32>>::Output;
+    assert_eq!(32, <Test32 as Unsigned>::to_int());
+
+    type Test0d = <U31 as Sub<U31>>::Output;
+    assert_eq!(0, <Test0d as Unsigned>::to_int());
+
+    type Test1c = <U32 as Sub<U31>>::Output;
+    assert_eq!(1, <Test1c as Unsigned>::to_int());
 }
