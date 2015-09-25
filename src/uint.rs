@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Add};
+use ::{Same, Add, And, Xor};
 use ::bit::{Bit, B0, B1};
 
 /// This trait is implemented for the all things that a UInt can take as a parameter,
@@ -68,6 +68,17 @@ pub type U28 = <U27 as Add<B1>>::Output;
 pub type U29 = <U28 as Add<B1>>::Output;
 pub type U30 = <U29 as Add<B1>>::Output;
 pub type U31 = <U30 as Add<B1>>::Output;
+pub type U32 = <U31 as Add<B1>>::Output;
+pub type U64 = <U32 as Add<U32>>::Output;
+pub type U128 = <U64 as Add<U64>>::Output;
+pub type U256 = <U128 as Add<U128>>::Output;
+pub type U512 = <U256 as Add<U256>>::Output;
+pub type U1024 = <U512 as Add<U512>>::Output;
+pub type U2048 = <U1024 as Add<U1024>>::Output;
+pub type U4096 = <U2048 as Add<U2048>>::Output;
+pub type U8192 = <U4096 as Add<U4096>>::Output;
+pub type U16384 = <U8192 as Add<U8192>>::Output;
+pub type U32768 = <U16384 as Add<U16384>>::Output;
 
 #[test]
 fn confirm_nums() {
@@ -108,43 +119,91 @@ impl<U> Add<B1> for UInt<U, B1> where U: Unsigned + Add<B1>, <U as Add<B1>>::Out
     type Output = UInt<<U as Add<B1>>::Output, B0>;
 }
 
-
-
-
-// /// Adding the 1 bit to a terminating UInt with final bit 1: UInt<(), B1> + B1 = UInt<UInt<(), B1>, B0>
-// impl Add<B1> for UInt<UTerm, B1> {
-//     type Output = UInt<UInt<UTerm, B1>, B0>;
-// }
-// /// Adding the 1 bit to a non-terminating UInt with final bit 1, and next bit 0: UInt<UInt<U, B0>, B1> + B1 = UInt<UInt<U, B1>, B0>
-// impl<U: Unsigned> Add<B1> for UInt<UInt<U, B0>, B1> {
-//     type Output = UInt<UInt<U, B1>, B0>;
-// }
-// /// Adding the 1 bit to a non-terminating UInt with final bit 1, and next bit 1: UInt<UInt<U, B1>, B1> + B1 = UInt<UInt<U + B1, B0>, B0>
-// impl<U: Unsigned> Add<B1> for UInt<UInt<U, B1>, B1>
-//     where U: Add<B1>, <U as Add<B1>>::Output: Unsigned
-// {
-//     type Output = UInt<UInt<<U as Add<B1>>::Output, B0>, B0>;
-// }
-
 #[test]
 fn add_bits_to_uints() {
-    type U = <U3 as Add<B0>>::Output;
-    assert_eq!(3, <U as Unsigned>::to_int());
+    type Test8 = <U7 as Add<B1>>::Output;
+    type Test9 = <U8 as Add<B1>>::Output;
+    type Test10 = <U9 as Add<B1>>::Output;
+    type Test11 = <U10 as Add<B1>>::Output;
+    type Test12 = <U11 as Add<B1>>::Output;
+    type Test13 = <U12 as Add<B1>>::Output;
+    type Test14 = <U13 as Add<B1>>::Output;
+    type Test15 = <U14 as Add<B1>>::Output;
+    type Test16 = <U15 as Add<B1>>::Output;
 
-    // <U3 as Same<U>>::Output::to_int();
+    type Test17 = <U17 as Add<B0>>::Output;
+
+    assert_eq!(8, <Test8 as Unsigned>::to_int());
+    assert_eq!(9, <Test9 as Unsigned>::to_int());
+    assert_eq!(10, <Test10 as Unsigned>::to_int());
+    assert_eq!(11, <Test11 as Unsigned>::to_int());
+    assert_eq!(12, <Test12 as Unsigned>::to_int());
+    assert_eq!(13, <Test13 as Unsigned>::to_int());
+    assert_eq!(14, <Test14 as Unsigned>::to_int());
+    assert_eq!(15, <Test15 as Unsigned>::to_int());
+    assert_eq!(16, <Test16 as Unsigned>::to_int());
+    assert_eq!(17, <Test17 as Unsigned>::to_int());
 }
 // Adding unsigned integers --------------------------------------------------------------
 
-// /// Adding unsigned integers: (Ul, Bl) + (Ur, Br) = (Ul + [Ur + Bl & Br], Bl ^ Br)
-// /// Where Bl and Br are the least significant bits of the left and right sides, respectively.
-// impl<Bl, Ul, Ur, Br> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
-//     where Bl: Bit, Ul: UInt, Br: Bit, Ur: UInt
-// {
-//     type Output = UInt<
-//         <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output,
-//         <Bl as Xor<Br>>::Output>;
-// }
+/// Adding UTerm to UTerm: UTerm + UTerm = UTerm
+impl Add<UTerm> for UTerm {
+    type Output = UTerm;
+}
+/// Adding UInt to UTerm: UTerm + UInt<U, B> = UInt<U, B>
+impl<U, B> Add<UInt<U, B>> for UTerm where U: Unsigned, B: Bit {
+    type Output = UInt<U, B>;
+}
+/// Adding UTerm to UInt: UInt<U, B> + UTerm = UInt<U, B>
+impl<U, B> Add<UTerm> for UInt<U, B> where U: Unsigned, B: Bit {
+    type Output = UInt<U, B>;
+}
+/// Adding unsigned integers: UInt<Ul, Bl> + UInt<Ur, Br> = UInt<Ul + (Ur + Bl & Br), Bl ^ Br>
+impl<Bl, Ul, Ur, Br> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Bl: Bit + And<Br> + Xor<Br>, Ul: Unsigned, Br: Bit,
+          Ur: Unsigned + Add<<Bl as And<Br>>::Output>,
+          Ul: Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>,
+          <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output: Unsigned,
+          <Bl as Xor<Br>>::Output: Bit
+{
+    type Output = UInt<
+        <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output,
+        <Bl as Xor<Br>>::Output>;
+}
+
+#[test]
+fn add_uints() {
+    type Test0 = <U0 as Add<U0>>::Output;
+    assert_eq!(0, <Test0 as Unsigned>::to_int());
+    type Test1 = <U1 as Add<U0>>::Output;
+    assert_eq!(1, <Test1 as Unsigned>::to_int());
+    type Test1b = <U0 as Add<U1>>::Output;
+    assert_eq!(1, <Test1b as Unsigned>::to_int());
+    type Test2 = <U1 as Add<U1>>::Output;
+    assert_eq!(2, <Test2 as Unsigned>::to_int());
+    type Test2b = <U2 as Add<U0>>::Output;
+    assert_eq!(2, <Test2b as Unsigned>::to_int());
+    type Test2c = <U0 as Add<U2>>::Output;
+    assert_eq!(2, <Test2c as Unsigned>::to_int());
+    type Test3 = <U2 as Add<U1>>::Output;
+    assert_eq!(3, <Test3 as Unsigned>::to_int());
+    type Test3b = <U1 as Add<U2>>::Output;
+    assert_eq!(3, <Test3b as Unsigned>::to_int());
+    type Test4 = <U2 as Add<U2>>::Output;
+    assert_eq!(4, <Test4 as Unsigned>::to_int());
 
 
+    type Test62 = <U31 as Add<U31>>::Output;
+    assert_eq!(62, <Test62 as Unsigned>::to_int());
 
+    assert_eq!(32, <U32 as Unsigned>::to_int());
+    assert_eq!(64, <U64 as Unsigned>::to_int());
+    assert_eq!(128, <U128 as Unsigned>::to_int());
+    assert_eq!(256, <U256 as Unsigned>::to_int());
+    // assert_eq!(512, <U512 as Unsigned>::to_int());
+    // assert_eq!(1024, <U1024 as Unsigned>::to_int());
+    // assert_eq!(2048, <U2048 as Unsigned>::to_int());
+    // assert_eq!(4096, <U4096 as Unsigned>::to_int());
+    // assert_eq!(8192, <U8192 as Unsigned>::to_int());
 
+}
