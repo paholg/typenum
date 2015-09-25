@@ -131,7 +131,7 @@ fn add_bits_to_uints() {
     type U = <U3 as Add<B0>>::Output;
     assert_eq!(3, <U as Unsigned>::to_int());
 
-    <U3 as Same<U>>::Output::to_int();
+    // <U3 as Same<U>>::Output::to_int();
 }
 // Adding unsigned integers --------------------------------------------------------------
 

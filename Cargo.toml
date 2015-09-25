@@ -2,7 +2,7 @@
 name = "typenum"
 version = "0.0.1"
 authors = ["Paho Lurie-Gregg <paho@paholg.com>"]
-description = "Compile time numbers in binary."
+description = "Type-level numbers."
 homepage = "http://paholg.com/typenum"
 documentation = "http://paholg.com/doc/typenum"
 repository = "https://github.com/paholg/typenum"
