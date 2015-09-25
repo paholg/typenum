@@ -1,0 +1,20 @@
+language: rust
+rust: stable
+
+notifications:
+  email:
+    recipients: paho@paholg.com
+
+script:
+  - cargo build
+  - cargo test
+  - cargo doc
+
+after_success:
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash update_doc.sh
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && cargo publish --token ${CRATESIO_TOKEN}
+
+env:
+  global:
+  - secure: ZKVATaNNGsoAdISoshGxDt82Ie4lgbrn91cRK+hjQvtAJjlWva554l49P5RU6T4ZkGFC2PyQ/zF8jMmNsPJUeQ3F2E4v1NVw83CrSoqIRmtDzN6kgblshPAZVX8xNsEZarEV+dw+CTA7a5c0J0Nm38lIaxwuntvO47x8Zf0RFZc=
+  - secure: YOsYYXcwIx8UZgcI4pPMi6sH6QLYGWpkogQLO53yQYzzpshw1XeKI+QD2Zx5zpUtocyP37zWJwvZZLEcs9auy4W2lrsFrwz0yB3PfzqOo9vDsxcAfm8Ycb+Uvvplwd6DUmRwqAp7XJqzbcL1K0MNezY9+bmE78JVG3WeGn2GGO0=
