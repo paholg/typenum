@@ -20,8 +20,7 @@ impl Unsigned for UTerm {
 
 /// UInt is defined recursevly, where B is the least significant bit and U is the rest
 /// of the number. U can be another UInt or UTerm. In order to keep numbers unique, leading
-/// zeros are not allowed: `UInt<UInt<UTerm, B0>, B1>` is not allowed, and `UInt<UTerm, B1>`
-/// should be used instead to represent the number 1.
+/// zeros are not allowed, so `UInt<UTerm, B0>` should never show up anywhere ever.
 pub struct UInt<U: Unsigned, B: Bit> {
     _marker: PhantomData<(U, B)>
 }
@@ -36,7 +35,7 @@ impl<U: Unsigned, B: Bit> Same<UInt<U, B>> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
 
-pub type U0 = UInt<UTerm, B0>;
+pub type U0 = UTerm;
 pub type U1 = UInt<UTerm, B1>;
 pub type U2 = UInt<UInt<UTerm, B1>, B0>;
 pub type U3 = UInt<UInt<UTerm, B1>, B1>;
@@ -253,7 +252,9 @@ fn sub_bits_from_uints() {
 
     assert_eq!(17, <Test17 as Unsigned>::to_int());
 }
+
 // Subtracting unsigned integers ---------------------------------------------------------
+
 /// A trait used to determine when to borrow for subtraction.
 trait Borrow<Rhs> {
     type Output;
