@@ -1,10 +1,8 @@
 use ::{Not, And, Or, Xor};
 
-#[derive(Copy, Clone)]
 /// The compile time bit 0
 pub struct B0;
 
-#[derive(Copy, Clone)]
 /// The compile time bit 1
 pub struct B1;
 
