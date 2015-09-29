@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, And, Xor, Add, Sub};
+use ::{Same, And, Or, Xor, Add, Sub};
 use ::bit::{Bit, B0, B1};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
@@ -327,4 +327,82 @@ fn sub_uints() {
 
     type Test1c = <U32 as Sub<U31>>::Output;
     assert_eq!(1, <Test1c as Unsigned>::to_int());
+}
+
+/// Anding `UTerm` with anything: `UTerm & X = UTerm`
+impl<U: Unsigned> And<U> for UTerm {
+    type Output = UTerm;
+}
+/// Anding `UTerm` with anything: `X & UTerm = UTerm`
+impl<B: Bit, U: Unsigned> And<UTerm> for UInt<U, B> {
+    type Output = UTerm;
+}
+
+/// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> And<UInt<Ur, Br>> for UInt<Ul, Bl> 
+    where Ul: And<Ur>, Bl: And<Br>, <Bl as And<Br>>::Output: Bit, 
+        <Ul as And<Ur>>::Output: Unsigned
+{
+    type Output = UInt<
+        <Ul as And<Ur>>::Output,
+        <Bl as And<Br>>::Output>;
+}
+
+#[test]
+fn and_uints() {
+    type Test0 = <U0 as And<U0>>::Output;
+    assert_eq!(0, <Test0 as Unsigned>::to_int());
+    type Test10 = <U1 as And<U0>>::Output;
+    assert_eq!(0, <Test10 as Unsigned>::to_int());
+    type Test01 = <U0 as And<U1>>::Output;
+    assert_eq!(0, <Test01 as Unsigned>::to_int());
+    type Test1 = <U1 as And<U1>>::Output;
+    assert_eq!(1, <Test1 as Unsigned>::to_int());
+    
+    type Test29 = <U2 as And<U9>>::Output;
+    assert_eq!(0, <Test29 as Unsigned>::to_int());
+    type Test37 = <U3 as And<U7>>::Output;
+    assert_eq!(3, <Test37 as Unsigned>::to_int());
+    
+    type TestLarge = <U15 as And<U15>>::Output;
+    assert_eq!(15, <TestLarge as Unsigned>::to_int());
+}
+
+/// Oring `UTerm` with anything: `UTerm | X = X`
+impl<U: Unsigned> Or<U> for UTerm {
+    type Output = U;
+}
+/// Anding `UTerm` with anything: `X | UTerm = X`
+impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
+    type Output = Self;
+}
+
+/// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl> 
+    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit, 
+        <Ul as Or<Ur>>::Output: Unsigned
+{
+    type Output = UInt<
+        <Ul as Or<Ur>>::Output,
+        <Bl as Or<Br>>::Output>;
+}
+
+#[test]
+fn or_uints() {
+    type Test0 = <U0 as Or<U0>>::Output;
+    assert_eq!(0, <Test0 as Unsigned>::to_int());
+    type Test10 = <U1 as Or<U0>>::Output;
+    assert_eq!(1, <Test10 as Unsigned>::to_int());
+    type Test01 = <U0 as Or<U1>>::Output;
+    assert_eq!(1, <Test01 as Unsigned>::to_int());
+    type Test1 = <U1 as Or<U1>>::Output;
+    assert_eq!(1, <Test1 as Unsigned>::to_int());
+    
+    type Test29 = <U2 as Or<U9>>::Output;
+    assert_eq!(11, <Test29 as Unsigned>::to_int());
+    type Test37 = <U3 as Or<U7>>::Output;
+    assert_eq!(7, <Test37 as Unsigned>::to_int());
+    
+    type TestLarge = <U15 as Or<U15>>::Output;
+    assert_eq!(15, <TestLarge as Unsigned>::to_int());
 }
