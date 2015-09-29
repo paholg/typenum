@@ -372,12 +372,12 @@ fn and_uints() {
 impl<U: Unsigned> Or<U> for UTerm {
     type Output = U;
 }
-/// Anding `UTerm` with anything: `X | UTerm = X`
+/// Oring `UTerm` with anything: `X | UTerm = X`
 impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
-/// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
+/// Oring unsigned integers: `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
 impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl> 
     where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit, 
         <Ul as Or<Ur>>::Output: Unsigned
