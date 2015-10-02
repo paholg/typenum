@@ -21,6 +21,12 @@ pub trait Xor<Rhs = Self> {
     type Output;
 }
 
+pub trait Shl<Rhs = Self> {
+    type Output;
+}
+pub trait Shr<Rhs = Self> {
+    type Output;
+}
 
 pub trait Add<Rhs = Self> {
     type Output;
