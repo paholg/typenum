@@ -214,9 +214,15 @@ impl<U: Unsigned> Sub<B0> for U {
     type Output = U;
 }
 /// Subtracting the 1 bit from a `UInt` with final bit 1: `UInt<U, B1> - B1 = UInt<U, B0>`
-impl<U: Unsigned> Sub<B1> for UInt<U, B1> {
-    type Output = UInt<U, B0>;
+impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
+    type Output = UInt<UInt<U, B>, B0>;
 }
+
+// Subtracting the last 1 bit from a value
+impl Sub<B1> for UInt<UTerm, B1> {
+    type Output = UTerm;
+}
+
 /// Subtracting the 1 bit from a `UInt` with final bit 0: `UInt<U, B0> - B1 = UInt<U - B1, B1>`
 impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
     type Output = UInt<<U as Sub<B1>>::Output, B1>;
