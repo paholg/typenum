@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, And, Or, Xor, Add, Sub, Shl};
+use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
 use ::bit::{Bit, B0, B1};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
@@ -51,7 +51,7 @@ pub type U12 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B0>;
 pub type U13 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B1>;
 pub type U14 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>;
 pub type U15 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>;
-pub type U16 = <U15 as Add<B1>>::Output;
+pub type U16 = <U8 as Shl<B1>>::Output;
 pub type U17 = <U16 as Add<B1>>::Output;
 pub type U18 = <U17 as Add<B1>>::Output;
 pub type U19 = <U18 as Add<B1>>::Output;
@@ -59,7 +59,7 @@ pub type U20 = <U19 as Add<B1>>::Output;
 pub type U21 = <U20 as Add<B1>>::Output;
 pub type U22 = <U21 as Add<B1>>::Output;
 pub type U23 = <U22 as Add<B1>>::Output;
-pub type U24 = <U23 as Add<B1>>::Output;
+pub type U24 = <U16 as Add<U8>>::Output;
 pub type U25 = <U24 as Add<B1>>::Output;
 pub type U26 = <U25 as Add<B1>>::Output;
 pub type U27 = <U26 as Add<B1>>::Output;
@@ -67,17 +67,18 @@ pub type U28 = <U27 as Add<B1>>::Output;
 pub type U29 = <U28 as Add<B1>>::Output;
 pub type U30 = <U29 as Add<B1>>::Output;
 pub type U31 = <U30 as Add<B1>>::Output;
-pub type U32 = <U31 as Add<B1>>::Output;
-pub type U64 = <U32 as Add<U32>>::Output;
-pub type U128 = <U64 as Add<U64>>::Output;
-pub type U256 = <U128 as Add<U128>>::Output;
-pub type U512 = <U256 as Add<U256>>::Output;
-pub type U1024 = <U512 as Add<U512>>::Output;
-pub type U2048 = <U1024 as Add<U1024>>::Output;
-pub type U4096 = <U2048 as Add<U2048>>::Output;
-pub type U8192 = <U4096 as Add<U4096>>::Output;
-pub type U16384 = <U8192 as Add<U8192>>::Output;
-pub type U32768 = <U16384 as Add<U16384>>::Output;
+pub type U32 = <U16 as Shl<B1>>::Output;
+pub type U64 = <U32 as Shl<B1>>::Output;
+pub type U128 = <U64 as Shl<B1>>::Output;
+pub type U256 = <U128 as Shl<B1>>::Output;
+pub type U512 = <U256 as Shl<B1>>::Output;
+pub type U1024 = <U512 as Shl<B1>>::Output;
+pub type U2048 = <U1024 as Shl<B1>>::Output;
+pub type U4096 = <U2048 as Shl<B1>>::Output;
+pub type U8192 = <U4096 as Shl<B1>>::Output;
+pub type U16384 = <U8192 as Shl<B1>>::Output;
+pub type U32768 = <U16384 as Shl<B1>>::Output;
+pub type U65536 = <U32768 as Shl<B1>>::Output;
 
 #[test]
 fn confirm_nums() {
@@ -503,4 +504,52 @@ fn shl_tests() {
     
     type TestLarge = <U1 as Shl<U15>>::Output;
     assert_eq!(32768, <TestLarge as Unsigned>::to_int());
+}
+
+/// Shifting right a `UTerm` by anything: `UTerm >> X = UTerm`
+impl<U: Unsigned> Shr<U> for UTerm {
+    type Output = UTerm;
+}
+
+/// Shifting right `UInt` by `UTerm`: `X >> UTerm = X`
+impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
+    type Output = UInt<U, B>;
+}
+
+/// Shifting right by a zero bit: `X >> B0 = X`
+impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+}
+
+/// Shifting right by a one bit: `X >> B0 = UInt<X, B0>`
+impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
+    type Output = U;
+}
+
+/// Shifting right `UInt` by `UInt`: `UInt(U, B) >> Y` = `U >> (Y - 1)`
+impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shr<UInt<Ur, Br>> for UInt<U, B>
+where UInt<Ur, Br> : Sub<B1>,
+    U : Shr<<UInt<Ur, Br> as Sub<B1>>::Output>
+{
+    type Output = <U as Shr<<UInt<Ur, Br> as Sub<B1>>::Output>>::Output;
+}
+
+#[test]
+fn shr_tests() {
+    type Test0 = <U0 as Shr<U0>>::Output;
+    assert_eq!(0, <Test0 as Unsigned>::to_int());
+    type Test10 = <U1 as Shr<U0>>::Output;
+    assert_eq!(1, <Test10 as Unsigned>::to_int());
+    type Test01 = <U0 as Shr<U1>>::Output;
+    assert_eq!(0, <Test01 as Unsigned>::to_int());
+    type Test1 = <U1 as Shr<U1>>::Output;
+    assert_eq!(0, <Test1 as Unsigned>::to_int());
+    
+    type Test92 = <U9 as Shr<U2>>::Output;
+    assert_eq!(2, <Test92 as Unsigned>::to_int());
+    type Test73 = <U7 as Shr<U3>>::Output;
+    assert_eq!(0, <Test73 as Unsigned>::to_int());
+    
+    type TestLarge = <U65536 as Shr<U15>>::Output;
+    assert_eq!(2, <TestLarge as Unsigned>::to_int());
 }
