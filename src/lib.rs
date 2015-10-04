@@ -1,3 +1,4 @@
+//#![feature(type_macros)]
 
 pub mod bit;
 pub mod uint;

@@ -35,6 +35,25 @@ impl<U: Unsigned, B: Bit> Same<UInt<U, B>> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
 
+macro_rules! uint {
+    (0) => (UTerm);
+    (1) => (UInt<UTerm, B1>);
+    (1, $($others:tt),+) => (uint_private!($($others),+, UInt<UTerm, B1>));
+}
+
+macro_rules! uint_private {
+    (1, $sofar: ty) => (UInt<$sofar, B1>);
+    (0, $sofar: ty) => (UInt<$sofar, B0>);
+    (1, $($others:tt),+, $sofar: ty) => (uint_private!($others, UInt<$sofar, B1>));
+    (0, $($others:tt),+, $sofar: ty) => (uint_private!($others, UInt<$sofar, B0>));
+}
+
+#[test]
+fn macro_test() {
+    #![feature(type_macros)]
+    type N0 = uint!(0);
+}
+
 pub type U0 = UTerm;
 pub type U1 = UInt<UTerm, B1>;
 pub type U2 = UInt<UInt<UTerm, B1>, B0>;
