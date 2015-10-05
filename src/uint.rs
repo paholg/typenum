@@ -388,14 +388,19 @@ impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
 
-/// Shifting left by a zero bit: `X << B0 = X`
-impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
-    type Output = UInt<U, B>;
+/// Shifting left by a zero bit: `U << B0 = U`
+impl<U: Unsigned> Shl<B0> for U {
+    type Output = U;
 }
 
-/// Shifting left by a one bit: `X << B1 = UInt<X, B0>`
+/// Shifting left by a one bit for a `UInt`: `UInt<U, B> << B1 = UInt<UInt<U, B>, B0>`
 impl<U: Unsigned, B: Bit> Shl<B1> for UInt<U, B> {
     type Output = UInt<UInt<U, B>, B0>;
+}
+
+/// Shifting left by a one bit for `UTerm`: `UTerm << B1 = UTerm`
+impl Shl<B1> for UTerm {
+    type Output = UTerm;
 }
 
 /// Shifting left `UInt` by `UInt`: `X << Y` = `UInt(X, B0) << (Y - 1)`
@@ -413,6 +418,12 @@ where UInt<Ur, Br> : Sub<B1>,
 
 #[test]
 fn shl_tests() {
+    test_uint_op!(U0 Shl B0 = U0);
+    test_uint_op!(U0 Shl B1 = U0);
+
+    test_uint_op!(U1 Shl B0 = U1);
+    test_uint_op!(U1 Shl B1 = U2);
+
     test_uint_op!(U0 Shl U0 = U0);
     test_uint_op!(U1 Shl U0 = U1);
     test_uint_op!(U0 Shl U1 = U0);
