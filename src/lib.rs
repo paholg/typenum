@@ -2,6 +2,7 @@
 pub mod bit;
 pub mod uint;
 pub mod int;
+pub mod private;
 
 pub trait Same<Rhs = Self> {
     /// `Output` should always be `Self`

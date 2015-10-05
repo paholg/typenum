@@ -3,6 +3,7 @@ use std::marker::PhantomData;
 
 use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
 use ::bit::{Bit, B0, B1};
+use ::private::Trim;
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
 /// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
@@ -262,7 +263,17 @@ fn sub_bits_from_uints() {
 
 // Subtracting unsigned integers ---------------------------------------------------------
 
-/// A trait used to determine when to borrow for subtraction.
+/// A **type operation** used to determine when to borrow for subtraction. Notice that
+/// this is a non-commutative operation, as we only borrow when we have 0 - 1.
+///
+/// Table:
+/// ```
+///  0 0 | 0
+///  0 1 | 1
+///  1 0 | 0
+///  1 1 | 0
+/// ```
+
 trait Borrow<Rhs> {
     type Output;
 }
@@ -283,17 +294,17 @@ impl Borrow<B0> for B0 {
     type Output = B0;
 }
 
-/// Subtracting `UTerm` from `UTerm`: `UTerm - UTerm = UTerm`
-impl Sub<UTerm> for UTerm {
-    type Output = UTerm;
+
+/// Subtracting `UTerm` from anything: `U - UTerm = UTerm`
+// Note that we apply our `Trim` operation here, as we should always come here when
+// finishing subtraction, and we need to get rid of any leading zeros.
+impl<U: Unsigned> Sub<UTerm> for U where U: Trim {
+    type Output = <U as Trim>::Output;
 }
-/// Subtracting `UTerm` from `UInt`: `UInt<U, B> - UTerm = UInt<U, B>`
-impl<U, B> Sub<UTerm> for UInt<U, B> where U: Unsigned, B: Bit {
-    type Output = UInt<U, B>;
-}
+
 /// Subtracting unsigned integers:
 /// `UInt<Ul, Bl> - UInt<Ur, Br> = UInt<(Ul - Bl Borrow Br) - Ur, Bl ^ Br>`
-/// where `Borrow` is a trait operation that only returns `B1` when
+/// where `Borrow` is a **type operation** that only returns `B1` when
 /// we need to borrow; `Bl = 0` and `Br = 1`. The rest of the time it returns `B0`.
 impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Sub<UInt<Ur, Br>> for UInt<Ul, Bl>
     where Bl: Xor<Br> + Borrow<Br>,
@@ -312,28 +323,28 @@ fn sub_uints() {
     // type TestN1 = <U0 as Sub<U1>>::Output;
     // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
 
-    type Test0 = <U0 as Sub<U0>>::Output;
-    assert_eq!(0, <Test0 as Unsigned>::to_int());
-    type Test1 = <U1 as Sub<U0>>::Output;
-    assert_eq!(1, <Test1 as Unsigned>::to_int());
-    type Test0b = <U1 as Sub<U1>>::Output;
-    assert_eq!(0, <Test0b as Unsigned>::to_int());
-    type Test2 = <U2 as Sub<U0>>::Output;
-    assert_eq!(2, <Test2 as Unsigned>::to_int());
-    type Test1b = <U2 as Sub<U1>>::Output;
-    assert_eq!(1, <Test1b as Unsigned>::to_int());
-    type Test0c = <U2 as Sub<U2>>::Output;
-    assert_eq!(0, <Test0c as Unsigned>::to_int());
+    type Test00 = <U0 as Sub<U0>>::Output;
+    assert_eq!(0, <Test00 as Unsigned>::to_int());
+    type Test10 = <U1 as Sub<U0>>::Output;
+    assert_eq!(1, <Test10 as Unsigned>::to_int());
+    type Test11 = <U1 as Sub<U1>>::Output;
+    assert_eq!(0, <Test11 as Unsigned>::to_int());
+    type Test20 = <U2 as Sub<U0>>::Output;
+    assert_eq!(2, <Test20 as Unsigned>::to_int());
+    type Test21 = <U2 as Sub<U1>>::Output;
+    assert_eq!(1, <Test21 as Unsigned>::to_int());
+    type Test22 = <U2 as Sub<U2>>::Output;
+    assert_eq!(0, <Test22 as Unsigned>::to_int());
 
 
-    type Test32 = <U64 as Sub<U32>>::Output;
-    assert_eq!(32, <Test32 as Unsigned>::to_int());
+    type Test6432 = <U64 as Sub<U32>>::Output;
+    assert_eq!(32, <Test6432 as Unsigned>::to_int());
 
-    type Test0d = <U31 as Sub<U31>>::Output;
-    assert_eq!(0, <Test0d as Unsigned>::to_int());
+    type Test3131 = <U31 as Sub<U31>>::Output;
+    assert_eq!(0, <Test3131 as Unsigned>::to_int());
 
-    type Test1c = <U32 as Sub<U31>>::Output;
-    assert_eq!(1, <Test1c as Unsigned>::to_int());
+    type Test3231 = <U32 as Sub<U31>>::Output;
+    assert_eq!(1, <Test3231 as Unsigned>::to_int());
 }
 
 /// Anding `UTerm` with anything: `UTerm & X = UTerm`
@@ -385,8 +396,8 @@ impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
 }
 
 /// Oring unsigned integers: `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl> 
-    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit, 
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit,
         <Ul as Or<Ur>>::Output: Unsigned
 {
     type Output = UInt<
