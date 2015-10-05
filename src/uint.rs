@@ -216,7 +216,8 @@ impl Borrow<B0> for B0 {
 
 /// Subtracting unsigned integers:
 impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
-    where Ul: Sub<Ur>
+    where Ul: PrivateSub<Ur>,
+          <Ul as PrivateSub<Ur>>::Output: Trim
 {
     type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
 }
