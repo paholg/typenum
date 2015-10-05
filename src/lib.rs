@@ -1,8 +1,12 @@
 
 pub mod bit;
+
 pub mod uint;
+pub mod const_uints;
+
 pub mod int;
-pub mod private;
+
+pub mod __private;
 
 pub trait Same<Rhs = Self> {
     /// `Output` should always be `Self`

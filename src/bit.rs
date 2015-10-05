@@ -1,4 +1,4 @@
-use ::{Not, And, Or, Xor};
+use ::{Not, And, Or, Xor, Same};
 
 /// The compile time bit 0
 pub struct B0;
@@ -22,9 +22,12 @@ impl Bit for B1 {
     fn to_bool() -> bool { true }
 }
 
-// impl<B: Bit> Same<B> for B {
-//     type Output = B;
-// }
+impl Same<B0> for B0 {
+    type Output = B0;
+}
+impl Same<B1> for B1 {
+    type Output = B1;
+}
 
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
@@ -70,23 +73,40 @@ impl Xor<B1> for B1 {
     type Output = B0;
 }
 
+// macro for testing operation results. Uses `Same` to ensure the types are equal and
+// not just the values they evaluate to.
+macro_rules! test_bit_op {
+    ($op:ident $Lhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+        }
+        );
+    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+        }
+        );
+}
+
 #[test]
 fn bit_operations() {
-    assert_eq!(1, <B0 as Not>::Output::to_int());
-    assert_eq!(0, <B1 as Not>::Output::to_int());
+    test_bit_op!(Not B0 = B1);
+    test_bit_op!(Not B1 = B0);
 
-    assert_eq!(0, <B0 as And<B0>>::Output::to_int());
-    assert_eq!(0, <B0 as And<B1>>::Output::to_int());
-    assert_eq!(0, <B1 as And<B0>>::Output::to_int());
-    assert_eq!(1, <B1 as And<B1>>::Output::to_int());
+    test_bit_op!(B0 And B0 = B0);
+    test_bit_op!(B0 And B1 = B0);
+    test_bit_op!(B1 And B0 = B0);
+    test_bit_op!(B1 And B1 = B1);
 
-    assert_eq!(0, <B0 as Or<B0>>::Output::to_int());
-    assert_eq!(1, <B0 as Or<B1>>::Output::to_int());
-    assert_eq!(1, <B1 as Or<B0>>::Output::to_int());
-    assert_eq!(1, <B1 as Or<B1>>::Output::to_int());
+    test_bit_op!(B0 Or B0 = B0);
+    test_bit_op!(B0 Or B1 = B1);
+    test_bit_op!(B1 Or B0 = B1);
+    test_bit_op!(B1 Or B1 = B1);
 
-    assert_eq!(0, <B0 as Xor<B0>>::Output::to_int());
-    assert_eq!(1, <B0 as Xor<B1>>::Output::to_int());
-    assert_eq!(1, <B1 as Xor<B0>>::Output::to_int());
-    assert_eq!(0, <B1 as Xor<B1>>::Output::to_int());
+    test_bit_op!(B0 Xor B0 = B0);
+    test_bit_op!(B0 Xor B1 = B1);
+    test_bit_op!(B1 Xor B0 = B1);
+    test_bit_op!(B1 Xor B1 = B0);
 }
