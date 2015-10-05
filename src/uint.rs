@@ -236,32 +236,19 @@ impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateSub<UInt<Ur, Br>> for 
 #[test]
 fn sub_uints() {
     // Uncomment for error:
-    // type TestN1 = <U0 as Sub<U1>>::Output;
-    // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
+    // test_uint_op!(U0 Sub U1 = U0);
 
-    // type Test00 = <<U0 as Sub<U0>>::Output as Same<U0>>::Output;
-    // type Test10 = <<U1 as Sub<U0>>::Output as Same<U1>>::Output;
-    // type Test11 = <<U1 as Sub<U1>>::Output as Same<U0>>::Output;
-    // type Test20 = <<U2 as Sub<U0>>::Output as Same<U2>>::Output;
-    // type Test21 = <<U2 as Sub<U1>>::Output as Same<U1>>::Output;
-    // type Test22 = <<U2 as Sub<U2>>::Output as Same<U0>>::Output;
+    test_uint_op!(U0 Sub U0 = U0);
+    test_uint_op!(U1 Sub U0 = U1);
+    test_uint_op!(U1 Sub U1 = U0);
+    test_uint_op!(U2 Sub U0 = U2);
+    test_uint_op!(U2 Sub U1 = U1);
+    test_uint_op!(U2 Sub U2 = U0);
 
-    // assert_eq!(0, <Test00 as Unsigned>::to_int());
-    // assert_eq!(1, <Test10 as Unsigned>::to_int());
-    // assert_eq!(0, <Test11 as Unsigned>::to_int());
-    // assert_eq!(2, <Test20 as Unsigned>::to_int());
-    // assert_eq!(1, <Test21 as Unsigned>::to_int());
-    // assert_eq!(0, <Test22 as Unsigned>::to_int());
+    test_uint_op!(U64 Sub U32 = U32);
+    test_uint_op!(U31 Sub U31 = U0);
 
-
-    // type Test6432 = <U64 as Sub<U32>>::Output;
-    // assert_eq!(32, <Test6432 as Unsigned>::to_int());
-
-    // type Test3131 = <U31 as Sub<U31>>::Output;
-    // assert_eq!(0, <Test3131 as Unsigned>::to_int());
-
-    // type Test3231 = <U32 as Sub<U31>>::Output;
-    // assert_eq!(1, <Test3231 as Unsigned>::to_int());
+    test_uint_op!(U32 Sub U31 = U1);
 }
 
 /// Anding `UTerm` with anything: `UTerm & X = UTerm`
