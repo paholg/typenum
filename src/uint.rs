@@ -283,6 +283,8 @@ impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateAnd<UInt<Ur, Br>> for 
         <Bl as And<Br>>::Output>;
 }
 
+/// Anding unsigned integers.
+/// We use our `PrivateAnd` operator and then `Trim` the output.
 impl<Ul: Unsigned, Ur: Unsigned> And<Ur> for Ul
     where Ul: PrivateAnd<Ur>,
           <Ul as PrivateAnd<Ur>>::Output: Trim
@@ -340,36 +342,44 @@ fn or_uints() {
 }
 
 /// Exclusive-Oring `UTerm` with anything: `UTerm ^ X = X`
-impl<U: Unsigned> Xor<U> for UTerm {
+impl<U: Unsigned> PrivateXor<U> for UTerm {
     type Output = U;
 }
 /// Exclusive-Oring `UTerm` with anything: `X ^ UTerm = X`
-impl<B: Bit, U: Unsigned> Xor<UTerm> for UInt<U, B> {
+impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
 /// Exclusive-Oring unsigned integers: `UInt<Ul, Bl> ^ UInt<Ur, Br> = UInt<Ul ^ Ur, Bl ^ Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Xor<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: Xor<Ur>, Bl: Xor<Br>, <Bl as Xor<Br>>::Output: Bit,
-        <Ul as Xor<Ur>>::Output: Unsigned
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateXor<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Ul: PrivateXor<Ur>, Bl: Xor<Br>, <Bl as Xor<Br>>::Output: Bit,
+        <Ul as PrivateXor<Ur>>::Output: Unsigned
 {
     type Output = UInt<
-        <Ul as Xor<Ur>>::Output,
+        <Ul as PrivateXor<Ur>>::Output,
         <Bl as Xor<Br>>::Output>;
+}
+
+/// Xoring unsigned integers.
+/// We use our `PrivateAnd` operator and then `Trim` the output.
+impl<Ul: Unsigned, Ur: Unsigned> Xor<Ur> for Ul
+    where Ul: PrivateXor<Ur>,
+          <Ul as PrivateXor<Ur>>::Output: Trim
+{
+    type Output = <<Ul as PrivateXor<Ur>>::Output as Trim>::Output;
 }
 
 #[test]
 fn xor_uints() {
-    // fixme: Need to trim for Xor
     test_uint_op!(U0 Xor U0 = U0);
     test_uint_op!(U1 Xor U0 = U1);
     test_uint_op!(U0 Xor U1 = U1);
-    //test_uint_op!(U1 Xor U1 = U0);
+    test_uint_op!(U1 Xor U1 = U0);
 
     test_uint_op!(U2 Xor U9 = U11);
     test_uint_op!(U3 Xor U7 = U4);
 
-    //test_uint_op!(U15 Xor U15 = U15);
+    test_uint_op!(U15 Xor U15 = U0);
 }
 
 /// Shifting left `UTerm` by anything: `UTerm << X = UTerm`
