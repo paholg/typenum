@@ -50,6 +50,16 @@ pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
     _marker: PhantomData<(IU, B)>
 }
 
+/// Does the real anding for `UInt`s; `And` just calls this and then `Trim`.
+pub trait PrivateAnd<Rhs = Self> {
+    type Output;
+}
+
+/// Does the real xoring for `UInt`s; `Xor` just calls this and then `Trim`.
+pub trait PrivateXor<Rhs = Self> {
+    type Output;
+}
+
 /// Does the real subtraction for `UInt`s; `Sub` just calls this and then `Trim`.
 pub trait PrivateSub<Rhs = Self> {
     type Output;
@@ -144,8 +154,10 @@ impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
     type Output = Self;
 }
 
-impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0> {
-    type Output = IU;
+impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0>
+    where IU: TrimTrailingZeros
+{
+    type Output = <IU as TrimTrailingZeros>::Output;
 }
 
 impl<U: Unsigned> Trim for U

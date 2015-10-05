@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 
 use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
 use ::bit::{Bit, B0, B1};
-use ::private::{Trim, PrivateSub};
+use ::private::{Trim, PrivateAnd, PrivateXor, PrivateSub};
 
 pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14, U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31, U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48, U49, U50, U51, U52, U53, U54, U55, U56, U57, U58, U59, U60, U61, U62, U63, U64, U65, U66, U67, U68, U69, U70, U71, U72, U73, U74, U75, U76, U77, U78, U79, U80, U81, U82, U83, U84, U85, U86, U87, U88, U89, U90, U91, U92, U93, U94, U95, U96, U97, U98, U99, U100, U101, U102, U103, U104, U105, U106, U107, U108, U109, U110, U111, U112, U113, U114, U115, U116, U117, U118, U119, U120, U121, U122, U123, U124, U125, U126, U127, U128, U256, U512, U1024, U2048, U4096, U8192, U16384, U32768, U65536};
 
@@ -265,22 +265,29 @@ fn sub_uints() {
 }
 
 /// Anding `UTerm` with anything: `UTerm & X = UTerm`
-impl<U: Unsigned> And<U> for UTerm {
+impl<U: Unsigned> PrivateAnd<U> for UTerm {
     type Output = UTerm;
 }
 /// Anding `UTerm` with anything: `X & UTerm = UTerm`
-impl<B: Bit, U: Unsigned> And<UTerm> for UInt<U, B> {
+impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
     type Output = UTerm;
 }
 
 /// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> And<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: And<Ur>, Bl: And<Br>, <Bl as And<Br>>::Output: Bit,
-        <Ul as And<Ur>>::Output: Unsigned
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateAnd<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Ul: PrivateAnd<Ur>, Bl: And<Br>, <Bl as And<Br>>::Output: Bit,
+        <Ul as PrivateAnd<Ur>>::Output: Unsigned
 {
     type Output = UInt<
-        <Ul as And<Ur>>::Output,
+        <Ul as PrivateAnd<Ur>>::Output,
         <Bl as And<Br>>::Output>;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> And<Ur> for Ul
+    where Ul: PrivateAnd<Ur>,
+          <Ul as PrivateAnd<Ur>>::Output: Trim
+{
+    type Output = <<Ul as PrivateAnd<Ur>>::Output as Trim>::Output;
 }
 
 #[test]
@@ -290,13 +297,13 @@ fn and_uints() {
     test_uint_op!(U0 And U1 = U0);
     test_uint_op!(U1 And U1 = U1);
 
-    // fixme: Need to Trim for Anding.
-    // test_uint_op!(U2 And U9 = U0);
+    test_uint_op!(U2 And U9 = U0);
+    test_uint_op!(U9 And U2 = U0);
+    test_uint_op!(U127 And U128 = U0);
     test_uint_op!(U3 And U7 = U3);
     test_uint_op!(U15 And U15 = U15);
 
     test_uint_op!(U120 And U105 = U104);
-
 }
 
 /// Oring `UTerm` with anything: `UTerm | X = X`
@@ -451,3 +458,5 @@ fn shr_tests() {
 
     test_uint_op!(U65536 Shr U15 = U2);
 }
+
+
