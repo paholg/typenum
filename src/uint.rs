@@ -464,5 +464,3 @@ fn shr_tests() {
 
     test_uint_op!(U65536 Shr U15 = U2);
 }
-
-
