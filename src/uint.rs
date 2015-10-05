@@ -385,8 +385,8 @@ impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
 }
 
 /// Oring unsigned integers: `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl> 
-    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit, 
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit,
         <Ul as Or<Ur>>::Output: Unsigned
 {
     type Output = UInt<
