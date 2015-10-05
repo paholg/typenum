@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 
 use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
 use ::bit::{Bit, B0, B1};
-use ::private::{Trim, PrivateAnd, PrivateXor, PrivateSub};
+use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub};
 
 pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
 U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,

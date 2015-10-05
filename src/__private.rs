@@ -2,7 +2,7 @@
 This module is for things that are conceptually private but that must be made public for
 typenum to work correctly.
 
-Unless you are working on typenum itself, **there is need to view anything here**.
+Unless you are working on typenum itself, **there is no need to view anything here**.
 
 Certainly don't implement any of the traits here for anything.
 
