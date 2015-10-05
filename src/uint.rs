@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
+use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr, Mul};
 use ::bit::{Bit, B0, B1};
 use ::private::Trim;
 
@@ -564,3 +564,24 @@ fn shr_tests() {
     type TestLarge = <U65536 as Shr<U15>>::Output;
     assert_eq!(2, <TestLarge as Unsigned>::to_int());
 }
+
+// Multiplying unsigned integers ---------------------------------------------------------
+
+/// Multiplying an unsigned integer by the 0 bit: `U * B0 = UTerm`
+impl<U: Unsigned> Mul<B0> for U {
+    type Output = UTerm;
+}
+
+/// Multiplying an unsigned integer by the 1 bit: `U * B1 = U`
+impl<U: Unsigned> Mul<B1> for U {
+    type Output = U;
+}
+
+/// Multiplying an unsigned integer by the UTerm: `U * UTerm = UTerm`
+impl<U: Unsigned> Mul<UTerm> for U {
+    type Output = UTerm;
+}
+
+
+
+
