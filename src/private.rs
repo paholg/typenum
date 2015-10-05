@@ -15,6 +15,7 @@ Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
 use std::marker::PhantomData;
 
+// use ::{Sub};
 use ::bit::{Bit, B1, B0};
 use ::uint::{Unsigned, UInt, UTerm};
 
@@ -49,6 +50,20 @@ pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
     _marker: PhantomData<(IU, B)>
 }
 
+/// Does the real anding for `UInt`s; `And` just calls this and then `Trim`.
+pub trait PrivateAnd<Rhs = Self> {
+    type Output;
+}
+
+/// Does the real xoring for `UInt`s; `Xor` just calls this and then `Trim`.
+pub trait PrivateXor<Rhs = Self> {
+    type Output;
+}
+
+/// Does the real subtraction for `UInt`s; `Sub` just calls this and then `Trim`.
+pub trait PrivateSub<Rhs = Self> {
+    type Output;
+}
 /// Inverted unsigned numbers
 pub trait InvertedUnsigned {
     fn to_int() -> u64;
@@ -139,8 +154,10 @@ impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
     type Output = Self;
 }
 
-impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0> {
-    type Output = IU;
+impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0>
+    where IU: TrimTrailingZeros
+{
+    type Output = <IU as TrimTrailingZeros>::Output;
 }
 
 impl<U: Unsigned> Trim for U
@@ -151,16 +168,4 @@ impl<U: Unsigned> Trim for U
     type Output = <<<U as Invert>::Output as TrimTrailingZeros>::Output as Invert>::Output;
 }
 
-#[test]
-fn test_trim() {
-    // these tests don't tell us much. It'd be much nicer to use `Same` to compare the
-    // actual types, but that doesn't work.
-    type Test4 = <::uint::U4 as Trim>::Output;
-    type Test00 = UInt<UTerm, B0>;
-    type Test01 = UInt<UInt<UTerm, B0>, B1>;
-
-
-    assert_eq!(4, <Test4 as Unsigned>::to_int());
-    assert_eq!(0, <Test00 as Unsigned>::to_int());
-    assert_eq!(1, <Test01 as Unsigned>::to_int());
-}
+// Note: Trimming is tested when we do subtraction.

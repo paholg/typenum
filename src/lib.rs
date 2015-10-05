@@ -1,7 +1,11 @@
 
 pub mod bit;
+
 pub mod uint;
+pub mod const_uints;
+
 pub mod int;
+
 pub mod private;
 
 pub trait Same<Rhs = Self> {
