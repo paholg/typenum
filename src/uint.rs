@@ -3,7 +3,9 @@ use std::marker::PhantomData;
 
 use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr};
 use ::bit::{Bit, B0, B1};
-use ::private::Trim;
+use ::private::{Trim, PrivateSub};
+
+pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14, U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31, U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48, U49, U50, U51, U52, U53, U54, U55, U56, U57, U58, U59, U60, U61, U62, U63, U64, U65, U66, U67, U68, U69, U70, U71, U72, U73, U74, U75, U76, U77, U78, U79, U80, U81, U82, U83, U84, U85, U86, U87, U88, U89, U90, U91, U92, U93, U94, U95, U96, U97, U98, U99, U100, U101, U102, U103, U104, U105, U106, U107, U108, U109, U110, U111, U112, U113, U114, U115, U116, U117, U118, U119, U120, U121, U122, U123, U124, U125, U126, U127, U128, U256, U512, U1024, U2048, U4096, U8192, U16384, U32768, U65536};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
 /// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
@@ -32,54 +34,9 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     }
 }
 
-impl<U: Unsigned, B: Bit> Same<UInt<U, B>> for UInt<U, B> {
-    type Output = UInt<U, B>;
+impl<U: Unsigned> Same<U> for U {
+    type Output = U;
 }
-
-pub type U0 = UTerm;
-pub type U1 = UInt<UTerm, B1>;
-pub type U2 = UInt<UInt<UTerm, B1>, B0>;
-pub type U3 = UInt<UInt<UTerm, B1>, B1>;
-pub type U4 = UInt<UInt<UInt<UTerm, B1>, B0>, B0>;
-pub type U5 = UInt<UInt<UInt<UTerm, B1>, B0>, B1>;
-pub type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
-pub type U7 = UInt<UInt<UInt<UTerm, B1>, B1>, B1>;
-pub type U8 = UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>;
-pub type U9 = UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B1>;
-pub type U10 = UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>, B0>;
-pub type U11 = UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>, B1>;
-pub type U12 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B0>;
-pub type U13 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>, B1>;
-pub type U14 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>;
-pub type U15 = UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>;
-pub type U16 = <U8 as Shl<B1>>::Output;
-pub type U17 = <U16 as Add<B1>>::Output;
-pub type U18 = <U17 as Add<B1>>::Output;
-pub type U19 = <U18 as Add<B1>>::Output;
-pub type U20 = <U19 as Add<B1>>::Output;
-pub type U21 = <U20 as Add<B1>>::Output;
-pub type U22 = <U21 as Add<B1>>::Output;
-pub type U23 = <U22 as Add<B1>>::Output;
-pub type U24 = <U16 as Add<U8>>::Output;
-pub type U25 = <U24 as Add<B1>>::Output;
-pub type U26 = <U25 as Add<B1>>::Output;
-pub type U27 = <U26 as Add<B1>>::Output;
-pub type U28 = <U27 as Add<B1>>::Output;
-pub type U29 = <U28 as Add<B1>>::Output;
-pub type U30 = <U29 as Add<B1>>::Output;
-pub type U31 = <U30 as Add<B1>>::Output;
-pub type U32 = <U16 as Shl<B1>>::Output;
-pub type U64 = <U32 as Shl<B1>>::Output;
-pub type U128 = <U64 as Shl<B1>>::Output;
-pub type U256 = <U128 as Shl<B1>>::Output;
-pub type U512 = <U256 as Shl<B1>>::Output;
-pub type U1024 = <U512 as Shl<B1>>::Output;
-pub type U2048 = <U1024 as Shl<B1>>::Output;
-pub type U4096 = <U2048 as Shl<B1>>::Output;
-pub type U8192 = <U4096 as Shl<B1>>::Output;
-pub type U16384 = <U8192 as Shl<B1>>::Output;
-pub type U32768 = <U16384 as Shl<B1>>::Output;
-pub type U65536 = <U32768 as Shl<B1>>::Output;
 
 #[test]
 fn confirm_nums() {
@@ -100,6 +57,18 @@ fn confirm_nums() {
     assert_eq!(14, U14::to_int());
     assert_eq!(15, U15::to_int());
 }
+
+// macro for testing operation results. Uses `Same` to ensure the types are equal and
+// not just the values they evaluate to.
+macro_rules! test_uint_op {
+    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Unsigned>::to_int(), <Test as Unsigned>::to_int());
+        }
+        );
+}
+
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
@@ -122,28 +91,11 @@ impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Outp
 
 #[test]
 fn add_bits_to_uints() {
-    type Test8 = <U7 as Add<B1>>::Output;
-    type Test9 = <U8 as Add<B1>>::Output;
-    type Test10 = <U9 as Add<B1>>::Output;
-    type Test11 = <U10 as Add<B1>>::Output;
-    type Test12 = <U11 as Add<B1>>::Output;
-    type Test13 = <U12 as Add<B1>>::Output;
-    type Test14 = <U13 as Add<B1>>::Output;
-    type Test15 = <U14 as Add<B1>>::Output;
-    type Test16 = <U15 as Add<B1>>::Output;
-
-    type Test17 = <U17 as Add<B0>>::Output;
-
-    assert_eq!(8, <Test8 as Unsigned>::to_int());
-    assert_eq!(9, <Test9 as Unsigned>::to_int());
-    assert_eq!(10, <Test10 as Unsigned>::to_int());
-    assert_eq!(11, <Test11 as Unsigned>::to_int());
-    assert_eq!(12, <Test12 as Unsigned>::to_int());
-    assert_eq!(13, <Test13 as Unsigned>::to_int());
-    assert_eq!(14, <Test14 as Unsigned>::to_int());
-    assert_eq!(15, <Test15 as Unsigned>::to_int());
-    assert_eq!(16, <Test16 as Unsigned>::to_int());
-    assert_eq!(17, <Test17 as Unsigned>::to_int());
+    test_uint_op!(U0 Add B1 = U1);
+    test_uint_op!(U1 Add B1 = U2);
+    test_uint_op!(U7 Add B1 = U8);
+    test_uint_op!(U7 Add B0 = U7);
+    test_uint_op!(U16 Add B0 = U16);
 }
 // Adding unsigned integers --------------------------------------------------------------
 
@@ -174,39 +126,12 @@ impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Add<UInt<Ur, Br>> for UInt<Ul
 
 #[test]
 fn add_uints() {
-    type Test0 = <U0 as Add<U0>>::Output;
-    assert_eq!(0, <Test0 as Unsigned>::to_int());
-    type Test1 = <U1 as Add<U0>>::Output;
-    assert_eq!(1, <Test1 as Unsigned>::to_int());
-    type Test1b = <U0 as Add<U1>>::Output;
-    assert_eq!(1, <Test1b as Unsigned>::to_int());
-    type Test2 = <U1 as Add<U1>>::Output;
-    assert_eq!(2, <Test2 as Unsigned>::to_int());
-    type Test2b = <U2 as Add<U0>>::Output;
-    assert_eq!(2, <Test2b as Unsigned>::to_int());
-    type Test2c = <U0 as Add<U2>>::Output;
-    assert_eq!(2, <Test2c as Unsigned>::to_int());
-    type Test3 = <U2 as Add<U1>>::Output;
-    assert_eq!(3, <Test3 as Unsigned>::to_int());
-    type Test3b = <U1 as Add<U2>>::Output;
-    assert_eq!(3, <Test3b as Unsigned>::to_int());
-    type Test4 = <U2 as Add<U2>>::Output;
-    assert_eq!(4, <Test4 as Unsigned>::to_int());
-
-
-    type Test62 = <U31 as Add<U31>>::Output;
-    assert_eq!(62, <Test62 as Unsigned>::to_int());
-
-    assert_eq!(32, <U32 as Unsigned>::to_int());
-    assert_eq!(64, <U64 as Unsigned>::to_int());
-    assert_eq!(128, <U128 as Unsigned>::to_int());
-    assert_eq!(256, <U256 as Unsigned>::to_int());
-    // assert_eq!(512, <U512 as Unsigned>::to_int());
-    // assert_eq!(1024, <U1024 as Unsigned>::to_int());
-    // assert_eq!(2048, <U2048 as Unsigned>::to_int());
-    // assert_eq!(4096, <U4096 as Unsigned>::to_int());
-    // assert_eq!(8192, <U8192 as Unsigned>::to_int());
-
+    test_uint_op!(U0 Add U0 = U0);
+    test_uint_op!(U1 Add U0 = U1);
+    test_uint_op!(U7 Add U2 = U9);
+    test_uint_op!(U31 Add U31 = U62);
+    test_uint_op!(U32 Add U31 = U63);
+    test_uint_op!(U31 Add U32 = U63);
 }
 
 // Subtracting bits from unsigned integers -----------------------------------------------
@@ -233,32 +158,17 @@ impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Outpu
 #[test]
 fn sub_bits_from_uints() {
     // Uncomment for error
-    // type TestN1 = <U0 as Sub<B1>>::Output;
-    // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
+    //test_uint_op!(U0 Sub B1 = U0);
 
-    type Test7 = <U8 as Sub<B1>>::Output;
-    type Test8 = <U9 as Sub<B1>>::Output;
-    type Test9 = <U10 as Sub<B1>>::Output;
-    type Test10 = <U11 as Sub<B1>>::Output;
-    type Test11 = <U12 as Sub<B1>>::Output;
-    type Test12 = <U13 as Sub<B1>>::Output;
-    type Test13 = <U14 as Sub<B1>>::Output;
-    type Test14 = <U15 as Sub<B1>>::Output;
-    type Test15 = <U16 as Sub<B1>>::Output;
+    test_uint_op!(U0 Sub B0 = U0);
+    test_uint_op!(U127 Sub B0 = U127);
+    test_uint_op!(U128 Sub B0 = U128);
 
-    type Test17 = <U17 as Sub<B0>>::Output;
-
-    assert_eq!(7, <Test7 as Unsigned>::to_int());
-    assert_eq!(8, <Test8 as Unsigned>::to_int());
-    assert_eq!(9, <Test9 as Unsigned>::to_int());
-    assert_eq!(10, <Test10 as Unsigned>::to_int());
-    assert_eq!(11, <Test11 as Unsigned>::to_int());
-    assert_eq!(12, <Test12 as Unsigned>::to_int());
-    assert_eq!(13, <Test13 as Unsigned>::to_int());
-    assert_eq!(14, <Test14 as Unsigned>::to_int());
-    assert_eq!(15, <Test15 as Unsigned>::to_int());
-
-    assert_eq!(17, <Test17 as Unsigned>::to_int());
+    test_uint_op!(U8 Sub B1 = U7);
+    test_uint_op!(U9 Sub B1 = U8);
+    test_uint_op!(U10 Sub B1 = U9);
+    test_uint_op!(U128 Sub B1 = U127);
+    test_uint_op!(U127 Sub B1 = U126);
 }
 
 // Subtracting unsigned integers ---------------------------------------------------------
@@ -295,56 +205,63 @@ impl Borrow<B0> for B0 {
 }
 
 
-/// Subtracting `UTerm` from anything: `U - UTerm = UTerm`
-// Note that we apply our `Trim` operation here, as we should always come here when
-// finishing subtraction, and we need to get rid of any leading zeros.
-impl<U: Unsigned> Sub<UTerm> for U where U: Trim {
-    type Output = <U as Trim>::Output;
-}
 
 /// Subtracting unsigned integers:
+impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
+    where Ul: Sub<Ur>
+{
+    type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
+}
+
+/// Subtracting `UTerm` from anything: `U - UTerm = UTerm`
+impl<U: Unsigned> PrivateSub<UTerm> for U {
+    type Output = U;
+}
+
 /// `UInt<Ul, Bl> - UInt<Ur, Br> = UInt<(Ul - Bl Borrow Br) - Ur, Bl ^ Br>`
 /// where `Borrow` is a **type operation** that only returns `B1` when
 /// we need to borrow; `Bl = 0` and `Br = 1`. The rest of the time it returns `B0`.
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Sub<UInt<Ur, Br>> for UInt<Ul, Bl>
+impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateSub<UInt<Ur, Br>> for UInt<Ul, Bl>
     where Bl: Xor<Br> + Borrow<Br>,
           Ul: Sub<<Bl as Borrow<Br>>::Output>,
-          <Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output: Sub<Ur>,
-          <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as Sub<Ur>>::Output: Unsigned,
+          <Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output: PrivateSub<Ur>,
+          <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output: Unsigned,
           <Bl as Xor<Br>>::Output: Bit
 {
     type Output = UInt<
-        <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as Sub<Ur>>::Output,
+        <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output,
         <Bl as Xor<Br>>::Output>;
 }
+
 #[test]
 fn sub_uints() {
     // Uncomment for error:
     // type TestN1 = <U0 as Sub<U1>>::Output;
     // assert_eq!(-1, <TestN1 as Unsigned>::to_int());
 
-    type Test00 = <U0 as Sub<U0>>::Output;
-    assert_eq!(0, <Test00 as Unsigned>::to_int());
-    type Test10 = <U1 as Sub<U0>>::Output;
-    assert_eq!(1, <Test10 as Unsigned>::to_int());
-    type Test11 = <U1 as Sub<U1>>::Output;
-    assert_eq!(0, <Test11 as Unsigned>::to_int());
-    type Test20 = <U2 as Sub<U0>>::Output;
-    assert_eq!(2, <Test20 as Unsigned>::to_int());
-    type Test21 = <U2 as Sub<U1>>::Output;
-    assert_eq!(1, <Test21 as Unsigned>::to_int());
-    type Test22 = <U2 as Sub<U2>>::Output;
-    assert_eq!(0, <Test22 as Unsigned>::to_int());
+    // type Test00 = <<U0 as Sub<U0>>::Output as Same<U0>>::Output;
+    // type Test10 = <<U1 as Sub<U0>>::Output as Same<U1>>::Output;
+    // type Test11 = <<U1 as Sub<U1>>::Output as Same<U0>>::Output;
+    // type Test20 = <<U2 as Sub<U0>>::Output as Same<U2>>::Output;
+    // type Test21 = <<U2 as Sub<U1>>::Output as Same<U1>>::Output;
+    // type Test22 = <<U2 as Sub<U2>>::Output as Same<U0>>::Output;
+
+    // assert_eq!(0, <Test00 as Unsigned>::to_int());
+    // assert_eq!(1, <Test10 as Unsigned>::to_int());
+    // assert_eq!(0, <Test11 as Unsigned>::to_int());
+    // assert_eq!(2, <Test20 as Unsigned>::to_int());
+    // assert_eq!(1, <Test21 as Unsigned>::to_int());
+    // assert_eq!(0, <Test22 as Unsigned>::to_int());
 
 
-    type Test6432 = <U64 as Sub<U32>>::Output;
-    assert_eq!(32, <Test6432 as Unsigned>::to_int());
+    // type Test6432 = <U64 as Sub<U32>>::Output;
+    // assert_eq!(32, <Test6432 as Unsigned>::to_int());
 
-    type Test3131 = <U31 as Sub<U31>>::Output;
-    assert_eq!(0, <Test3131 as Unsigned>::to_int());
+    // type Test3131 = <U31 as Sub<U31>>::Output;
+    // assert_eq!(0, <Test3131 as Unsigned>::to_int());
 
-    type Test3231 = <U32 as Sub<U31>>::Output;
-    assert_eq!(1, <Test3231 as Unsigned>::to_int());
+    // type Test3231 = <U32 as Sub<U31>>::Output;
+    // assert_eq!(1, <Test3231 as Unsigned>::to_int());
 }
 
 /// Anding `UTerm` with anything: `UTerm & X = UTerm`
@@ -368,22 +285,18 @@ impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> And<UInt<Ur, Br>> for UInt<Ul
 
 #[test]
 fn and_uints() {
-    type Test0 = <U0 as And<U0>>::Output;
-    assert_eq!(0, <Test0 as Unsigned>::to_int());
-    type Test10 = <U1 as And<U0>>::Output;
-    assert_eq!(0, <Test10 as Unsigned>::to_int());
-    type Test01 = <U0 as And<U1>>::Output;
-    assert_eq!(0, <Test01 as Unsigned>::to_int());
-    type Test1 = <U1 as And<U1>>::Output;
-    assert_eq!(1, <Test1 as Unsigned>::to_int());
+    test_uint_op!(U0 And U0 = U0);
+    test_uint_op!(U1 And U0 = U0);
+    test_uint_op!(U0 And U1 = U0);
+    test_uint_op!(U1 And U1 = U1);
 
-    type Test29 = <U2 as And<U9>>::Output;
-    assert_eq!(0, <Test29 as Unsigned>::to_int());
-    type Test37 = <U3 as And<U7>>::Output;
-    assert_eq!(3, <Test37 as Unsigned>::to_int());
+    // fixme: Need to Trim for Anding.
+    // test_uint_op!(U2 And U9 = U0);
+    test_uint_op!(U3 And U7 = U3);
+    test_uint_op!(U15 And U15 = U15);
 
-    type TestLarge = <U15 as And<U15>>::Output;
-    assert_eq!(15, <TestLarge as Unsigned>::to_int());
+    test_uint_op!(U120 And U105 = U104);
+
 }
 
 /// Oring `UTerm` with anything: `UTerm | X = X`

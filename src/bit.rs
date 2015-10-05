@@ -1,4 +1,4 @@
-use ::{Not, And, Or, Xor};
+use ::{Not, And, Or, Xor, Same};
 
 /// The compile time bit 0
 pub struct B0;
@@ -22,9 +22,12 @@ impl Bit for B1 {
     fn to_bool() -> bool { true }
 }
 
-// impl<B: Bit> Same<B> for B {
-//     type Output = B;
-// }
+impl Same<B0> for B0 {
+    type Output = B0;
+}
+impl Same<B1> for B1 {
+    type Output = B1;
+}
 
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
