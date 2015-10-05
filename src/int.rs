@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Add, Sub};
-use ::bit::{Bit, B0, B1};
+use ::{Same};
+use ::bit::{Bit};
 use ::uint::{Unsigned};
 
 /// This trait is implemented for the all things that an `Int` can take as a parameter,
