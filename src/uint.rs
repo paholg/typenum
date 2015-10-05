@@ -136,6 +136,9 @@ impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Add<UInt<Ur, Br>> for UInt<Ul
 fn add_uints() {
     test_uint_op!(U0 Add U0 = U0);
     test_uint_op!(U1 Add U0 = U1);
+    test_uint_op!(U0 Add U1 = U1);
+    test_uint_op!(U1 Add U1 = U2);
+
     test_uint_op!(U7 Add U2 = U9);
     test_uint_op!(U31 Add U31 = U62);
     test_uint_op!(U32 Add U31 = U63);
@@ -477,11 +480,45 @@ impl<U: Unsigned> Mul<B1> for U {
     type Output = U;
 }
 
-/// Multiplying an unsigned integer by the UTerm: `U * UTerm = UTerm`
+/// Multiplying an unsigned integer by `UTerm`: `U * UTerm = UTerm`
 impl<U: Unsigned> Mul<UTerm> for U {
     type Output = UTerm;
 }
 
+/// Multiplying `UTerm` by an unsigned integer: `UTerm * U = UTerm`
+// impl<U: Unsigned> Mul<U> for UTerm {
+//     type Output = UTerm;
+// }
 
+/// Multiplying unsigned integers where the Rhs has LSB 0: `Ul * UInt<Ur, B0> = (Ul * Ur) << 1`
+impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B0>> for Ul
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Shl<B1>
+{
+    type Output = <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output;
+}
 
+/// Multiplying unsigned integers where the Rhs has LSB 1: `Ul * UInt<Ur, B1> = [(Ul * Ur) << 1] + Ul`
+impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B1>> for Ul
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Shl<B1>,
+          <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output: Add<Ul>
+{
+    type Output = <<<Ul as Mul<Ur>>::Output as Shl<B1>>::Output as Add<Ul>>::Output;
+}
 
+#[test]
+fn mul_tests() {
+    test_uint_op!(U0 Mul U0 = U0);
+    test_uint_op!(U1 Mul U0 = U0);
+    test_uint_op!(U0 Mul U1 = U0);
+    test_uint_op!(U1 Mul U1 = U1);
+    test_uint_op!(U0 Shl B1 = U0);
+
+    test_uint_op!(U12 Mul U5 = U60);
+    test_uint_op!(U5 Mul U12 = U60);
+    test_uint_op!(U15 Mul U4 = U60);
+    test_uint_op!(U4 Mul U15 = U60);
+    test_uint_op!(U32 Mul U8 = U256);
+
+}
