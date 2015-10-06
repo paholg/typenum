@@ -69,6 +69,12 @@ fn confirm_nums() {
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.
 macro_rules! test_uint_op {
+    ($op:ident $Lhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Unsigned>::to_int(), <Test as Unsigned>::to_int());
+        }
+        );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
             type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;

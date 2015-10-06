@@ -16,6 +16,9 @@ pub trait Same<Rhs = Self> {
 pub trait Not {
     type Output;
 }
+pub trait Neg {
+    type Output;
+}
 pub trait And<Rhs = Self> {
     type Output;
 }
@@ -43,5 +46,8 @@ pub trait Mul<Rhs = Self> {
     type Output;
 }
 pub trait Div<Rhs = Self> {
+    type Output;
+}
+pub trait Rem<Rhs = Self> {
     type Output;
 }
