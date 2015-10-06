@@ -544,3 +544,4 @@ fn mul_tests() {
     test_uint_op!(U4 Mul U15 = U60);
     test_uint_op!(U32 Mul U8 = U256);
 }
+
