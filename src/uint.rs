@@ -492,25 +492,20 @@ fn shr_tests() {
 
 // Multiplying unsigned integers ---------------------------------------------------------
 
-/// Multiplying an unsigned integer by the 0 bit: `U * B0 = UTerm`
+/// Multiplying any unsigned integer by the 0 bit: `U * B0 = UTerm`
 impl<U: Unsigned> Mul<B0> for U {
     type Output = UTerm;
 }
 
-/// Multiplying an unsigned integer by the 1 bit: `U * B1 = U`
+/// Multiplying any unsigned integer by the 1 bit: `U * B1 = U`
 impl<U: Unsigned> Mul<B1> for U {
     type Output = U;
 }
 
-/// Multiplying an unsigned integer by `UTerm`: `U * UTerm = UTerm`
+/// Multiplying any unsigned integer by `UTerm`: `U * UTerm = UTerm`
 impl<U: Unsigned> Mul<UTerm> for U {
     type Output = UTerm;
 }
-
-/// Multiplying `UTerm` by an unsigned integer: `UTerm * U = UTerm`
-// impl<U: Unsigned> Mul<U> for UTerm {
-//     type Output = UTerm;
-// }
 
 /// Multiplying unsigned integers where the Rhs has LSB 0: `Ul * UInt<Ur, B0> = (Ul * Ur) << 1`
 impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B0>> for Ul
@@ -542,5 +537,4 @@ fn mul_tests() {
     test_uint_op!(U15 Mul U4 = U60);
     test_uint_op!(U4 Mul U15 = U60);
     test_uint_op!(U32 Mul U8 = U256);
-
 }
