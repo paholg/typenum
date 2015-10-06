@@ -51,3 +51,8 @@ pub trait Div<Rhs = Self> {
 pub trait Rem<Rhs = Self> {
     type Output;
 }
+
+/// Gives the size of a type number in bits as a `UInt`
+pub trait SizeOf {
+    type Output;
+}

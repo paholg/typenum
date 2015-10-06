@@ -42,6 +42,10 @@ pub trait PrivateInvert<Rhs> {
     type Output;
 }
 
+pub trait PrivateSizeOf {
+    type Output;
+}
+
 /// Terminating character for `InvertedUInt`s
 pub struct InvertedUTerm;
 
@@ -170,25 +174,25 @@ impl<U: Unsigned> Trim for U
 
 // Note: Trimming is tested when we do subtraction.
 
-pub Trait DivPrivate<Rhs> {
-    type Quotient;
-    type Remainder;
-}
+// pub trait DivPrivate<Rhs> {
+//     type Quotient;
+//     type Remainder;
+// }
 
-/// Dividing any unsigned by the 1 bit: `U / B1: Q = U; R = UTerm`
-impl<U: Unsigned> DivPrivate<B1> for U {
-    type Quotient = U;
-    type Remainder = UTerm;
-}
+// /// Dividing any unsigned by the 1 bit: `U / B1: Q = U; R = UTerm`
+// impl<U: Unsigned> DivPrivate<B1> for U {
+//     type Quotient = U;
+//     type Remainder = UTerm;
+// }
 
-/// Dividing `UTerm` by any `UInt`: `UTerm / UInt<U, B>: Q = UTerm; R = UTerm`
-impl<U: Unsigned, B: Bit> DivPrivate<UInt<U, B>> for UTerm {
-    type Quotient = UTerm;
-    type Remainder = UTerm;
-}
+// /// Dividing `UTerm` by any `UInt`: `UTerm / UInt<U, B>: Q = UTerm; R = UTerm`
+// impl<U: Unsigned, B: Bit> DivPrivate<UInt<U, B>> for UTerm {
+//     type Quotient = UTerm;
+//     type Remainder = UTerm;
+// }
 
-/// Dividing `UInt` by `UInt`: `UInt<Ul, Bl> / UInt<Ur, Br>:
-impl<U: Unsigned, B: Bit> DivPrivate<UInt<U, B>> for UTerm {
-    type Quotient = UTerm;
-    type Remainder = UTerm;
-}
+// /// Dividing `UInt` by `UInt`: `UInt<Ul, Bl> / UInt<Ur, Br>:
+// impl<U: Unsigned, B: Bit> DivPrivate<UInt<U, B>> for UTerm {
+//     type Quotient = UTerm;
+//     type Remainder = UTerm;
+// }

@@ -1,9 +1,9 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr, Mul};
+use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
-use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub};
+use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateSizeOf};
 
 pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
 U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
@@ -81,6 +81,44 @@ macro_rules! test_uint_op {
             assert_eq!(<$Answer as Unsigned>::to_int(), <Test as Unsigned>::to_int());
         }
         );
+}
+
+// Getting size of unsigned integers -----------------------------------------------------
+
+/// Size of `UTerm` by itself is 1
+impl SizeOf for UTerm {
+    type Output = U1;
+}
+
+/// Size of a `UInt`
+impl<U: Unsigned, B: Bit> SizeOf for UInt<U, B>
+    where UInt<U, B>: PrivateSizeOf
+{
+    type Output = <UInt<U, B> as PrivateSizeOf>::Output;
+}
+
+/// Size of `UTerm` inside a number is 0
+impl PrivateSizeOf for UTerm {
+    type Output = U0;
+}
+
+/// Size of bit is 1
+impl<U: Unsigned, B: Bit> PrivateSizeOf for UInt<U, B>
+    where U: PrivateSizeOf,
+    <U as PrivateSizeOf>::Output: Add<B1>
+{
+    type Output = <<U as PrivateSizeOf>::Output as Add<B1>>::Output;
+}
+
+#[test]
+fn sizeof_uints() {
+    test_uint_op!(SizeOf U0 = U1);
+    test_uint_op!(SizeOf U1 = U1);
+    test_uint_op!(SizeOf U2 = U2);
+    test_uint_op!(SizeOf U3 = U2);
+    test_uint_op!(SizeOf U4 = U3);
+    test_uint_op!(SizeOf U127 = U7);
+    test_uint_op!(SizeOf U128 = U8);
 }
 
 
