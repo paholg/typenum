@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 
 use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
-use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateSizeOf};
+use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateSizeOf, PrivateDiv};
 
 pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
 U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
@@ -583,3 +583,23 @@ fn mul_tests() {
     test_uint_op!(U32 Mul U8 = U256);
 }
 
+// Dividing unsigned integers ---------------------------------------------------------
+
+
+/// Dividing any unsigned by the 1 bit: `U / B1: Q = U; R = UTerm`
+impl<U: Unsigned> PrivateDiv<B1> for U {
+    type Quotient = U;
+    type Remainder = UTerm;
+}
+
+/// Dividing `UTerm` by any `UInt`: `UTerm / UInt<U, B>: Q = UTerm; R = UTerm`
+impl<U: Unsigned, B: Bit> PrivateDiv<UInt<U, B>> for UTerm {
+    type Quotient = UTerm;
+    type Remainder = UTerm;
+}
+
+/// Dividing `UInt` by `UInt`: `UInt<Ul, Bl> / UInt<Ur, Br>:
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Unsigned> PrivateDiv<UInt<Ur, Br>> for UInt<Ul, Bl> {
+    type Quotient = UTerm;
+    type Remainder = UTerm;
+}
