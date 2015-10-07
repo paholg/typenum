@@ -269,23 +269,41 @@ fn sub_uints() {
     test_uint_op!(U32 Sub U31 = U1);
 }
 
-/// Anding `UTerm` with anything: `UTerm & X = UTerm`
+/// `UTerm & X = UTerm`
 impl<U: Unsigned> PrivateAnd<U> for UTerm {
     type Output = UTerm;
 }
-/// Anding `UTerm` with anything: `X & UTerm = UTerm`
+/// `X & UTerm = UTerm`
 impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
     type Output = UTerm;
 }
 
-/// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateAnd<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: PrivateAnd<Ur>, Bl: And<Br>, <Bl as And<Br>>::Output: Bit,
-        <Ul as PrivateAnd<Ur>>::Output: Unsigned
+/// `UInt<Ul, B0> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
 {
-    type Output = UInt<
-        <Ul as PrivateAnd<Ur>>::Output,
-        <Bl as And<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> & UInt<Ur, B1> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B1> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B1> & UInt<Ur, B1> = UInt<Ul & Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B1>;
 }
 
 /// Anding unsigned integers.
@@ -311,6 +329,8 @@ fn and_uints() {
     test_uint_op!(U15 And U15 = U15);
 
     test_uint_op!(U120 And U105 = U104);
+
+    test_uint_op!(U65536 And U65536 = U65536);
 }
 
 /// `UTerm | X = X`
