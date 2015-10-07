@@ -1,7 +1,10 @@
 [package]
 name = "typenum"
 version = "0.0.2"
-authors = ["Paho Lurie-Gregg <paho@paholg.com>"]
+authors = [
+    "Paho Lurie-Gregg <paho@paholg.com>",
+    "Andre Bogus <bogusandre@gmail.com>"
+]
 description = "Type-level numbers."
 homepage = "http://paholg.com/typenum"
 documentation = "http://paholg.com/doc/typenum"
