@@ -378,23 +378,41 @@ fn or_uints() {
     test_uint_op!(U65536 Or U65536 = U65536);
 }
 
-/// Exclusive-Oring `UTerm` with anything: `UTerm ^ X = X`
+/// `UTerm ^ X = X`
 impl<U: Unsigned> PrivateXor<U> for UTerm {
     type Output = U;
 }
-/// Exclusive-Oring `UTerm` with anything: `X ^ UTerm = X`
+/// `X ^ UTerm = X`
 impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
-/// Exclusive-Oring unsigned integers: `UInt<Ul, Bl> ^ UInt<Ur, Br> = UInt<Ul ^ Ur, Bl ^ Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateXor<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: PrivateXor<Ur>, Bl: Xor<Br>, <Bl as Xor<Br>>::Output: Bit,
-        <Ul as PrivateXor<Ur>>::Output: Unsigned
+/// `UInt<Ul, B0> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
 {
-    type Output = UInt<
-        <Ul as PrivateXor<Ur>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
 }
 
 /// Xoring unsigned integers.
@@ -417,6 +435,8 @@ fn xor_uints() {
     test_uint_op!(U3 Xor U7 = U4);
 
     test_uint_op!(U15 Xor U15 = U0);
+
+    test_uint_op!(U65536 Xor U65536 = U0);
 }
 
 /// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
