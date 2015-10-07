@@ -313,23 +313,33 @@ fn and_uints() {
     test_uint_op!(U120 And U105 = U104);
 }
 
-/// Oring `UTerm` with anything: `UTerm | X = X`
+/// Or `UTerm` with anything: `UTerm | X = X`
 impl<U: Unsigned> Or<U> for UTerm {
     type Output = U;
 }
-/// Oring `UTerm` with anything: `X | UTerm = X`
+/// Or `UTerm` with anything: `X | UTerm = X`
 impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
-/// Oring unsigned integers: `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit,
-        <Ul as Or<Ur>>::Output: Unsigned
-{
-    type Output = UInt<
-        <Ul as Or<Ur>>::Output,
-        <Bl as Or<Br>>::Output>;
+/// Or unsigned integers: `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B0>;
+}
+
+/// Or unsigned integers: `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+}
+
+/// Or unsigned integers: `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+}
+
+/// Or unsigned integers: `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
 }
 
 #[test]
@@ -344,6 +354,8 @@ fn or_uints() {
     test_uint_op!(U3 Or U7 = U7);
 
     test_uint_op!(U15 Or U15 = U15);
+
+    test_uint_op!(U65536 Or U65536 = U65536);
 }
 
 /// Exclusive-Oring `UTerm` with anything: `UTerm ^ X = X`
