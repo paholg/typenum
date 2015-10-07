@@ -170,21 +170,21 @@ fn add_uints() {
 
 // Subtracting bits from unsigned integers -----------------------------------------------
 
-/// Subtracting the 0 bit from any `Unsigned`: `U - B0 = U`
+/// `U - B0 = U`
 impl<U: Unsigned> Sub<B0> for U {
     type Output = U;
 }
-/// Subtracting the 1 bit from a `UInt` with final bit 1: `UInt<U, B1> - B1 = UInt<U, B0>`
+/// `UInt<U, B1> - B1 = UInt<U, B0>`
 impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
     type Output = UInt<UInt<U, B>, B0>;
 }
 
-// Subtracting the last 1 bit from a value
+// `UInt<UTerm, B1> - B1 = UTerm`
 impl Sub<B1> for UInt<UTerm, B1> {
     type Output = UTerm;
 }
 
-/// Subtracting the 1 bit from a `UInt` with final bit 0: `UInt<U, B0> - B1 = UInt<U - B1, B1>`
+/// `UInt<U, B0> - B1 = UInt<U - B1, B1>`
 impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
     type Output = UInt<<U as Sub<B1>>::Output, B1>;
 }
@@ -207,40 +207,7 @@ fn sub_bits_from_uints() {
 
 // Subtracting unsigned integers ---------------------------------------------------------
 
-/// A **type operation** used to determine when to borrow for subtraction. Notice that
-/// this is a non-commutative operation, as we only borrow when we have 0 - 1.
-///
-/// Table:
-/// ```
-///  0 0 | 0
-///  0 1 | 1
-///  1 0 | 0
-///  1 1 | 0
-/// ```
-
-trait Borrow<Rhs> {
-    type Output;
-}
-/// We only borrow in this case; when we have `B0 - B1`
-impl Borrow<B1> for B0 {
-    type Output = B1;
-}
-/// We do not borrow in this case.
-impl Borrow<B1> for B1 {
-    type Output = B0;
-}
-/// We do not borrow in this case.
-impl Borrow<B0> for B1 {
-    type Output = B0;
-}
-/// We do not borrow in this case.
-impl Borrow<B0> for B0 {
-    type Output = B0;
-}
-
-
-
-/// Subtracting unsigned integers:
+/// Subtracting unsigned integers. We just do our `PrivateSub` and then `Trim` the output.
 impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
     where Ul: PrivateSub<Ur>,
           <Ul as PrivateSub<Ur>>::Output: Trim
@@ -248,25 +215,40 @@ impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
     type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
 }
 
-/// Subtracting `UTerm` from anything: `U - UTerm = UTerm`
+/// `U - UTerm = U`
 impl<U: Unsigned> PrivateSub<UTerm> for U {
     type Output = U;
 }
 
-/// `UInt<Ul, Bl> - UInt<Ur, Br> = UInt<(Ul - Bl Borrow Br) - Ur, Bl ^ Br>`
-/// where `Borrow` is a **type operation** that only returns `B1` when
-/// we need to borrow; `Bl = 0` and `Br = 1`. The rest of the time it returns `B0`.
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateSub<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Bl: Xor<Br> + Borrow<Br>,
-          Ul: Sub<<Bl as Borrow<Br>>::Output>,
-          <Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output: PrivateSub<Ur>,
-          <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output: Unsigned,
-          <Bl as Xor<Br>>::Output: Bit
+/// `UInt<Ul, B0> - UInt<Ur, B0> = UInt<Ul - Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateSub<Ur>
 {
-    type Output = UInt<
-        <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B0>;
 }
+
+/// `UInt<Ul, B0> - UInt<Ur, B1> = UInt<(Ul - Ur) - B1, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateSub<Ur>,
+<Ul as PrivateSub<Ur>>::Output: Sub<B1>
+{
+    type Output = UInt<<<Ul as PrivateSub<Ur>>::Output as Sub<B1>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> - UInt<Ur, B0> = UInt<Ul - Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
+{
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> - UInt<Ur, B1> = UInt<Ul - Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
+{
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B0>;
+}
+
 
 #[test]
 fn sub_uints() {
@@ -284,6 +266,8 @@ fn sub_uints() {
     test_uint_op!(U31 Sub U31 = U0);
 
     test_uint_op!(U32 Sub U31 = U1);
+
+    test_uint_op!(U65536 Sub U65536 = U0);
 }
 
 /// `UTerm & X = UTerm`
