@@ -86,19 +86,19 @@ macro_rules! test_uint_op {
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
-/// Adding the 0 bit to any `Unsigned`: `U + B0 = U`
+/// `U + B0 = U`
 impl<U: Unsigned> Add<B0> for U {
     type Output = U;
 }
-/// Adding the 1 bit to a `UTerm`: `UTerm + B1 = UInt<UTerm, B1>`
+/// `UTerm + B1 = UInt<UTerm, B1>`
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
 }
-/// Adding the 1 bit to a `UInt` with final bit 0: `UInt<U, B0> + B1 = UInt<U + B1>`
+/// `UInt<U, B0> + B1 = UInt<U + B1>`
 impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
 }
-/// Adding the 1 bit to a `UInt` with final bit 1: `UInt<U, B1> + B1 = UInt<U + B1, B0>`
+/// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
 impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Output: Unsigned {
     type Output = UInt<<U as Add<B1>>::Output, B0>;
 }
@@ -110,32 +110,47 @@ fn add_bits_to_uints() {
     test_uint_op!(U7 Add B1 = U8);
     test_uint_op!(U7 Add B0 = U7);
     test_uint_op!(U16 Add B0 = U16);
+
+    test_uint_op!(U65536 Add B0 = U65536);
 }
 // Adding unsigned integers --------------------------------------------------------------
 
-/// Adding `UTerm` to `UTerm`: `UTerm + UTerm = UTerm`
+/// `UTerm + UTerm = UTerm`
 impl Add<UTerm> for UTerm {
     type Output = UTerm;
 }
-/// Adding `UInt` to `UTerm`: `UTerm + UInt<U, B> = UInt<U, B>`
+
+/// `UTerm + UInt<U, B> = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UInt<U, B>> for UTerm {
     type Output = UInt<U, B>;
 }
-/// Adding `UTerm` to `UInt`: `UInt<U, B> + UTerm = UInt<U, B>`
+
+/// `UInt<U, B> + UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
-/// Adding unsigned integers: `UInt<Ul, Bl> + UInt<Ur, Br> = UInt<Ul + (Ur + Bl & Br), Bl ^ Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Bl: And<Br> + Xor<Br>,
-          Ul: Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>,
-          Ur: Add<<Bl as And<Br>>::Output>,
-          <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output: Unsigned,
-          <Bl as Xor<Br>>::Output: Bit
+
+/// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> + UInt<Ur, B1> = UInt<(Ul + Ur) + B1, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: Add<Ur>,
+          <Ul as Add<Ur>>::Output: Add<B1>
 {
-    type Output = UInt<
-        <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<<Ul as Add<Ur>>::Output as Add<B1>>::Output, B0>;
 }
 
 #[test]
@@ -149,6 +164,8 @@ fn add_uints() {
     test_uint_op!(U31 Add U31 = U62);
     test_uint_op!(U32 Add U31 = U63);
     test_uint_op!(U31 Add U32 = U63);
+
+    test_uint_op!(U32768 Add U32768 = U65536);
 }
 
 // Subtracting bits from unsigned integers -----------------------------------------------
