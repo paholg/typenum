@@ -124,19 +124,19 @@ fn sizeof_uints() {
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
-/// Adding the 0 bit to any `Unsigned`: `U + B0 = U`
+/// `U + B0 = U`
 impl<U: Unsigned> Add<B0> for U {
     type Output = U;
 }
-/// Adding the 1 bit to a `UTerm`: `UTerm + B1 = UInt<UTerm, B1>`
+/// `UTerm + B1 = UInt<UTerm, B1>`
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
 }
-/// Adding the 1 bit to a `UInt` with final bit 0: `UInt<U, B0> + B1 = UInt<U + B1>`
+/// `UInt<U, B0> + B1 = UInt<U + B1>`
 impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
 }
-/// Adding the 1 bit to a `UInt` with final bit 1: `UInt<U, B1> + B1 = UInt<U + B1, B0>`
+/// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
 impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Output: Unsigned {
     type Output = UInt<<U as Add<B1>>::Output, B0>;
 }
@@ -148,32 +148,47 @@ fn add_bits_to_uints() {
     test_uint_op!(U7 Add B1 = U8);
     test_uint_op!(U7 Add B0 = U7);
     test_uint_op!(U16 Add B0 = U16);
+
+    test_uint_op!(U65536 Add B0 = U65536);
 }
 // Adding unsigned integers --------------------------------------------------------------
 
-/// Adding `UTerm` to `UTerm`: `UTerm + UTerm = UTerm`
+/// `UTerm + UTerm = UTerm`
 impl Add<UTerm> for UTerm {
     type Output = UTerm;
 }
-/// Adding `UInt` to `UTerm`: `UTerm + UInt<U, B> = UInt<U, B>`
+
+/// `UTerm + UInt<U, B> = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UInt<U, B>> for UTerm {
     type Output = UInt<U, B>;
 }
-/// Adding `UTerm` to `UInt`: `UInt<U, B> + UTerm = UInt<U, B>`
+
+/// `UInt<U, B> + UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
 }
-/// Adding unsigned integers: `UInt<Ul, Bl> + UInt<Ur, Br> = UInt<Ul + (Ur + Bl & Br), Bl ^ Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Add<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Bl: And<Br> + Xor<Br>,
-          Ul: Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>,
-          Ur: Add<<Bl as And<Br>>::Output>,
-          <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output: Unsigned,
-          <Bl as Xor<Br>>::Output: Bit
+
+/// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Add<Ur> {
+    type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> + UInt<Ur, B1> = UInt<(Ul + Ur) + B1, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: Add<Ur>,
+          <Ul as Add<Ur>>::Output: Add<B1>
 {
-    type Output = UInt<
-        <Ul as Add<<Ur as Add<<Bl as And<Br>>::Output>>::Output>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<<Ul as Add<Ur>>::Output as Add<B1>>::Output, B0>;
 }
 
 #[test]
@@ -187,25 +202,27 @@ fn add_uints() {
     test_uint_op!(U31 Add U31 = U62);
     test_uint_op!(U32 Add U31 = U63);
     test_uint_op!(U31 Add U32 = U63);
+
+    test_uint_op!(U32768 Add U32768 = U65536);
 }
 
 // Subtracting bits from unsigned integers -----------------------------------------------
 
-/// Subtracting the 0 bit from any `Unsigned`: `U - B0 = U`
+/// `U - B0 = U`
 impl<U: Unsigned> Sub<B0> for U {
     type Output = U;
 }
-/// Subtracting the 1 bit from a `UInt` with final bit 1: `UInt<U, B1> - B1 = UInt<U, B0>`
+/// `UInt<U, B1> - B1 = UInt<U, B0>`
 impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
     type Output = UInt<UInt<U, B>, B0>;
 }
 
-// Subtracting the last 1 bit from a value
+// `UInt<UTerm, B1> - B1 = UTerm`
 impl Sub<B1> for UInt<UTerm, B1> {
     type Output = UTerm;
 }
 
-/// Subtracting the 1 bit from a `UInt` with final bit 0: `UInt<U, B0> - B1 = UInt<U - B1, B1>`
+/// `UInt<U, B0> - B1 = UInt<U - B1, B1>`
 impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
     type Output = UInt<<U as Sub<B1>>::Output, B1>;
 }
@@ -228,40 +245,7 @@ fn sub_bits_from_uints() {
 
 // Subtracting unsigned integers ---------------------------------------------------------
 
-/// A **type operation** used to determine when to borrow for subtraction. Notice that
-/// this is a non-commutative operation, as we only borrow when we have 0 - 1.
-///
-/// Table:
-/// ```
-///  0 0 | 0
-///  0 1 | 1
-///  1 0 | 0
-///  1 1 | 0
-/// ```
-
-trait Borrow<Rhs> {
-    type Output;
-}
-/// We only borrow in this case; when we have `B0 - B1`
-impl Borrow<B1> for B0 {
-    type Output = B1;
-}
-/// We do not borrow in this case.
-impl Borrow<B1> for B1 {
-    type Output = B0;
-}
-/// We do not borrow in this case.
-impl Borrow<B0> for B1 {
-    type Output = B0;
-}
-/// We do not borrow in this case.
-impl Borrow<B0> for B0 {
-    type Output = B0;
-}
-
-
-
-/// Subtracting unsigned integers:
+/// Subtracting unsigned integers. We just do our `PrivateSub` and then `Trim` the output.
 impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
     where Ul: PrivateSub<Ur>,
           <Ul as PrivateSub<Ur>>::Output: Trim
@@ -269,25 +253,40 @@ impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
     type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
 }
 
-/// Subtracting `UTerm` from anything: `U - UTerm = UTerm`
+/// `U - UTerm = U`
 impl<U: Unsigned> PrivateSub<UTerm> for U {
     type Output = U;
 }
 
-/// `UInt<Ul, Bl> - UInt<Ur, Br> = UInt<(Ul - Bl Borrow Br) - Ur, Bl ^ Br>`
-/// where `Borrow` is a **type operation** that only returns `B1` when
-/// we need to borrow; `Bl = 0` and `Br = 1`. The rest of the time it returns `B0`.
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateSub<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Bl: Xor<Br> + Borrow<Br>,
-          Ul: Sub<<Bl as Borrow<Br>>::Output>,
-          <Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output: PrivateSub<Ur>,
-          <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output: Unsigned,
-          <Bl as Xor<Br>>::Output: Bit
+/// `UInt<Ul, B0> - UInt<Ur, B0> = UInt<Ul - Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateSub<Ur>
 {
-    type Output = UInt<
-        <<Ul as Sub<<Bl as Borrow<Br>>::Output>>::Output as PrivateSub<Ur>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B0>;
 }
+
+/// `UInt<Ul, B0> - UInt<Ur, B1> = UInt<(Ul - Ur) - B1, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateSub<Ur>,
+<Ul as PrivateSub<Ur>>::Output: Sub<B1>
+{
+    type Output = UInt<<<Ul as PrivateSub<Ur>>::Output as Sub<B1>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> - UInt<Ur, B0> = UInt<Ul - Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
+{
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> - UInt<Ur, B1> = UInt<Ul - Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
+{
+    type Output = UInt<<Ul as PrivateSub<Ur>>::Output, B0>;
+}
+
 
 #[test]
 fn sub_uints() {
@@ -305,25 +304,45 @@ fn sub_uints() {
     test_uint_op!(U31 Sub U31 = U0);
 
     test_uint_op!(U32 Sub U31 = U1);
+
+    test_uint_op!(U65536 Sub U65536 = U0);
 }
 
-/// Anding `UTerm` with anything: `UTerm & X = UTerm`
+/// `UTerm & X = UTerm`
 impl<U: Unsigned> PrivateAnd<U> for UTerm {
     type Output = UTerm;
 }
-/// Anding `UTerm` with anything: `X & UTerm = UTerm`
+/// `X & UTerm = UTerm`
 impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
     type Output = UTerm;
 }
 
-/// Anding unsigned integers: `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateAnd<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: PrivateAnd<Ur>, Bl: And<Br>, <Bl as And<Br>>::Output: Bit,
-        <Ul as PrivateAnd<Ur>>::Output: Unsigned
+/// `UInt<Ul, B0> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
 {
-    type Output = UInt<
-        <Ul as PrivateAnd<Ur>>::Output,
-        <Bl as And<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> & UInt<Ur, B1> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B1> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B1> & UInt<Ur, B1> = UInt<Ul & Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
+{
+    type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B1>;
 }
 
 /// Anding unsigned integers.
@@ -349,25 +368,37 @@ fn and_uints() {
     test_uint_op!(U15 And U15 = U15);
 
     test_uint_op!(U120 And U105 = U104);
+
+    test_uint_op!(U65536 And U65536 = U65536);
 }
 
-/// Oring `UTerm` with anything: `UTerm | X = X`
+/// `UTerm | X = X`
 impl<U: Unsigned> Or<U> for UTerm {
     type Output = U;
 }
-/// Oring `UTerm` with anything: `X | UTerm = X`
+///  `X | UTerm = X`
 impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
-/// Oring unsigned integers: `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> Or<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: Or<Ur>, Bl: Or<Br>, <Bl as Or<Br>>::Output: Bit,
-        <Ul as Or<Ur>>::Output: Unsigned
-{
-    type Output = UInt<
-        <Ul as Or<Ur>>::Output,
-        <Bl as Or<Br>>::Output>;
+/// `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: Or<Ur> {
+    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
 }
 
 #[test]
@@ -382,25 +413,45 @@ fn or_uints() {
     test_uint_op!(U3 Or U7 = U7);
 
     test_uint_op!(U15 Or U15 = U15);
+
+    test_uint_op!(U65536 Or U65536 = U65536);
 }
 
-/// Exclusive-Oring `UTerm` with anything: `UTerm ^ X = X`
+/// `UTerm ^ X = X`
 impl<U: Unsigned> PrivateXor<U> for UTerm {
     type Output = U;
 }
-/// Exclusive-Oring `UTerm` with anything: `X ^ UTerm = X`
+/// `X ^ UTerm = X`
 impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
     type Output = Self;
 }
 
-/// Exclusive-Oring unsigned integers: `UInt<Ul, Bl> ^ UInt<Ur, Br> = UInt<Ul ^ Ur, Bl ^ Br>`
-impl<Bl: Bit, Ul: Unsigned, Br: Bit, Ur: Unsigned> PrivateXor<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where Ul: PrivateXor<Ur>, Bl: Xor<Br>, <Bl as Xor<Br>>::Output: Bit,
-        <Ul as PrivateXor<Ur>>::Output: Unsigned
+/// `UInt<Ul, B0> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
 {
-    type Output = UInt<
-        <Ul as PrivateXor<Ur>>::Output,
-        <Bl as Xor<Br>>::Output>;
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
+}
+
+/// `UInt<Ul, B0> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B1>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B1>;
+}
+
+/// `UInt<Ul, B1> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B0>`
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
+{
+    type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
 }
 
 /// Xoring unsigned integers.
@@ -423,6 +474,8 @@ fn xor_uints() {
     test_uint_op!(U3 Xor U7 = U4);
 
     test_uint_op!(U15 Xor U15 = U0);
+
+    test_uint_op!(U65536 Xor U65536 = U0);
 }
 
 /// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
