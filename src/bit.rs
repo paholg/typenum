@@ -1,4 +1,4 @@
-use ::{Not, And, Or, Xor, Same};
+use ::{Not, And, Or, Xor, Same, Cmp, Greater, Less, Equal};
 
 /// The compile time bit 0
 pub struct B0;
@@ -109,4 +109,20 @@ fn bit_operations() {
     test_bit_op!(B0 Xor B1 = B1);
     test_bit_op!(B1 Xor B0 = B1);
     test_bit_op!(B1 Xor B1 = B0);
+}
+
+impl Cmp<B0> for B0 {
+    type Output = Equal;
+}
+
+impl Cmp<B1> for B0 {
+    type Output = Less;
+}
+
+impl Cmp<B0> for B1 {
+    type Output = Greater;
+}
+
+impl Cmp<B1> for B1 {
+    type Output = Equal;
 }

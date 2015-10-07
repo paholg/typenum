@@ -169,3 +169,7 @@ impl<U: Unsigned> Trim for U
 }
 
 // Note: Trimming is tested when we do subtraction.
+
+pub trait PrivateCmp<Rhs, SoFar> {
+    type Output;
+}

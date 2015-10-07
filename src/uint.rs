@@ -1,9 +1,9 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, And, Or, Xor, Add, Sub, Shl, Shr, Mul};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, Mul};
 use ::bit::{Bit, B0, B1};
-use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub};
+use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp};
 
 pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
 U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
@@ -543,4 +543,133 @@ fn mul_tests() {
     test_uint_op!(U15 Mul U4 = U60);
     test_uint_op!(U4 Mul U15 = U60);
     test_uint_op!(U32 Mul U8 = U256);
+}
+
+// Comparing unsigned integers -----------------------------------------------------------
+
+/// Zero == Zero
+impl Cmp<UTerm> for UTerm {
+    type Output = Equal;
+}
+
+/// Nonzero > Zero
+impl<U: Unsigned, B: Bit> Cmp<UTerm> for UInt<U, B> {
+    type Output = Greater;
+}
+
+/// Zero < Nonzero
+impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
+    type Output = Less;
+}
+
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Cmp<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Equal>
+{
+    type Output = <UInt<Ul, Bl> as PrivateCmp<UInt<Ur, Br>, Equal>>::Output;
+}
+
+/// Comparing non-terimal bits, with both having bit B0. These are the same, so we propogate `SoFar`.
+impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B0>, S> for UInt<UInt<Ul, Bl>, B0>
+    where Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit, S: Ord,
+          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, S>,
+{
+    type Output = <UInt<Ul, Bl> as PrivateCmp<UInt<Ur, Br>, S>>::Output;
+}
+
+/// Comparing non-terimal bits, with both having bit B1. These are the same, so we propogate `SoFar`.
+impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B1>, S> for UInt<UInt<Ul, Bl>, B1>
+    where Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit, S: Ord,
+          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, S>,
+{
+    type Output = <UInt<Ul, Bl> as PrivateCmp<UInt<Ur, Br>, S>>::Output;
+}
+
+/// Comparing non-terimal bits, with Lhs having bit B0 and Rhs having bit B1. `SoFar`, Lhs is `Less`.
+impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B1>, S> for UInt<UInt<Ul, Bl>, B0>
+    where Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit, S: Ord,
+          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Less>,
+{
+    type Output = <UInt<Ul, Bl> as PrivateCmp<UInt<Ur, Br>, Less>>::Output;
+}
+
+/// Comparing non-terimal bits, with Lhs having bit B1 and Rhs having bit B0. `SoFar`, Lhs is `Greater`.
+impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B0>, S> for UInt<UInt<Ul, Bl>, B1>
+    where Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit, S: Ord,
+          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Greater>,
+{
+    type Output = <UInt<Ul, Bl> as PrivateCmp<UInt<Ur, Br>, Greater>>::Output;
+}
+
+/// Comparing when Rhs has finished but Lhs has not; Lhs is `Greater`.
+impl<Ul, Bl1, Bl2, Br, S> PrivateCmp<UInt<UTerm, Br>, S> for UInt<UInt<Ul, Bl2>, Bl1>
+    where Ul: Unsigned, Bl1: Bit, Bl2: Bit, Br: Bit, S: Ord
+{
+    type Output = Greater;
+}
+
+/// Comparing when Lhs has finished but Rhs has not; Lhs is `Less`.
+impl<Bl, Ur, Br1, Br2, S> PrivateCmp<UInt<UInt<Ur, Br2>, Br1>, S> for UInt<UTerm, Bl>
+    where Bl: Bit, Ur: Unsigned, Br1: Bit, Br2: Bit, S: Ord
+{
+    type Output = Less;
+}
+
+/// Comparing when both are at terminal bits and both have `B0`. Go by `SoFar`.
+impl<S: Ord> PrivateCmp<UInt<UTerm, B0>, S> for UInt<UTerm, B0> {
+    type Output = S;
+}
+
+/// Comparing when both are at terminal bits and both have `B1`. Go by `SoFar`.
+impl<S: Ord> PrivateCmp<UInt<UTerm, B1>, S> for UInt<UTerm, B1> {
+    type Output = S;
+}
+
+/// Comparing when both are at terminal bits and Lhs has `B0` while Rhs has `B1`. Lhs is `Less`.
+impl<S: Ord> PrivateCmp<UInt<UTerm, B1>, S> for UInt<UTerm, B0> {
+    type Output = Less;
+}
+
+/// Comparing when both are at terminal bits and Lhs has `B1` while Rhs has `B0`. Lhs is `Greater`.
+impl<S: Ord> PrivateCmp<UInt<UTerm, B0>, S> for UInt<UTerm, B1> {
+    type Output = Greater;
+}
+
+macro_rules! test_ord {
+    ($Lhs:ident > $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
+        }
+        );
+    ($Lhs:ident == $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
+        }
+        );
+    ($Lhs:ident < $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Less, <Test as Ord>::to_ordering());
+        }
+        );
+}
+
+#[test]
+fn test_ord() {
+    test_ord!(U0 == U0);
+    test_ord!(U1 > U0);
+    test_ord!(U0 < U1);
+
+    test_ord!(U85 > U0);
+    test_ord!(U0 < U85);
+
+    test_ord!(U2 > U1);
+    test_ord!(U1 < U2);
+
+    test_ord!(U128 > U127);
+    test_ord!(U127 < U128);
+
+    test_ord!(U125 == U125);
+    test_ord!(U512 == U512);
 }
