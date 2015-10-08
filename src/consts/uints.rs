@@ -136,12 +136,18 @@ pub type U126 = UInt<U63, B0>;
 pub type U127 = UInt<U63, B1>;
 
 pub type U128 = UInt<U64, B0>;
+pub type U250 = UInt<U125, B0>;
 pub type U256 = UInt<U128, B0>;
+pub type U500 = UInt<U250, B0>;
 pub type U512 = UInt<U256, B0>;
+
+pub type U1000 = UInt<U500, B0>;
 pub type U1024 = UInt<U512, B0>;
 pub type U2048 = UInt<U1024, B0>;
 pub type U4096 = UInt<U2048, B0>;
 pub type U8192 = UInt<U4096, B0>;
+
+pub type U10000 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<U39, B0>, B0>, B0>, B1>, B0>, B0>, B0>, B0>;
 pub type U16384 = UInt<U8192, B0>;
 pub type U32768 = UInt<U16384, B0>;
 pub type U65536 = UInt<U32768, B0>;
