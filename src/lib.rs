@@ -3,7 +3,7 @@ use std::cmp::{Ordering};
 pub mod bit;
 
 pub mod uint;
-pub mod const_uints;
+pub mod consts;
 
 pub mod int;
 

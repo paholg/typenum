@@ -5,7 +5,7 @@ use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, M
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp};
 
-pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
+pub use ::consts::uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
 U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
 U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48,
 U49, U50, U51, U52, U53, U54, U55, U56, U57, U58, U59, U60, U61, U62, U63, U64, U65,
@@ -13,7 +13,7 @@ U66, U67, U68, U69, U70, U71, U72, U73, U74, U75, U76, U77, U78, U79, U80, U81, 
 U83, U84, U85, U86, U87, U88, U89, U90, U91, U92, U93, U94, U95, U96, U97, U98, U99,
 U100, U101, U102, U103, U104, U105, U106, U107, U108, U109, U110, U111, U112, U113,
 U114, U115, U116, U117, U118, U119, U120, U121, U122, U123, U124, U125, U126, U127,
-U128, U256, U512, U1024, U2048, U4096, U8192, U16384, U32768, U65536};
+U128, U256, U512, U1024, U2048, U4096, U8192, U10000, U16384, U32768, U65536};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
 /// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
@@ -64,6 +64,8 @@ fn confirm_nums() {
     assert_eq!(13, U13::to_int());
     assert_eq!(14, U14::to_int());
     assert_eq!(15, U15::to_int());
+    
+    assert_eq!(10000, U10000::to_int());
 }
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
@@ -516,15 +518,14 @@ impl<U: Unsigned> Mul<UTerm> for U {
 /// Multiplying unsigned integers where the Rhs has LSB 0: `Ul * UInt<Ur, B0> = (Ul * Ur) << 1`
 impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B0>> for Ul
     where Ul: Mul<Ur>,
-          <Ul as Mul<Ur>>::Output: Shl<B1>
 {
-    type Output = <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output;
+    type Output = UInt<<Ul as Mul<Ur>>::Output, B0>;
 }
 
 /// Multiplying unsigned integers where the Rhs has LSB 1: `Ul * UInt<Ur, B1> = [(Ul * Ur) << 1] + Ul`
 impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B1>> for Ul
     where Ul: Mul<Ur>,
-          <Ul as Mul<Ur>>::Output: Shl<B1>,
+          <Ul as Mul<Ur>>::Output: Shl<B1> + Unsigned,
           <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output: Add<Ul>
 {
     type Output = <<<Ul as Mul<Ur>>::Output as Shl<B1>>::Output as Add<Ul>>::Output;
@@ -536,7 +537,7 @@ fn mul_tests() {
     test_uint_op!(U1 Mul U0 = U0);
     test_uint_op!(U0 Mul U1 = U0);
     test_uint_op!(U1 Mul U1 = U1);
-    test_uint_op!(U0 Shl B1 = U0);
+    test_uint_op!(U0 Mul B1 = U0);
 
     test_uint_op!(U12 Mul U5 = U60);
     test_uint_op!(U5 Mul U12 = U60);
