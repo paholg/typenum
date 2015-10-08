@@ -1,4 +1,5 @@
-use ::{Not, And, Or, Xor, Same, Cmp, Greater, Less, Equal};
+use ::{Not, And, Or, Xor, Same, Cmp, Greater, Less, Equal, SizeOf};
+use ::uint::U1;
 
 /// The compile time bit 0
 pub struct B0;
@@ -22,11 +23,35 @@ impl Bit for B1 {
     fn to_bool() -> bool { true }
 }
 
+// macro for testing operation results. Uses `Same` to ensure the types are equal and
+// not just the values they evaluate to.
+macro_rules! test_bit_op {
+    ($op:ident $Lhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+        }
+        );
+    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
+        {
+            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+        }
+        );
+}
+
 impl Same<B0> for B0 {
     type Output = B0;
 }
 impl Same<B1> for B1 {
     type Output = B1;
+}
+
+impl SizeOf for B0 {
+    type Output = U1;
+}
+impl SizeOf for B1 {
+    type Output = U1;
 }
 
 /// Not of 0 (!0 = 1)
@@ -71,23 +96,6 @@ impl Xor<B1> for B0 {
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
 impl Xor<B1> for B1 {
     type Output = B0;
-}
-
-// macro for testing operation results. Uses `Same` to ensure the types are equal and
-// not just the values they evaluate to.
-macro_rules! test_bit_op {
-    ($op:ident $Lhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
-        }
-        );
-    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
-        }
-        );
 }
 
 #[test]

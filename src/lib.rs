@@ -53,6 +53,7 @@ pub trait Rem<Rhs = Self> {
     type Output;
 }
 
+
 pub trait Ord {
     fn to_ordering() -> Ordering;
 }
@@ -73,5 +74,10 @@ impl Ord for Equal {
 
 /// Compares `Self` and `Rhs`. Should only ever return one of `Greater`, `Less`, or `Equal`.
 pub trait Cmp<Rhs = Self> {
+    type Output;
+}
+
+/// Gives the size of a type number in bits as a `UInt`
+pub trait SizeOf {
     type Output;
 }

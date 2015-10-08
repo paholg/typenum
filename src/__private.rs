@@ -42,6 +42,10 @@ pub trait PrivateInvert<Rhs> {
     type Output;
 }
 
+pub trait PrivateSizeOf {
+    type Output;
+}
+
 /// Terminating character for `InvertedUInt`s
 pub struct InvertedUTerm;
 
@@ -172,4 +176,9 @@ impl<U: Unsigned> Trim for U
 
 pub trait PrivateCmp<Rhs, SoFar> {
     type Output;
+}
+
+pub trait PrivateDiv<Rhs> {
+    type Quotient;
+    type Remainder;
 }
