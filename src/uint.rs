@@ -32,7 +32,7 @@ impl Unsigned for UTerm {
 /// UInt is defined recursevly, where B is the least significant bit and U is the rest
 /// of the number. U can be another UInt or UTerm. In order to keep numbers unique, leading
 /// zeros are not allowed, so `UInt<UTerm, B0>` should never show up anywhere ever.
-pub struct UInt<U: Unsigned, B: Bit> {
+pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>
 }
 
