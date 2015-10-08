@@ -619,6 +619,9 @@ impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B1>> for Ul
           <Ul as Mul<Ur>>::Output: Shl<B1> + Unsigned,
           <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output: Add<Ul>
 {
+    // note that we cannot easily remove the Shl<B1> here, because 
+    // <Ul as Mul<Ur>>::Output may be UTerm, and inlining doesn't give us
+    // much benefit.
     type Output = <<<Ul as Mul<Ur>>::Output as Shl<B1>>::Output as Add<Ul>>::Output;
 }
 
@@ -635,6 +638,9 @@ fn mul_tests() {
     test_uint_op!(U15 Mul U4 = U60);
     test_uint_op!(U4 Mul U15 = U60);
     test_uint_op!(U32 Mul U8 = U256);
+    
+    test_uint_op!(U65536 Mul U1 = U65536);
+    test_uint_op!(U1 Mul U65536 = U65536);
 }
 
 // Comparing unsigned integers -----------------------------------------------------------
