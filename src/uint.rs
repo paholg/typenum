@@ -5,15 +5,27 @@ use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, M
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
-pub use ::const_uints::{U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
-U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
-U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48,
-U49, U50, U51, U52, U53, U54, U55, U56, U57, U58, U59, U60, U61, U62, U63, U64, U65,
-U66, U67, U68, U69, U70, U71, U72, U73, U74, U75, U76, U77, U78, U79, U80, U81, U82,
-U83, U84, U85, U86, U87, U88, U89, U90, U91, U92, U93, U94, U95, U96, U97, U98, U99,
-U100, U101, U102, U103, U104, U105, U106, U107, U108, U109, U110, U111, U112, U113,
-U114, U115, U116, U117, U118, U119, U120, U121, U122, U123, U124, U125, U126, U127,
-U128, U256, U512, U1024, U2048, U4096, U8192, U16384, U32768, U65536};
+pub use ::consts::uints::{
+    U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
+    U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
+    U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48,
+    U49, U50, U51, U52, U53, U54, U55, U56, U57, U58, U59, U60, U61, U62, U63, U64, U65,
+    U66, U67, U68, U69, U70, U71, U72, U73, U74, U75, U76, U77, U78, U79, U80, U81, U82,
+    U83, U84, U85, U86, U87, U88, U89, U90, U91, U92, U93, U94, U95, U96, U97, U98, U99,
+    U100, U101, U102, U103, U104, U105, U106, U107, U108, U109, U110, U111, U112, U113,
+    U114, U115, U116, U117, U118, U119, U120, U121, U122, U123, U124, U125, U126, U127,
+    U128, U256, U512, U1024, U2048, U4096, U8192, U10000, U16384, U32768, U65536,
+
+    U131072, U262144, U524288, U1048576, U2097152, U4194304, U8388608, U16777216, U33554432,
+    U67108864, U134217728, U268435456, U536870912, U1073741824, U2147483648, U4294967296,
+    U8589934592, U17179869184, U34359738368, U68719476736, U137438953472, U274877906944,
+    U549755813888, U1099511627776, U2199023255552, U4398046511104, U8796093022208,
+    U17592186044416, U35184372088832, U70368744177664, U140737488355328, U281474976710656,
+    U562949953421312, U1125899906842624, U2251799813685248, U4503599627370496,
+    U9007199254740992, U18014398509481984, U36028797018963968, U72057594037927936,
+    U144115188075855872, U288230376151711744, U576460752303423488, U1152921504606846976,
+    U2305843009213693952, U4611686018427387904, U9223372036854775808
+};
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,
 /// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
@@ -64,6 +76,8 @@ fn confirm_nums() {
     assert_eq!(13, U13::to_int());
     assert_eq!(14, U14::to_int());
     assert_eq!(15, U15::to_int());
+
+    assert_eq!(10000, U10000::to_int());
 }
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
@@ -202,6 +216,9 @@ fn add_uints() {
     test_uint_op!(U31 Add U31 = U62);
     test_uint_op!(U32 Add U31 = U63);
     test_uint_op!(U31 Add U32 = U63);
+
+    test_uint_op!(U0 Add U32 = U32);
+    test_uint_op!(U32 Add U0 = U32);
 
     test_uint_op!(U32768 Add U32768 = U65536);
 }
@@ -589,36 +606,44 @@ fn shr_tests() {
 
 // Multiplying unsigned integers ---------------------------------------------------------
 
-/// Multiplying any unsigned integer by the 0 bit: `U * B0 = UTerm`
+/// `U * B0 = UTerm`
 impl<U: Unsigned> Mul<B0> for U {
     type Output = UTerm;
 }
 
-/// Multiplying any unsigned integer by the 1 bit: `U * B1 = U`
+/// `U * B1 = U`
 impl<U: Unsigned> Mul<B1> for U {
     type Output = U;
 }
 
-/// Multiplying any unsigned integer by `UTerm`: `U * UTerm = UTerm`
-impl<U: Unsigned> Mul<UTerm> for U {
+/// `UInt<U, B> * UTerm = UTerm`
+impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
     type Output = UTerm;
 }
 
-/// Multiplying unsigned integers where the Rhs has LSB 0: `Ul * UInt<Ur, B0> = (Ul * Ur) << 1`
-impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B0>> for Ul
-    where Ul: Mul<Ur>,
-          <Ul as Mul<Ur>>::Output: Shl<B1>
-{
-    type Output = <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output;
+/// `UTerm * UInt<U, B> = UTerm`
+impl<U: Unsigned, B: Bit> Mul<UInt<U, B>> for UTerm {
+    type Output = UTerm;
 }
 
-/// Multiplying unsigned integers where the Rhs has LSB 1: `Ul * UInt<Ur, B1> = [(Ul * Ur) << 1] + Ul`
-impl<Ul: Unsigned, Ur: Unsigned> Mul<UInt<Ur, B1>> for Ul
-    where Ul: Mul<Ur>,
-          <Ul as Mul<Ur>>::Output: Shl<B1>,
-          <<Ul as Mul<Ur>>::Output as Shl<B1>>::Output: Add<Ul>
+/// `UTerm * UTerm = UTerm`
+impl Mul<UTerm> for UTerm {
+    type Output = UTerm;
+}
+
+/// `UInt<Ul, B0> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0>`
+impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B0>
+   where Ul: Mul<UInt<Ur, B>>
 {
-    type Output = <<<Ul as Mul<Ur>>::Output as Shl<B1>>::Output as Add<Ul>>::Output;
+    type Output = UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>;
+}
+
+/// `UInt<Ul, B1> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0> + UInt<Ur, B>`
+impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B1>
+    where Ul: Mul<UInt<Ur, B>>,
+UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>: Add<UInt<Ur, B>>
+{
+    type Output = <UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0> as Add<UInt<Ur, B>>>::Output;
 }
 
 #[test]
@@ -627,13 +652,24 @@ fn mul_tests() {
     test_uint_op!(U1 Mul U0 = U0);
     test_uint_op!(U0 Mul U1 = U0);
     test_uint_op!(U1 Mul U1 = U1);
-    test_uint_op!(U0 Shl B1 = U0);
+    test_uint_op!(U0 Mul B1 = U0);
+    test_uint_op!(U0 Mul U2 = U0);
+
+    test_uint_op!(U1 Mul U2 = U2);
+    test_uint_op!(U2 Mul U1 = U2);
+    test_uint_op!(U2 Mul U2 = U4);
+
 
     test_uint_op!(U12 Mul U5 = U60);
     test_uint_op!(U5 Mul U12 = U60);
     test_uint_op!(U15 Mul U4 = U60);
     test_uint_op!(U4 Mul U15 = U60);
     test_uint_op!(U32 Mul U8 = U256);
+
+    test_uint_op!(U65536 Mul U1 = U65536);
+    test_uint_op!(U1 Mul U65536 = U65536);
+
+    test_uint_op!(U65536 Mul U65536 = U4294967296);
 }
 
 // Comparing unsigned integers -----------------------------------------------------------
