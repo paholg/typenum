@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{Neg, Add, Sub, Mul};
+use std::ops::{Neg, Add, Sub, Mul, Div};
 use ::{NonZero, Same, Cmp, Greater, Equal, Less};
 use ::uint::{Unsigned};
 use ::__private::{PrivateIntegerAdd};
@@ -473,4 +473,68 @@ fn mul_ints() {
     test_int_op!(N7 Mul P2 = N14);
 
     test_int_op!(P32768 Mul P32768 = P1073741824);
+}
+
+// ---------------------------------------------------------------------------------------
+// Div
+
+/// `I0 / I = I0` where `I != 0`
+impl<I: Integer + NonZero> Div<I> for I0 {
+    type Output = I0;
+    fn div(self, _: I) -> Self::Output { unreachable!() }
+}
+
+/// P(Ul) / P(Ur) = P(Ul / Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for PInt<Ul>
+    where Ul: Div<Ur>,
+          <Ul as Div<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Div<Ur>>::Output>;
+    fn div(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// N(Ul) / N(Ur) = P(Ul / Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<NInt<Ur>> for NInt<Ul>
+    where Ul: Div<Ur>,
+          <Ul as Div<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Div<Ur>>::Output>;
+    fn div(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// P(Ul) / N(Ur) = N(Ul / Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<NInt<Ur>> for PInt<Ul>
+    where Ul: Div<Ur>,
+          <Ul as Div<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Div<Ur>>::Output>;
+    fn div(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// N(Ul) / P(Ur) = N(Ul / Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for NInt<Ul>
+    where Ul: Div<Ur>,
+          <Ul as Div<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Div<Ur>>::Output>;
+    fn div(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+#[test]
+fn div_ints() {
+    // test_int_op!(I0 Div P7 = I0);
+    // test_int_op!(I0 Div N9 = I0);
+
+
+    // test_int_op!(P6 Div P2 = P3);
+    // test_int_op!(P7 Mul N1 = N7);
+    // test_int_op!(P7 Mul P2 = P14);
+    // test_int_op!(P7 Mul N2 = N14);
+
+    // test_int_op!(N7 Mul N1 = P7);
+    // test_int_op!(N7 Mul P1 = N7);
+    // test_int_op!(N7 Mul N2 = P14);
+    // test_int_op!(N7 Mul P2 = N14);
+
+    // test_int_op!(P32768 Mul P32768 = P1073741824);
 }
