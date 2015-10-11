@@ -1011,7 +1011,7 @@ fn pow_uints() {
 //   # I > 0
 //   if C == Less: # Divisor is too big
 //     Call PrivateDiv with Divisor >> 1, I - 1
-//   if C == Equal: # Sweet, we're done eary with no remainder
+//   if C == Equal: # Sweet, we're done early with no remainder
 //     return Q + 2^I
 //   if C == Greater: # Do a step and keep going
 //     Q += 2^I
