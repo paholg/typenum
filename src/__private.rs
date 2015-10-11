@@ -178,7 +178,21 @@ pub trait PrivateCmp<Rhs, SoFar> {
     type Output;
 }
 
-pub trait PrivateDiv<Rhs> {
-    type Quotient;
-    type Remainder;
+/// Performs long division.
+/// RvsD is the result of comparing the remainder with the divisor (Rhs)
+/// I is the counter; it should start at N-1 and go to 0. N is the number of bits of the numberator.
+/// Q is the quotient so far
+/// R is the Remainder so far
+// pub trait PrivateDiv<RvsD, I, Quotient, Remainder, Rhs> {
+//     type Output;
+// }
+
+/// Gives the least significant bit
+pub trait LSB {
+    type Output;
+}
+
+/// Gives the bit at `Rhs`
+pub trait BitAt<Rhs> {
+    type Output;
 }
