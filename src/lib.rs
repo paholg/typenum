@@ -14,13 +14,6 @@ pub trait Same<Rhs = Self> {
     type Output;
 }
 
-pub trait Neg {
-    type Output;
-}
-
-pub trait Shl<Rhs = Self> {
-    type Output;
-}
 pub trait Shr<Rhs = Self> {
     type Output;
 }
@@ -35,9 +28,6 @@ pub trait Mul<Rhs = Self> {
     type Output;
 }
 pub trait Div<Rhs = Self> {
-    type Output;
-}
-pub trait Rem<Rhs = Self> {
     type Output;
 }
 
