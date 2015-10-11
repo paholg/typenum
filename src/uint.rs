@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Add, Sub, Shr, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Add, Sub, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -586,26 +586,37 @@ fn shl_tests() {
 /// Shifting right a `UTerm` by an unsigned integer: `UTerm >> U = UTerm`
 impl<U: Unsigned> Shr<U> for UTerm {
     type Output = UTerm;
+    fn shr(self, _: U) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right `UInt` by `UTerm`: `UInt<U, B> >> UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
+    fn shr(self, _: UTerm) -> Self::Output { unreachable!() }
+}
+
+/// Shifting right UTerm by a zero bit: `UTerm >> B0 = UTerm`
+impl Shr<B0> for UTerm {
+    type Output = UTerm;
+    fn shr(self, _: B0) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right any unsigned by a zero bit: `U >> B0 = U`
-impl<U: Unsigned> Shr<B0> for U {
-    type Output = U;
+impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn shr(self, _: B0) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right a `UInt` by a 1 bit: `UInt<U, B> >> B1 = U`
 impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
     type Output = U;
+    fn shr(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right a `UTerm` by a 1 bit: `UTerm >> B1 = UTerm`
 impl Shr<B1> for UTerm {
     type Output = UTerm;
+    fn shr(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right `UInt` by `UInt`: `UInt(U, B) >> Y` = `U >> (Y - 1)`
@@ -614,6 +625,7 @@ where UInt<Ur, Br> : Sub<B1>,
     U : Shr<<UInt<Ur, Br> as Sub<B1>>::Output>
 {
     type Output = <U as Shr<<UInt<Ur, Br> as Sub<B1>>::Output>>::Output;
+    fn shr(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
 }
 
 #[test]

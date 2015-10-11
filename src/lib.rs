@@ -14,10 +14,6 @@ pub trait Same<Rhs = Self> {
     type Output;
 }
 
-pub trait Shr<Rhs = Self> {
-    type Output;
-}
-
 pub trait Add<Rhs = Self> {
     type Output;
 }
