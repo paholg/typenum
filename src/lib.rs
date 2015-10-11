@@ -20,9 +20,6 @@ pub trait Not {
 pub trait Neg {
     type Output;
 }
-pub trait Or<Rhs = Self> {
-    type Output;
-}
 pub trait Xor<Rhs = Self> {
     type Output;
 }

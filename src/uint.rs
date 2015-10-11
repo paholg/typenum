@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -397,48 +397,54 @@ fn and_uints() {
 }
 
 /// `UTerm | X = X`
-impl<U: Unsigned> Or<U> for UTerm {
+impl<U: Unsigned> BitOr<U> for UTerm {
     type Output = U;
+    fn bitor(self, _: U) -> Self::Output { unreachable!() }
 }
 ///  `X | UTerm = X`
-impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
+impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
     type Output = Self;
+    fn bitor(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B0>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B0>;
+    fn bitor(self, _: UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn or_uints() {
-    test_uint_op!(U0 Or U0 = U0);
-    test_uint_op!(U1 Or U0 = U1);
-    test_uint_op!(U0 Or U1 = U1);
-    test_uint_op!(U1 Or U1 = U1);
+    test_uint_op!(U0 BitOr U0 = U0);
+    test_uint_op!(U1 BitOr U0 = U1);
+    test_uint_op!(U0 BitOr U1 = U1);
+    test_uint_op!(U1 BitOr U1 = U1);
 
 
-    test_uint_op!(U2 Or U9 = U11);
-    test_uint_op!(U3 Or U7 = U7);
+    test_uint_op!(U2 BitOr U9 = U11);
+    test_uint_op!(U3 BitOr U7 = U7);
 
-    test_uint_op!(U15 Or U15 = U15);
+    test_uint_op!(U15 BitOr U15 = U15);
 
-    test_uint_op!(U65536 Or U65536 = U65536);
+    test_uint_op!(U65536 BitOr U65536 = U65536);
 }
 
 /// `UTerm ^ X = X`
