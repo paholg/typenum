@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{Neg, Add, Sub};
+use std::ops::{Neg, Add, Sub, Mul};
 use ::{NonZero, Same, Cmp, Greater, Equal, Less};
 use ::uint::{Unsigned};
 use ::__private::{PrivateIntegerAdd};
@@ -286,6 +286,9 @@ fn add_ints() {
     test_int_op!(I0 Add P7 = P7);
     test_int_op!(I0 Add N8 = N8);
 
+    test_int_op!(P7 Add N7 = I0);
+    test_int_op!(N7 Add P7 = I0);
+
     test_int_op!(P7 Add P8 = P15);
     test_int_op!(P7 Add N8 = N1);
     test_int_op!(P7 Add N5 = P2);
@@ -379,6 +382,9 @@ fn sub_ints() {
     test_int_op!(I0 Sub P7 = N7);
     test_int_op!(I0 Sub N8 = P8);
 
+    test_int_op!(P7 Sub P7 = I0);
+    test_int_op!(N7 Sub N7 = I0);
+
     test_int_op!(P7 Sub P8 = N1);
     test_int_op!(P7 Sub N8 = P15);
     test_int_op!(P7 Sub N5 = P12);
@@ -389,4 +395,82 @@ fn sub_ints() {
 
     test_int_op!(P32768 Sub P32768 = I0);
     test_int_op!(P32768 Sub N32768 = P65536);
+}
+
+// ---------------------------------------------------------------------------------------
+// Mul
+
+/// `I0 * I = I0`
+impl<I: Integer> Mul<I> for I0 {
+    type Output = I0;
+    fn mul(self, _: I) -> Self::Output { unreachable!() }
+}
+
+/// `P * I0 = I0`
+impl<U: Unsigned + NonZero> Mul<I0> for PInt<U> {
+    type Output = I0;
+    fn mul(self, _: I0) -> Self::Output { unreachable!() }
+}
+
+/// `N * I0 = I0`
+impl<U: Unsigned + NonZero> Mul<I0> for NInt<U> {
+    type Output = I0;
+    fn mul(self, _: I0) -> Self::Output { unreachable!() }
+}
+
+/// P(Ul) * P(Ur) = P(Ul * Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for PInt<Ul>
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Mul<Ur>>::Output>;
+    fn mul(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// N(Ul) * N(Ur) = P(Ul * Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for NInt<Ul>
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Mul<Ur>>::Output>;
+    fn mul(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// P(Ul) * N(Ur) = N(Ul * Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for PInt<Ul>
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Mul<Ur>>::Output>;
+    fn mul(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// N(Ul) * P(Ur) = N(Ul * Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
+    where Ul: Mul<Ur>,
+          <Ul as Mul<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Mul<Ur>>::Output>;
+    fn mul(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+#[test]
+fn mul_ints() {
+    test_int_op!(I0 Mul I0 = I0);
+    test_int_op!(I0 Mul P7 = I0);
+    test_int_op!(P7 Mul I0 = I0);
+    test_int_op!(I0 Mul N7 = I0);
+    test_int_op!(N7 Mul I0 = I0);
+
+    test_int_op!(P7 Mul P1 = P7);
+    test_int_op!(P7 Mul N1 = N7);
+    test_int_op!(P7 Mul P2 = P14);
+    test_int_op!(P7 Mul N2 = N14);
+
+    test_int_op!(N7 Mul N1 = P7);
+    test_int_op!(N7 Mul P1 = N7);
+    test_int_op!(N7 Mul N2 = P14);
+    test_int_op!(N7 Mul P2 = N14);
+
+    test_int_op!(P32768 Mul P32768 = P1073741824);
 }
