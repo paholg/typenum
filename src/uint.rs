@@ -1103,10 +1103,10 @@ impl<Q, Divisor, Remainder> PrivateDiv<Greater, U0, Q, Divisor> for Remainder
 // Remainder is equal to the divisor. We're done! Return `Q + 2^I`
 impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> for Remainder
     where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
-U2: Pow<UInt<Ui, Bi>>,
-Q: Add<<U2 as Pow<UInt<Ui, Bi>>>::Output>
+          U1: Shl<UInt<Ui, Bi>>,
+          Q: Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>
 {
-    type Output = <Q as Add<<U2 as Pow<UInt<Ui, Bi>>>::Output>>::Output;
+    type Output = <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output;
 }
 
 // Remainder is too small so we proceed to the next step.
@@ -1129,8 +1129,51 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
         <Divisor as Shr<B1>>::Output
     >>::Output;
 }
+// Remainder is bigger than the divisor.
+// We set `Q += 2^I`, `I -= 1`, `R -= D`, `D >>= 1`, `C = R.cmp(new D)` and go again
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor> for Remainder
+    where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+          Divisor: Shr<B1>,
+          Remainder: Cmp<<Divisor as Shr<B1>>::Output>,
+          UInt<Ui, Bi>: Sub<U1>,
+          U1: Shl<UInt<Ui, Bi>>,
+          Q: Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>,
+          Remainder: PrivateDiv<
+              <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
+              <UInt<Ui, Bi> as Sub<U1>>::Output,
+              <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output,
+              <Divisor as Shr<B1>>::Output
+          >
+{
+    type Output = <Remainder as PrivateDiv<
+        <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
+    <UInt<Ui, Bi> as Sub<U1>>::Output,
+    <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output,
+    <Divisor as Shr<B1>>::Output
+        >>::Output;
+}
 
+#[test]
+fn div_uints() {
+    test_uint_op!(U0 Div U1 = U0);
+    test_uint_op!(U1 Div U1 = U1);
+    test_uint_op!(U2 Div U1 = U2);
+    test_uint_op!(U127 Div U1 = U127);
 
+    test_uint_op!(U2 Div U2 = U1);
+    test_uint_op!(U4 Div U2 = U2);
+    test_uint_op!(U8 Div U2 = U4);
+    test_uint_op!(U16 Div U2 = U8);
+    test_uint_op!(U128 Div U2 = U64);
+
+    test_uint_op!(U14 Div U7 = U2);
+    test_uint_op!(U3 Div U3 = U1);
+    test_uint_op!(U9 Div U3 = U3);
+    test_uint_op!(U49 Div U7 = U7);
+
+    test_uint_op!(U16 Div U4 = U4);
+    // test_uint_op!(U27 Div U3 = U9);
+}
 
 // ---------------------------------------------------------------------------------------
 // Dividing unsigned integers
