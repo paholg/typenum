@@ -297,3 +297,96 @@ fn add_ints() {
     test_int_op!(P32768 Add P32768 = P65536);
     test_int_op!(P32768 Add N32768 = I0);
 }
+
+// ---------------------------------------------------------------------------------------
+// Sub
+
+/// `I0 - I0 = I0`
+impl Sub<I0> for I0 {
+    type Output = I0;
+    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+}
+
+/// `I0 - P = N`
+impl<U: Unsigned + NonZero> Sub<PInt<U>> for I0 {
+    type Output = NInt<U>;
+    fn sub(self, _: PInt<U>) -> Self::Output { unreachable!() }
+}
+
+/// `I0 - N = P`
+impl<U: Unsigned + NonZero> Sub<NInt<U>> for I0 {
+    type Output = PInt<U>;
+    fn sub(self, _: NInt<U>) -> Self::Output { unreachable!() }
+}
+
+/// `PInt - I0 = PInt`
+impl<U: Unsigned + NonZero> Sub<I0> for PInt<U> {
+    type Output = PInt<U>;
+    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+}
+
+/// `NInt - I0 = NInt`
+impl<U: Unsigned + NonZero> Sub<I0> for NInt<U> {
+    type Output = NInt<U>;
+    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+}
+
+/// `P(Ul) - N(Ur) = P(Ul + Ur)`
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for PInt<Ul>
+    where Ul: Add<Ur>,
+          <Ul as Add<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Add<Ur>>::Output>;
+    fn sub(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// `N(Ul) - P(Ur) = N(Ul + Ur)`
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for NInt<Ul>
+    where Ul: Add<Ur>,
+          <Ul as Add<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Add<Ur>>::Output>;
+    fn sub(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// `P(Ul) - P(Ur)`: We resolve this with our `PrivateAdd`
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
+    where Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>
+{
+    type Output = <Ul as PrivateIntegerAdd<
+        <Ul as Cmp<Ur>>::Output, Ur
+        >>::Output;
+    fn sub(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+/// `N(Ul) - N(Ur)`: We resolve this with our `PrivateAdd`
+// We just do the same thing as above, swapping Lhs and Rhs
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
+    where Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>
+{
+    type Output = <Ur as PrivateIntegerAdd<
+        <Ur as Cmp<Ul>>::Output, Ul
+        >>::Output;
+    fn sub(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+}
+
+#[test]
+fn sub_ints() {
+    test_int_op!(I0 Sub I0 = I0);
+    test_int_op!(P1 Sub I0 = P1);
+    test_int_op!(N1 Sub I0 = N1);
+
+    test_int_op!(I0 Sub P7 = N7);
+    test_int_op!(I0 Sub N8 = P8);
+
+    test_int_op!(P7 Sub P8 = N1);
+    test_int_op!(P7 Sub N8 = P15);
+    test_int_op!(P7 Sub N5 = P12);
+
+    test_int_op!(N7 Sub N8 = P1);
+    test_int_op!(N7 Sub P8 = N15);
+    test_int_op!(N7 Sub P5 = N12);
+
+    test_int_op!(P32768 Sub P32768 = I0);
+    test_int_op!(P32768 Sub N32768 = P65536);
+}
