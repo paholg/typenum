@@ -1,7 +1,8 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -138,21 +139,30 @@ fn sizeof_uints() {
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
-/// `U + B0 = U`
-impl<U: Unsigned> Add<B0> for U {
-    type Output = U;
+/// `UTerm + B0 = UTerm`
+impl Add<B0> for UTerm {
+    type Output = UTerm;
+    fn add(self, _: B0) -> Self::Output { unreachable!() }
+}
+/// `UInt + B0 = UInt`
+impl<U: Unsigned, B: Bit> Add<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn add(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// `UTerm + B1 = UInt<UTerm, B1>`
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B0> + B1 = UInt<U + B1>`
 impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
 impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Output: Unsigned {
     type Output = UInt<<U as Add<B1>>::Output, B0>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -170,31 +180,37 @@ fn add_bits_to_uints() {
 /// `UTerm + UTerm = UTerm`
 impl Add<UTerm> for UTerm {
     type Output = UTerm;
+    fn add(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm + UInt<U, B> = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UInt<U, B>> for UTerm {
     type Output = UInt<U, B>;
+    fn add(self, _: UInt<U, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B> + UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
+    fn add(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B0>;
+    fn add(self, _:UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+    fn add(self, _:UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+    fn add(self, _:UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> + UInt<Ur, B1> = UInt<(Ul + Ur) + B1, B0>`
@@ -203,6 +219,7 @@ impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
           <Ul as Add<Ur>>::Output: Add<B1>
 {
     type Output = UInt<<<Ul as Add<Ur>>::Output as Add<B1>>::Output, B0>;
+    fn add(self, _:UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -225,23 +242,33 @@ fn add_uints() {
 
 // Subtracting bits from unsigned integers -----------------------------------------------
 
-/// `U - B0 = U`
-impl<U: Unsigned> Sub<B0> for U {
-    type Output = U;
+/// `UTerm - B0 = Term`
+impl Sub<B0> for UTerm {
+    type Output = UTerm;
+    fn sub(self, _:B0) -> Self::Output { unreachable!() }
+}
+
+/// `UInt - B0 = UInt`
+impl<U: Unsigned, B: Bit> Sub<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn sub(self, _:B0) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B1> - B1 = UInt<U, B0>`
 impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
     type Output = UInt<UInt<U, B>, B0>;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
-// `UInt<UTerm, B1> - B1 = UTerm`
+/// `UInt<UTerm, B1> - B1 = UTerm`
 impl Sub<B1> for UInt<UTerm, B1> {
     type Output = UTerm;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B0> - B1 = UInt<U - B1, B1>`
 impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
     type Output = UInt<<U as Sub<B1>>::Output, B1>;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -261,13 +288,18 @@ fn sub_bits_from_uints() {
 }
 
 // Subtracting unsigned integers ---------------------------------------------------------
-
+/// `UTerm - UTerm = UTerm`
+impl Sub<UTerm> for UTerm {
+    type Output = UTerm;
+    fn sub(self, _:UTerm) -> Self::Output { unreachable!() }
+}
 /// Subtracting unsigned integers. We just do our `PrivateSub` and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
-    where Ul: PrivateSub<Ur>,
-          <Ul as PrivateSub<Ur>>::Output: Trim
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Sub<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateSub<Ur>,
+          <UInt<Ul, Bl> as PrivateSub<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateSub<Ur>>::Output as Trim>::Output;
+    fn sub(self, _:Ur) -> Self::Output { unreachable!() }
 }
 
 /// `U - UTerm = U`
@@ -362,76 +394,88 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
     type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B1>;
 }
 
+impl<Ur: Unsigned> BitAnd<Ur> for UTerm {
+    type Output = UTerm;
+    fn bitand(self, _: Ur) -> Self::Output { unreachable!() }
+}
+
 /// Anding unsigned integers.
 /// We use our `PrivateAnd` operator and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> And<Ur> for Ul
-    where Ul: PrivateAnd<Ur>,
-          <Ul as PrivateAnd<Ur>>::Output: Trim
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitAnd<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateAnd<Ur>,
+          <UInt<Ul, Bl> as PrivateAnd<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateAnd<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateAnd<Ur>>::Output as Trim>::Output;
+    fn bitand(self, _: Ur) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn and_uints() {
-    test_uint_op!(U0 And U0 = U0);
-    test_uint_op!(U1 And U0 = U0);
-    test_uint_op!(U0 And U1 = U0);
-    test_uint_op!(U1 And U1 = U1);
+    test_uint_op!(U0 BitAnd U0 = U0);
+    test_uint_op!(U1 BitAnd U0 = U0);
+    test_uint_op!(U0 BitAnd U1 = U0);
+    test_uint_op!(U1 BitAnd U1 = U1);
 
-    test_uint_op!(U2 And U9 = U0);
-    test_uint_op!(U9 And U2 = U0);
-    test_uint_op!(U127 And U128 = U0);
-    test_uint_op!(U3 And U7 = U3);
-    test_uint_op!(U15 And U15 = U15);
+    test_uint_op!(U2 BitAnd U9 = U0);
+    test_uint_op!(U9 BitAnd U2 = U0);
+    test_uint_op!(U127 BitAnd U128 = U0);
+    test_uint_op!(U3 BitAnd U7 = U3);
+    test_uint_op!(U15 BitAnd U15 = U15);
 
-    test_uint_op!(U120 And U105 = U104);
+    test_uint_op!(U120 BitAnd U105 = U104);
 
-    test_uint_op!(U65536 And U65536 = U65536);
+    test_uint_op!(U65536 BitAnd U65536 = U65536);
 }
 
 /// `UTerm | X = X`
-impl<U: Unsigned> Or<U> for UTerm {
+impl<U: Unsigned> BitOr<U> for UTerm {
     type Output = U;
+    fn bitor(self, _: U) -> Self::Output { unreachable!() }
 }
 ///  `X | UTerm = X`
-impl<B: Bit, U: Unsigned> Or<UTerm> for UInt<U, B> {
+impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
     type Output = Self;
+    fn bitor(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B0>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B0>;
+    fn bitor(self, _: UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Or<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: Or<Ur> {
-    type Output = UInt<<Ul as Or<Ur>>::Output, B1>;
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: BitOr<Ur> {
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, B1>;
+    fn bitor(self, _: UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn or_uints() {
-    test_uint_op!(U0 Or U0 = U0);
-    test_uint_op!(U1 Or U0 = U1);
-    test_uint_op!(U0 Or U1 = U1);
-    test_uint_op!(U1 Or U1 = U1);
+    test_uint_op!(U0 BitOr U0 = U0);
+    test_uint_op!(U1 BitOr U0 = U1);
+    test_uint_op!(U0 BitOr U1 = U1);
+    test_uint_op!(U1 BitOr U1 = U1);
 
 
-    test_uint_op!(U2 Or U9 = U11);
-    test_uint_op!(U3 Or U7 = U7);
+    test_uint_op!(U2 BitOr U9 = U11);
+    test_uint_op!(U3 BitOr U7 = U7);
 
-    test_uint_op!(U15 Or U15 = U15);
+    test_uint_op!(U15 BitOr U15 = U15);
 
-    test_uint_op!(U65536 Or U65536 = U65536);
+    test_uint_op!(U65536 BitOr U65536 = U65536);
 }
 
 /// `UTerm ^ X = X`
@@ -471,53 +515,70 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
     type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
 }
 
+/// 0 ^ X = X
+impl<Ur: Unsigned> BitXor<Ur> for UTerm {
+    type Output = Ur;
+    fn bitxor(self, _: Ur) -> Self::Output { unreachable!() }
+}
 /// Xoring unsigned integers.
-/// We use our `PrivateAnd` operator and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> Xor<Ur> for Ul
-    where Ul: PrivateXor<Ur>,
-          <Ul as PrivateXor<Ur>>::Output: Trim
+/// We use our `PrivateXor` operator and then `Trim` the output.
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitXor<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateXor<Ur>,
+          <UInt<Ul, Bl> as PrivateXor<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateXor<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateXor<Ur>>::Output as Trim>::Output;
+    fn bitxor(self, _: Ur) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn xor_uints() {
-    test_uint_op!(U0 Xor U0 = U0);
-    test_uint_op!(U1 Xor U0 = U1);
-    test_uint_op!(U0 Xor U1 = U1);
-    test_uint_op!(U1 Xor U1 = U0);
+    test_uint_op!(U0 BitXor U0 = U0);
+    test_uint_op!(U1 BitXor U0 = U1);
+    test_uint_op!(U0 BitXor U1 = U1);
+    test_uint_op!(U1 BitXor U1 = U0);
 
-    test_uint_op!(U2 Xor U9 = U11);
-    test_uint_op!(U3 Xor U7 = U4);
+    test_uint_op!(U2 BitXor U9 = U11);
+    test_uint_op!(U3 BitXor U7 = U4);
 
-    test_uint_op!(U15 Xor U15 = U0);
+    test_uint_op!(U15 BitXor U15 = U0);
 
-    test_uint_op!(U65536 Xor U65536 = U0);
+    test_uint_op!(U65536 BitXor U65536 = U0);
 }
 
 /// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
 impl<U: Unsigned> Shl<U> for UTerm {
     type Output = UTerm;
+    fn shl(self, _: U) -> Self::Output { unreachable!() }
 }
 
 /// Shifting left `UInt` by `UTerm`: `UInt<U, B> << UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
+    fn shl(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// Shifting left any unsigned by a zero bit: `U << B0 = U`
-impl<U: Unsigned> Shl<B0> for U {
-    type Output = U;
+impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn shl(self, _: B0) -> Self::Output { unreachable!() }
+}
+
+/// Shifting UTerm by a zero bit: `UTerm << B0 = UTerm`
+impl Shl<B0> for UTerm {
+    type Output = UTerm;
+    fn shl(self, _: B0) -> Self::Output { unreachable!() }
 }
 
 /// Shifting left a `UInt` by a one bit: `UInt<U, B> << B1 = UInt<UInt<U, B>, B0>`
 impl<U: Unsigned, B: Bit> Shl<B1> for UInt<U, B> {
     type Output = UInt<UInt<U, B>, B0>;
+    fn shl(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting left a `UTerm` by a 1 bit: `UTerm << B1 = UTerm`
 impl Shl<B1> for UTerm {
     type Output = UTerm;
+    fn shl(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting left `UInt` by `UInt`: `X << Y` = `UInt(X, B0) << (Y - 1)`
@@ -531,6 +592,7 @@ where UInt<Ur, Br> : Sub<B1>,
                     <UInt<Ur, Br> as Sub<B1>>::Output
                 >
         >::Output;
+        fn shl(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -555,26 +617,37 @@ fn shl_tests() {
 /// Shifting right a `UTerm` by an unsigned integer: `UTerm >> U = UTerm`
 impl<U: Unsigned> Shr<U> for UTerm {
     type Output = UTerm;
+    fn shr(self, _: U) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right `UInt` by `UTerm`: `UInt<U, B> >> UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
+    fn shr(self, _: UTerm) -> Self::Output { unreachable!() }
+}
+
+/// Shifting right UTerm by a zero bit: `UTerm >> B0 = UTerm`
+impl Shr<B0> for UTerm {
+    type Output = UTerm;
+    fn shr(self, _: B0) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right any unsigned by a zero bit: `U >> B0 = U`
-impl<U: Unsigned> Shr<B0> for U {
-    type Output = U;
+impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn shr(self, _: B0) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right a `UInt` by a 1 bit: `UInt<U, B> >> B1 = U`
 impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
     type Output = U;
+    fn shr(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right a `UTerm` by a 1 bit: `UTerm >> B1 = UTerm`
 impl Shr<B1> for UTerm {
     type Output = UTerm;
+    fn shr(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// Shifting right `UInt` by `UInt`: `UInt(U, B) >> Y` = `U >> (Y - 1)`
@@ -583,6 +656,7 @@ where UInt<Ur, Br> : Sub<B1>,
     U : Shr<<UInt<Ur, Br> as Sub<B1>>::Output>
 {
     type Output = <U as Shr<<UInt<Ur, Br> as Sub<B1>>::Output>>::Output;
+    fn shr(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -606,29 +680,40 @@ fn shr_tests() {
 
 // Multiplying unsigned integers ---------------------------------------------------------
 
-/// `U * B0 = UTerm`
-impl<U: Unsigned> Mul<B0> for U {
+/// `UInt * B0 = UTerm`
+impl<U: Unsigned, B: Bit> Mul<B0> for UInt<U, B> {
     type Output = UTerm;
+    fn mul(self, _: B0) -> Self::Output { unreachable!() }
 }
 
-/// `U * B1 = U`
-impl<U: Unsigned> Mul<B1> for U {
-    type Output = U;
+/// `UTerm * B = UTerm`
+impl<B: Bit> Mul<B> for UTerm {
+    type Output = UTerm;
+    fn mul(self, _: B) -> Self::Output { unreachable!() }
+}
+
+/// `UInt * B1 = UInt`
+impl<U: Unsigned, B: Bit> Mul<B1> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn mul(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B> * UTerm = UTerm`
 impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
     type Output = UTerm;
+    fn mul(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm * UInt<U, B> = UTerm`
 impl<U: Unsigned, B: Bit> Mul<UInt<U, B>> for UTerm {
     type Output = UTerm;
+    fn mul(self, _: UInt<U, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm * UTerm = UTerm`
 impl Mul<UTerm> for UTerm {
     type Output = UTerm;
+    fn mul(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0>`
@@ -636,6 +721,7 @@ impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B0>
    where Ul: Mul<UInt<Ur, B>>
 {
     type Output = UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>;
+    fn mul(self, _: UInt<Ur, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0> + UInt<Ur, B>`
@@ -644,6 +730,7 @@ impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B1>
 UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>: Add<UInt<Ur, B>>
 {
     type Output = <UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0> as Add<UInt<Ur, B>>>::Output;
+    fn mul(self, _: UInt<Ur, B>) -> Self::Output { unreachable!() }
 }
 
 #[test]
