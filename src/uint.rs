@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Add, Sub, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Sub, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -139,21 +139,30 @@ fn sizeof_uints() {
 
 // Adding bits to unsigned integers ------------------------------------------------------
 
-/// `U + B0 = U`
-impl<U: Unsigned> Add<B0> for U {
-    type Output = U;
+/// `UTerm + B0 = UTerm`
+impl Add<B0> for UTerm {
+    type Output = UTerm;
+    fn add(self, _: B0) -> Self::Output { unreachable!() }
+}
+/// `UInt + B0 = UInt`
+impl<U: Unsigned, B: Bit> Add<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn add(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// `UTerm + B1 = UInt<UTerm, B1>`
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B0> + B1 = UInt<U + B1>`
 impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
 impl<U: Unsigned> Add<B1> for UInt<U, B1> where U: Add<B1>, <U as Add<B1>>::Output: Unsigned {
     type Output = UInt<<U as Add<B1>>::Output, B0>;
+    fn add(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -171,31 +180,37 @@ fn add_bits_to_uints() {
 /// `UTerm + UTerm = UTerm`
 impl Add<UTerm> for UTerm {
     type Output = UTerm;
+    fn add(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm + UInt<U, B> = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UInt<U, B>> for UTerm {
     type Output = UInt<U, B>;
+    fn add(self, _: UInt<U, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B> + UTerm = UInt<U, B>`
 impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
+    fn add(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B0>;
+    fn add(self, _:UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+    fn add(self, _:UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
 impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Add<Ur> {
     type Output = UInt<<Ul as Add<Ur>>::Output, B1>;
+    fn add(self, _:UInt<Ur, B0>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> + UInt<Ur, B1> = UInt<(Ul + Ur) + B1, B0>`
@@ -204,6 +219,7 @@ impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
           <Ul as Add<Ur>>::Output: Add<B1>
 {
     type Output = UInt<<<Ul as Add<Ur>>::Output as Add<B1>>::Output, B0>;
+    fn add(self, _:UInt<Ur, B1>) -> Self::Output { unreachable!() }
 }
 
 #[test]
