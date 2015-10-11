@@ -1217,6 +1217,9 @@ fn div_uints() {
     test_uint_op!(U27 Div U27 = U1);
 
     test_uint_op!(U81 Div U9 = U9);
+
+    test_uint_op!(U7 Div U3 = U2);
+    test_uint_op!(U7 Div U2 = U3);
 }
 
 // ---------------------------------------------------------------------------------------
