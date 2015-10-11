@@ -8,6 +8,9 @@ pub mod consts;
 
 pub mod __private;
 
+/// Only things that aren't zero should impl this.
+pub trait NonZero {}
+
 pub trait Same<Rhs = Self> {
     /// `Output` should always be `Self`
     type Output;

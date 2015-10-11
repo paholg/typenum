@@ -70,16 +70,16 @@ pub trait PrivateSub<Rhs = Self> {
 }
 /// Inverted unsigned numbers
 pub trait InvertedUnsigned {
-    fn to_int() -> u64;
+    fn to_u64() -> u64;
 }
 
 impl InvertedUnsigned for InvertedUTerm {
-    fn to_int() -> u64 { 0 }
+    fn to_u64() -> u64 { 0 }
 }
 
 impl<IU: InvertedUnsigned, B: Bit> InvertedUnsigned for InvertedUInt<IU, B> {
-    fn to_int() -> u64 {
-        B::to_int() as u64 + 2*(IU::to_int())
+    fn to_u64() -> u64 {
+        B::to_u8() as u64 | IU::to_u64() << 1
     }
 }
 
@@ -111,10 +111,10 @@ fn test_inversion() {
     type Test12 = <::uint::U12 as Invert>::Output;
     type Test16 = <::uint::U16 as Invert>::Output;
 
-    assert_eq!(1, <Test4 as InvertedUnsigned>::to_int());
-    assert_eq!(5, <Test5 as InvertedUnsigned>::to_int());
-    assert_eq!(3, <Test12 as InvertedUnsigned>::to_int());
-    assert_eq!(1, <Test16 as InvertedUnsigned>::to_int());
+    assert_eq!(1, <Test4 as InvertedUnsigned>::to_u64());
+    assert_eq!(5, <Test5 as InvertedUnsigned>::to_u64());
+    assert_eq!(3, <Test12 as InvertedUnsigned>::to_u64());
+    assert_eq!(1, <Test16 as InvertedUnsigned>::to_u64());
 }
 
 impl Invert for InvertedUTerm {
@@ -144,10 +144,10 @@ fn test_double_inversion() {
     type Test12 = <<::uint::U12 as Invert>::Output as Invert>::Output;
     type Test16 = <<::uint::U16 as Invert>::Output as Invert>::Output;
 
-    assert_eq!(4, <Test4 as Unsigned>::to_int());
-    assert_eq!(5, <Test5 as Unsigned>::to_int());
-    assert_eq!(12, <Test12 as Unsigned>::to_int());
-    assert_eq!(16, <Test16 as Unsigned>::to_int());
+    assert_eq!(4, <Test4 as Unsigned>::to_u64());
+    assert_eq!(5, <Test5 as Unsigned>::to_u64());
+    assert_eq!(12, <Test12 as Unsigned>::to_u64());
+    assert_eq!(16, <Test16 as Unsigned>::to_u64());
 }
 
 impl TrimTrailingZeros for InvertedUTerm {
