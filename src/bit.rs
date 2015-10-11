@@ -1,4 +1,5 @@
-use ::{Not, And, Or, Xor, Same, Cmp, Greater, Less, Equal, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Not};
+use ::{Same, Cmp, Greater, Less, Equal, SizeOf};
 use ::uint::U1;
 
 /// The compile time bit 0
@@ -57,45 +58,55 @@ impl SizeOf for B1 {
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
     type Output = B1;
+    fn not(self) -> Self::Output { unreachable!() }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
+    fn not(self) -> Self::Output { unreachable!() }
 }
 
 /// And with 0 ( 0 & B = 0)
-impl<Rhs: Bit> And<Rhs> for B0 {
+impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
+    fn bitand(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 /// And with 1 ( 1 & B = B)
-impl<Rhs: Bit> And<Rhs> for B1 {
+impl<Rhs: Bit> BitAnd<Rhs> for B1 {
     type Output = Rhs;
+    fn bitand(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 
 /// Or with 0 ( 0 | B = B)
-impl<Rhs: Bit> Or<Rhs> for B0 {
+impl<Rhs: Bit> BitOr<Rhs> for B0 {
     type Output = Rhs;
+    fn bitor(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 /// Or with 1 ( 1 | B = 1)
-impl<Rhs: Bit> Or<Rhs> for B1 {
+impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
+    fn bitor(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 
 /// Xor between 0 and 0 ( 0 ^ 0 = 0)
-impl Xor<B0> for B0 {
+impl BitXor<B0> for B0 {
     type Output = B0;
+    fn bitxor(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
-impl Xor<B0> for B1 {
+impl BitXor<B0> for B1 {
     type Output = B1;
+    fn bitxor(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
-impl Xor<B1> for B0 {
+impl BitXor<B1> for B0 {
     type Output = B1;
+    fn bitxor(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
-impl Xor<B1> for B1 {
+impl BitXor<B1> for B1 {
     type Output = B0;
+    fn bitxor(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -103,20 +114,20 @@ fn bit_operations() {
     test_bit_op!(Not B0 = B1);
     test_bit_op!(Not B1 = B0);
 
-    test_bit_op!(B0 And B0 = B0);
-    test_bit_op!(B0 And B1 = B0);
-    test_bit_op!(B1 And B0 = B0);
-    test_bit_op!(B1 And B1 = B1);
+    test_bit_op!(B0 BitAnd B0 = B0);
+    test_bit_op!(B0 BitAnd B1 = B0);
+    test_bit_op!(B1 BitAnd B0 = B0);
+    test_bit_op!(B1 BitAnd B1 = B1);
 
-    test_bit_op!(B0 Or B0 = B0);
-    test_bit_op!(B0 Or B1 = B1);
-    test_bit_op!(B1 Or B0 = B1);
-    test_bit_op!(B1 Or B1 = B1);
+    test_bit_op!(B0 BitOr B0 = B0);
+    test_bit_op!(B0 BitOr B1 = B1);
+    test_bit_op!(B1 BitOr B0 = B1);
+    test_bit_op!(B1 BitOr B1 = B1);
 
-    test_bit_op!(B0 Xor B0 = B0);
-    test_bit_op!(B0 Xor B1 = B1);
-    test_bit_op!(B1 Xor B0 = B1);
-    test_bit_op!(B1 Xor B1 = B0);
+    test_bit_op!(B0 BitXor B0 = B0);
+    test_bit_op!(B0 BitXor B1 = B1);
+    test_bit_op!(B1 BitXor B0 = B1);
+    test_bit_op!(B1 BitXor B1 = B0);
 }
 
 impl Cmp<B0> for B0 {
