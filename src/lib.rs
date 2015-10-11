@@ -14,9 +14,6 @@ pub trait Same<Rhs = Self> {
     type Output;
 }
 
-pub trait Sub<Rhs = Self> {
-    type Output;
-}
 pub trait Mul<Rhs = Self> {
     type Output;
 }

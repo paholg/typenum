@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Sub, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -242,23 +242,33 @@ fn add_uints() {
 
 // Subtracting bits from unsigned integers -----------------------------------------------
 
-/// `U - B0 = U`
-impl<U: Unsigned> Sub<B0> for U {
-    type Output = U;
+/// `UTerm - B0 = Term`
+impl Sub<B0> for UTerm {
+    type Output = UTerm;
+    fn sub(self, _:B0) -> Self::Output { unreachable!() }
+}
+
+/// `UInt - B0 = UInt`
+impl<U: Unsigned, B: Bit> Sub<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn sub(self, _:B0) -> Self::Output { unreachable!() }
 }
 /// `UInt<U, B1> - B1 = UInt<U, B0>`
 impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
     type Output = UInt<UInt<U, B>, B0>;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
-// `UInt<UTerm, B1> - B1 = UTerm`
+/// `UInt<UTerm, B1> - B1 = UTerm`
 impl Sub<B1> for UInt<UTerm, B1> {
     type Output = UTerm;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B0> - B1 = UInt<U - B1, B1>`
 impl<U: Unsigned> Sub<B1> for UInt<U, B0> where U:Sub<B1>, <U as Sub<B1>>::Output: Unsigned {
     type Output = UInt<<U as Sub<B1>>::Output, B1>;
+    fn sub(self, _:B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -278,13 +288,18 @@ fn sub_bits_from_uints() {
 }
 
 // Subtracting unsigned integers ---------------------------------------------------------
-
+/// `UTerm - UTerm = UTerm`
+impl Sub<UTerm> for UTerm {
+    type Output = UTerm;
+    fn sub(self, _:UTerm) -> Self::Output { unreachable!() }
+}
 /// Subtracting unsigned integers. We just do our `PrivateSub` and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> Sub<Ur> for Ul
-    where Ul: PrivateSub<Ur>,
-          <Ul as PrivateSub<Ur>>::Output: Trim
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Sub<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateSub<Ur>,
+          <UInt<Ul, Bl> as PrivateSub<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateSub<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateSub<Ur>>::Output as Trim>::Output;
+    fn sub(self, _:Ur) -> Self::Output { unreachable!() }
 }
 
 /// `U - UTerm = U`
