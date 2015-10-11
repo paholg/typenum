@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, Mul, Pow, Div, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, LSB, BitAt};
 
@@ -99,9 +99,9 @@ macro_rules! test_uint_op {
 
 // Getting size of unsigned integers -----------------------------------------------------
 
-/// Size of `UTerm` by itself is 1
+/// Size of `UTerm` by itself is 0
 impl SizeOf for UTerm {
-    type Output = U1;
+    type Output = U0;
 }
 
 /// Size of a `UInt`
@@ -126,7 +126,7 @@ impl<U: Unsigned, B: Bit> PrivateSizeOf for UInt<U, B>
 
 #[test]
 fn sizeof_uints() {
-    test_uint_op!(SizeOf U0 = U1);
+    test_uint_op!(SizeOf U0 = U0);
     test_uint_op!(SizeOf U1 = U1);
     test_uint_op!(SizeOf U2 = U2);
     test_uint_op!(SizeOf U3 = U2);
@@ -883,13 +883,7 @@ impl<Ul, Bl, Ur, Br> BitDiff<UInt<Ur, Br>> for UInt<Ul, Bl>
     type Output = <Ul as BitDiff<Ur>>::Output;
 }
 
-impl BitDiff<UTerm> for UTerm {
-    type Output = U0;
-}
-
-impl<Ul, Bl> BitDiff<UTerm> for UInt<Ul, Bl>
-    where Ul: Unsigned + SizeOf, Bl: Bit
-{
+impl<Ul> BitDiff<UTerm> for Ul where Ul: Unsigned + SizeOf {
     type Output = <Ul as SizeOf>::Output;
 }
 
@@ -899,19 +893,137 @@ fn uint_bitdiff() {
     test_uint_op!(U1 BitDiff U0 = U1);
     test_uint_op!(U1 BitDiff U1 = U0);
 
-    // fixme: finish this
-    // test_uint_op!(U2 BitDiff U0 = U2);
-    // test_uint_op!(U2 BitDiff U1 = U1);
-    // test_uint_op!(U2 BitDiff U2 = U0);
+    test_uint_op!(U2 BitDiff U0 = U2);
+    test_uint_op!(U2 BitDiff U1 = U1);
+    test_uint_op!(U2 BitDiff U2 = U0);
+
+    test_uint_op!(U3 BitDiff U0 = U2);
+    test_uint_op!(U3 BitDiff U1 = U1);
+    test_uint_op!(U3 BitDiff U2 = U0);
+    test_uint_op!(U3 BitDiff U3 = U0);
+
+    test_uint_op!(U4 BitDiff U0 = U3);
+    test_uint_op!(U4 BitDiff U1 = U2);
+    test_uint_op!(U4 BitDiff U2 = U1);
+    test_uint_op!(U4 BitDiff U3 = U1);
+    test_uint_op!(U4 BitDiff U4 = U0);
 }
+
+/// Performs Shl on Lhs so that SizeOf(Lhs) = SizeOf(Rhs)
+/// Fails if SizeOf(Lhs) > SizeOf(Rhs)
+pub trait ShiftDiff<Rhs> {
+    type Output;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> ShiftDiff<Ur> for Ul
+    where Ur: BitDiff<Ul>,
+          Ul: Shl<<Ur as BitDiff<Ul>>::Output>
+{
+    type Output = <Ul as Shl<<Ur as BitDiff<Ul>>::Output>>::Output;
+}
+
+#[test]
+fn uint_shiftdiff() {
+    test_uint_op!(U3 ShiftDiff U16 = U24);
+}
+
+// ---------------------------------------------------------------------------------------
+// Powers of unsigned integers
+
+pub trait PrivatePow<Y, N> {
+    type Output;
+}
+
+impl<X: Unsigned, N: Unsigned> Pow<N> for X
+    where X: PrivatePow<U1, N>
+{
+    type Output = <X as PrivatePow<U1, N>>::Output;
+}
+
+impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U0> for X {
+    type Output = Y;
+}
+
+impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U1> for X
+    where X: Mul<Y>
+{
+    type Output = <X as Mul<Y>>::Output;
+}
+
+// N is even
+impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B>, B0>> for X
+    where X: Mul, <X as Mul>::Output: PrivatePow<Y, UInt<U, B>>
+{
+    type Output = <<X as Mul>::Output as PrivatePow<Y, UInt<U, B>>>::Output;
+}
+// N is odd
+impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B>, B1>> for X
+    where X: Mul + Mul<Y>,
+<X as Mul>::Output: PrivatePow<<X as Mul<Y>>::Output, UInt<U, B>>
+{
+    type Output = <<X as Mul>::Output as PrivatePow<<X as Mul<Y>>::Output, UInt<U, B>>>::Output;
+}
+
+#[test]
+fn pow_uints() {
+    test_uint_op!(U0 Pow U0 = U1);
+    test_uint_op!(U0 Pow U1 = U0);
+    test_uint_op!(U1 Pow U0 = U1);
+
+    test_uint_op!(U0 Pow U9 = U0);
+    test_uint_op!(U9 Pow U0 = U1);
+
+    test_uint_op!(U1 Pow U1 = U1);
+    test_uint_op!(U2 Pow U1 = U2);
+    test_uint_op!(U3 Pow U1 = U3);
+
+    test_uint_op!(U1 Pow U2 = U1);
+    test_uint_op!(U2 Pow U2 = U4);
+    test_uint_op!(U3 Pow U2 = U9);
+
+    test_uint_op!(U5 Pow U3 = U125);
+
+    test_uint_op!(U16 Pow U15 = U1152921504606846976);
+}
+
+// /// `X ^ 0 = 1`
+// impl<X: Unsigned> Pow<UTerm> for X {
+//     type Output = U1;
+// }
+
+// /// `X ^ 1 = X`
+// impl<X: Unsigned> Pow<U1> for X {
+//     type Output = X;
+// }
+// /// X ^ N = (X*X) ^ N/2 if N is even
+// impl<U: Unsigned, B: Bit, X: Unsigned> Pow<UInt<UInt<U, B>, B0>> for X
+//     where UInt<X, B0>: Pow<UInt<U, B>>
+// {
+//     type Output = <UInt<X, B0> as Pow<UInt<U, B>>>::Output;
+// }
+// /// U ^ N = U * (U*U) ^ (N-1)/2 if N is odd
+// impl<U: Unsigned, B: Bit, X: Unsigned> Pow<UInt<UInt<U, B>, B1>> for X
+//     where UInt<X, B0>: Pow<UInt<U, B>>,
+//  <UInt<X, B0> as Pow<UInt<U, B>>>::Output: Mul<X>
+// {
+//     type Output = <<UInt<X, B0> as Pow<UInt<U, B>>>::Output as Mul<X>>::Output;
+// }
+
+
+// ---------------------------------------------------------------------------------------
+// Dividing unsigned integers
 
 // Here is the algorithm we use:
 // Div:
-//   if Divisor > Numerator:
+//   Call PrivateDivFirstStep with C = Numerator.cmp(Divisor)
+// PrivateDivFirstStep:
+//   if Numerator < Divisor:
 //     return 0
+//   if Numerator == Divisor:
+//     return 1
 //   I = SizeOf(Numerator) - SizeOf(Divisor)
 //   Divisor = Divisor << I
-//   call PrivateDiv with C = Numerator.cmp(Divisor), I = I, Q = 0, Remainder = Numerator
+//   Call PrivateDiv with C = Numerator.cmp(Divisor), I = I, Q = 0, Remainder = Numerator
 // PrivateDiv:
 //   if I == 0:
 //     if C == Less: # we are done, have a remainder
@@ -936,42 +1048,125 @@ pub trait PrivateDiv<C, I, Q, Divisor> {
     type Output;
 }
 
-// impl<Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UTerm {
-//     type Output = UTerm;
-// }
-// impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UInt<Ul, Bl> {
-//     type Output = <UInt<Ul, Bl> as PrivateDiv<
-        
-//         >>::Output;
+pub trait PrivateDivFirstStep<C, Divisor> {
+    type Output;
+}
+
+//  -----------------------------------------
+// Div
+impl<Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UTerm {
+    type Output = UTerm;
+}
+
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: Cmp<UInt<Ur, Br>>,
+          UInt<Ul, Bl>: PrivateDivFirstStep<<UInt<Ul, Bl> as Cmp<UInt<Ur, Br>>>::Output,
+              UInt<Ur, Br>>
+{
+    type Output = <UInt<Ul, Bl> as PrivateDivFirstStep<
+        <UInt<Ul, Bl> as Cmp<UInt<Ur, Br>>>::Output,
+        UInt<Ur, Br>
+    >>::Output;
+}
+
+//  -----------------------------------------
+// PrivateDivFirstStep
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Less, Divisor> for Numerator {
+    type Output = U0;
+}
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor> for Numerator {
+    type Output = U1;
+}
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Divisor> for Numerator
+    where Numerator: BitDiff<Divisor> + Cmp<<Divisor as Shl<<Numerator as BitDiff<Divisor>>::Output>>::Output>,
+          Divisor: Shl<<Numerator as BitDiff<Divisor>>::Output>,
+          Numerator: PrivateDiv<
+              <Numerator as Cmp<<Divisor as ShiftDiff<Numerator>>::Output>>::Output,
+              <Numerator as BitDiff<Divisor>>::Output,
+              U0,
+             <Divisor as ShiftDiff<Numerator>>::Output
+          >
+{
+    type Output = <Numerator as PrivateDiv<
+        <Numerator as Cmp<<Divisor as ShiftDiff<Numerator>>::Output>>::Output,
+        <Numerator as BitDiff<Divisor>>::Output, // I
+        U0, // Q
+        <Divisor as ShiftDiff<Numerator>>::Output // Divisor
+    >>::Output;
+}
+
+//  -----------------------------------------
+// PrivateDiv with I == 0
+
+// Remainder is too small so we're done.
+impl<Q, Divisor, Remainder> PrivateDiv<Less, U0, Q, Divisor> for Remainder
+    where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned
+{
+    type Output = Q;
+}
+
+// Remainder is the same as divisor, so we're done.
+impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
+    where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+          Q: Add<U1>
+{
+    type Output = <Q as Add<U1>>::Output;
+}
+
+// We don't cover the greater case because it should never happen.
+
+
+
+// PrivateDiv:
+//   if I == 0:
+//     if C == Less: # we are done, have a remainder
+//       return Q
+//     if C == Equal # we are done, no remainder
+//       return Q + 1
+//     if C == Greater # I'm pretty sure this can't happen
+//       unimplemented!
+//   # I > 0
+//   if C == Equal: # Sweet, we're done eary with no remainder
+//     return Q + 2^I
+//   if C == Less: # Divisor is too big
+//     Call PrivateDiv with Divisor >> 1, I - 1
+//   if C == Greater: # Do a step and keep going
+//     Q += 2^I
+//     I -= 1
+//     Remainder -= Divisor
+//     Divisor = Divisor >> 1
+//     C = Remainder.cmp(Divisor)
+//     Call PrivateDiv
+
+//  -----------------------------------------
+// PrivateDiv with I > 0
+
+// Remainder is equal to the divisor. We're done!
+// impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> for Remainder {
+//     type Output = Q as Add<>
 // }
 
-// // Remainder is too small so we're done.
-// impl<I, Q, R, Divisor, Numerator> PrivateDiv<Less, I, Q, Divisor> for Remainder
-//     where I: Unsigned, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned
-// {
-//     type Output = Q;
-// }
+// Remainder is too small so we proceed to the next step.
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> for Remainder
+    where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+          Divisor: Shr<B1>,
+          Remainder: Cmp<<Divisor as Shr<B1>>::Output>,
+          UInt<Ui, Bi>: Sub<U1>,
+          Remainder: PrivateDiv<
+              <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
+              <UInt<Ui, Bi> as Sub<U1>>::Output,
+              Q,
+              <Divisor as Shr<B1>>::Output
+          >
+{
+    type Output = <Remainder as PrivateDiv<
+        <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output, // Remainder.cmp(New Divisor)
+        <UInt<Ui, Bi> as Sub<U1>>::Output,
+        Q,
+        <Divisor as Shr<B1>>::Output
+    >>::Output;
+}
 
-// // Remainder is the same as divisor, so we're done.
-// impl<I, Q, R, Divisor, Numerator> PrivateDiv<Equal, I, Q, R, Divisor> for Numerator
-//     where I: Unsigned, Q: Unsigned, R: Unsigned, Divisor: Unsigned, Numerator: Unsigned,
-//           Q: Add<U1>
-// {
-//     type Output = <Q as Add<  >>::Output;
-// }
-
-// // Remainder is bigger than divisor, so we need to keep going.
-// impl<I, Q, R, Divisor, Numerator> PrivateDiv<Greater, I, Q, R, Divisor> for Numerator
-//     where I: Unsigned, Q: Unsigned, R: Unsigned, Divisor: Unsigned, Numerator: Unsigned
-// {
-//     type Output = <Numerator as PrivateDiv<
-        
-//     I,
-//     Q,
-//     R,
-//     Divisor
-//         >>::Output;
-// }
 
 
 // ---------------------------------------------------------------------------------------

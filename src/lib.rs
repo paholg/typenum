@@ -52,6 +52,9 @@ pub trait Div<Rhs = Self> {
 pub trait Rem<Rhs = Self> {
     type Output;
 }
+pub trait Pow<Rhs = Self> {
+    type Output;
+}
 
 
 pub trait Ord {
