@@ -986,30 +986,6 @@ fn pow_uints() {
     test_uint_op!(U16 Pow U15 = U1152921504606846976);
 }
 
-// /// `X ^ 0 = 1`
-// impl<X: Unsigned> Pow<UTerm> for X {
-//     type Output = U1;
-// }
-
-// /// `X ^ 1 = X`
-// impl<X: Unsigned> Pow<U1> for X {
-//     type Output = X;
-// }
-// /// X ^ N = (X*X) ^ N/2 if N is even
-// impl<U: Unsigned, B: Bit, X: Unsigned> Pow<UInt<UInt<U, B>, B0>> for X
-//     where UInt<X, B0>: Pow<UInt<U, B>>
-// {
-//     type Output = <UInt<X, B0> as Pow<UInt<U, B>>>::Output;
-// }
-// /// U ^ N = U * (U*U) ^ (N-1)/2 if N is odd
-// impl<U: Unsigned, B: Bit, X: Unsigned> Pow<UInt<UInt<U, B>, B1>> for X
-//     where UInt<X, B0>: Pow<UInt<U, B>>,
-//  <UInt<X, B0> as Pow<UInt<U, B>>>::Output: Mul<X>
-// {
-//     type Output = <<UInt<X, B0> as Pow<UInt<U, B>>>::Output as Mul<X>>::Output;
-// }
-
-
 // ---------------------------------------------------------------------------------------
 // Dividing unsigned integers
 
@@ -1026,12 +1002,12 @@ fn pow_uints() {
 //   Call PrivateDiv with C = Numerator.cmp(Divisor), I = I, Q = 0, Remainder = Numerator
 // PrivateDiv:
 //   if I == 0:
-//     if C == Less: # we are done, have a remainder
+//     if C == Less: # Can't do any more
 //       return Q
-//     if C == Equal # we are done, no remainder
+//     if C == Equal # We are done, no remainder
 //       return Q + 1
-//     if C == Greater # I'm pretty sure this can't happen
-//       unimplemented!
+//     if C == Greater # Same as Equal, but we have a remainder
+//       return Q + 1
 //   # I > 0
 //   if C == Less: # Divisor is too big
 //     Call PrivateDiv with Divisor >> 1, I - 1
@@ -1105,7 +1081,7 @@ impl<Q, Divisor, Remainder> PrivateDiv<Less, U0, Q, Divisor> for Remainder
     type Output = Q;
 }
 
-// Remainder is the same as divisor, so we're done.
+// Remainder is the same as divisor, so we're done. No remainder!
 impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
     where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
           Q: Add<U1>
@@ -1113,38 +1089,25 @@ impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
     type Output = <Q as Add<U1>>::Output;
 }
 
-// We don't cover the greater case because it should never happen.
-
-
-
-// PrivateDiv:
-//   if I == 0:
-//     if C == Less: # we are done, have a remainder
-//       return Q
-//     if C == Equal # we are done, no remainder
-//       return Q + 1
-//     if C == Greater # I'm pretty sure this can't happen
-//       unimplemented!
-//   # I > 0
-//   if C == Equal: # Sweet, we're done eary with no remainder
-//     return Q + 2^I
-//   if C == Less: # Divisor is too big
-//     Call PrivateDiv with Divisor >> 1, I - 1
-//   if C == Greater: # Do a step and keep going
-//     Q += 2^I
-//     I -= 1
-//     Remainder -= Divisor
-//     Divisor = Divisor >> 1
-//     C = Remainder.cmp(Divisor)
-//     Call PrivateDiv
+// Remainder is more than the divisor; same as the Equal case, but with a remainder.
+impl<Q, Divisor, Remainder> PrivateDiv<Greater, U0, Q, Divisor> for Remainder
+    where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+          Q: Add<U1>
+{
+    type Output = <Q as Add<U1>>::Output;
+}
 
 //  -----------------------------------------
 // PrivateDiv with I > 0
 
-// Remainder is equal to the divisor. We're done!
-// impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> for Remainder {
-//     type Output = Q as Add<>
-// }
+// Remainder is equal to the divisor. We're done! Return `Q + 2^I`
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> for Remainder
+    where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+U2: Pow<UInt<Ui, Bi>>,
+Q: Add<<U2 as Pow<UInt<Ui, Bi>>>::Output>
+{
+    type Output = <Q as Add<<U2 as Pow<UInt<Ui, Bi>>>::Output>>::Output;
+}
 
 // Remainder is too small so we proceed to the next step.
 impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> for Remainder
