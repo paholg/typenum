@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -680,29 +680,40 @@ fn shr_tests() {
 
 // Multiplying unsigned integers ---------------------------------------------------------
 
-/// `U * B0 = UTerm`
-impl<U: Unsigned> Mul<B0> for U {
+/// `UInt * B0 = UTerm`
+impl<U: Unsigned, B: Bit> Mul<B0> for UInt<U, B> {
     type Output = UTerm;
+    fn mul(self, _: B0) -> Self::Output { unreachable!() }
 }
 
-/// `U * B1 = U`
-impl<U: Unsigned> Mul<B1> for U {
-    type Output = U;
+/// `UTerm * B = UTerm`
+impl<B: Bit> Mul<B> for UTerm {
+    type Output = UTerm;
+    fn mul(self, _: B) -> Self::Output { unreachable!() }
+}
+
+/// `UInt * B1 = UInt`
+impl<U: Unsigned, B: Bit> Mul<B1> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn mul(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<U, B> * UTerm = UTerm`
 impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
     type Output = UTerm;
+    fn mul(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm * UInt<U, B> = UTerm`
 impl<U: Unsigned, B: Bit> Mul<UInt<U, B>> for UTerm {
     type Output = UTerm;
+    fn mul(self, _: UInt<U, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UTerm * UTerm = UTerm`
 impl Mul<UTerm> for UTerm {
     type Output = UTerm;
+    fn mul(self, _: UTerm) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B0> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0>`
@@ -710,6 +721,7 @@ impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B0>
    where Ul: Mul<UInt<Ur, B>>
 {
     type Output = UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>;
+    fn mul(self, _: UInt<Ur, B>) -> Self::Output { unreachable!() }
 }
 
 /// `UInt<Ul, B1> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0> + UInt<Ur, B>`
@@ -718,6 +730,7 @@ impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B1>
 UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0>: Add<UInt<Ur, B>>
 {
     type Output = <UInt<<Ul as Mul<UInt<Ur, B>>>::Output, B0> as Add<UInt<Ur, B>>>::Output;
+    fn mul(self, _: UInt<Ur, B>) -> Self::Output { unreachable!() }
 }
 
 #[test]
