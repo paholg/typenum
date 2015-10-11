@@ -1,5 +1,5 @@
-use std::ops::{BitAnd, BitOr, BitXor};
-use ::{Not, Same, Cmp, Greater, Less, Equal, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor, Not};
+use ::{Same, Cmp, Greater, Less, Equal, SizeOf};
 use ::uint::U1;
 
 /// The compile time bit 0
@@ -58,10 +58,12 @@ impl SizeOf for B1 {
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
     type Output = B1;
+    fn not(self) -> Self::Output { unreachable!() }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
+    fn not(self) -> Self::Output { unreachable!() }
 }
 
 /// And with 0 ( 0 & B = 0)

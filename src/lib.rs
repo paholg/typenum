@@ -14,9 +14,6 @@ pub trait Same<Rhs = Self> {
     type Output;
 }
 
-pub trait Not {
-    type Output;
-}
 pub trait Neg {
     type Output;
 }
