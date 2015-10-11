@@ -1,4 +1,5 @@
-use ::{Not, And, Or, Xor, Same, Cmp, Greater, Less, Equal, SizeOf};
+use std::ops::{BitAnd};
+use ::{Not, Or, Xor, Same, Cmp, Greater, Less, Equal, SizeOf};
 use ::uint::U1;
 
 /// The compile time bit 0
@@ -64,12 +65,14 @@ impl Not for B1 {
 }
 
 /// And with 0 ( 0 & B = 0)
-impl<Rhs: Bit> And<Rhs> for B0 {
+impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
+    fn bitand(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 /// And with 1 ( 1 & B = B)
-impl<Rhs: Bit> And<Rhs> for B1 {
+impl<Rhs: Bit> BitAnd<Rhs> for B1 {
     type Output = Rhs;
+    fn bitand(self, _: Rhs) -> Self::Output { unreachable!() }
 }
 
 /// Or with 0 ( 0 | B = B)
@@ -103,10 +106,10 @@ fn bit_operations() {
     test_bit_op!(Not B0 = B1);
     test_bit_op!(Not B1 = B0);
 
-    test_bit_op!(B0 And B0 = B0);
-    test_bit_op!(B0 And B1 = B0);
-    test_bit_op!(B1 And B0 = B0);
-    test_bit_op!(B1 And B1 = B1);
+    test_bit_op!(B0 BitAnd B0 = B0);
+    test_bit_op!(B0 BitAnd B1 = B0);
+    test_bit_op!(B1 BitAnd B0 = B0);
+    test_bit_op!(B1 BitAnd B1 = B1);
 
     test_bit_op!(B0 Or B0 = B0);
     test_bit_op!(B0 Or B1 = B1);

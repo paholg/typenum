@@ -1,7 +1,8 @@
 
 use std::marker::PhantomData;
 
-use ::{Same, Ord, Greater, Equal, Less, Cmp, And, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
+use std::ops::{BitAnd};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Or, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -362,31 +363,37 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
     type Output = UInt<<Ul as PrivateAnd<Ur>>::Output, B1>;
 }
 
+impl<Ur: Unsigned> BitAnd<Ur> for UTerm {
+    type Output = UTerm;
+    fn bitand(self, _: Ur) -> Self::Output { unreachable!() }
+}
+
 /// Anding unsigned integers.
 /// We use our `PrivateAnd` operator and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> And<Ur> for Ul
-    where Ul: PrivateAnd<Ur>,
-          <Ul as PrivateAnd<Ur>>::Output: Trim
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitAnd<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateAnd<Ur>,
+          <UInt<Ul, Bl> as PrivateAnd<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateAnd<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateAnd<Ur>>::Output as Trim>::Output;
+    fn bitand(self, _: Ur) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn and_uints() {
-    test_uint_op!(U0 And U0 = U0);
-    test_uint_op!(U1 And U0 = U0);
-    test_uint_op!(U0 And U1 = U0);
-    test_uint_op!(U1 And U1 = U1);
+    test_uint_op!(U0 BitAnd U0 = U0);
+    test_uint_op!(U1 BitAnd U0 = U0);
+    test_uint_op!(U0 BitAnd U1 = U0);
+    test_uint_op!(U1 BitAnd U1 = U1);
 
-    test_uint_op!(U2 And U9 = U0);
-    test_uint_op!(U9 And U2 = U0);
-    test_uint_op!(U127 And U128 = U0);
-    test_uint_op!(U3 And U7 = U3);
-    test_uint_op!(U15 And U15 = U15);
+    test_uint_op!(U2 BitAnd U9 = U0);
+    test_uint_op!(U9 BitAnd U2 = U0);
+    test_uint_op!(U127 BitAnd U128 = U0);
+    test_uint_op!(U3 BitAnd U7 = U3);
+    test_uint_op!(U15 BitAnd U15 = U15);
 
-    test_uint_op!(U120 And U105 = U104);
+    test_uint_op!(U120 BitAnd U105 = U104);
 
-    test_uint_op!(U65536 And U65536 = U65536);
+    test_uint_op!(U65536 BitAnd U65536 = U65536);
 }
 
 /// `UTerm | X = X`
@@ -472,7 +479,7 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
 }
 
 /// Xoring unsigned integers.
-/// We use our `PrivateAnd` operator and then `Trim` the output.
+/// We use our `PrivateXor` operator and then `Trim` the output.
 impl<Ul: Unsigned, Ur: Unsigned> Xor<Ur> for Ul
     where Ul: PrivateXor<Ur>,
           <Ul as PrivateXor<Ur>>::Output: Trim
