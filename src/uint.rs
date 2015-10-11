@@ -1,8 +1,8 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, Xor, Add, Sub, Shl, Shr, Mul, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor};
+use ::{Same, Ord, Greater, Equal, Less, Cmp, Add, Sub, Shl, Shr, Mul, SizeOf};
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf, PrivateDiv};
 
@@ -484,28 +484,34 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
     type Output = UInt<<Ul as PrivateXor<Ur>>::Output, B0>;
 }
 
+/// 0 ^ X = X
+impl<Ur: Unsigned> BitXor<Ur> for UTerm {
+    type Output = Ur;
+    fn bitxor(self, _: Ur) -> Self::Output { unreachable!() }
+}
 /// Xoring unsigned integers.
 /// We use our `PrivateXor` operator and then `Trim` the output.
-impl<Ul: Unsigned, Ur: Unsigned> Xor<Ur> for Ul
-    where Ul: PrivateXor<Ur>,
-          <Ul as PrivateXor<Ur>>::Output: Trim
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitXor<Ur> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: PrivateXor<Ur>,
+          <UInt<Ul, Bl> as PrivateXor<Ur>>::Output: Trim
 {
-    type Output = <<Ul as PrivateXor<Ur>>::Output as Trim>::Output;
+    type Output = <<UInt<Ul, Bl> as PrivateXor<Ur>>::Output as Trim>::Output;
+    fn bitxor(self, _: Ur) -> Self::Output { unreachable!() }
 }
 
 #[test]
 fn xor_uints() {
-    test_uint_op!(U0 Xor U0 = U0);
-    test_uint_op!(U1 Xor U0 = U1);
-    test_uint_op!(U0 Xor U1 = U1);
-    test_uint_op!(U1 Xor U1 = U0);
+    test_uint_op!(U0 BitXor U0 = U0);
+    test_uint_op!(U1 BitXor U0 = U1);
+    test_uint_op!(U0 BitXor U1 = U1);
+    test_uint_op!(U1 BitXor U1 = U0);
 
-    test_uint_op!(U2 Xor U9 = U11);
-    test_uint_op!(U3 Xor U7 = U4);
+    test_uint_op!(U2 BitXor U9 = U11);
+    test_uint_op!(U3 BitXor U7 = U4);
 
-    test_uint_op!(U15 Xor U15 = U0);
+    test_uint_op!(U15 BitXor U15 = U0);
 
-    test_uint_op!(U65536 Xor U65536 = U0);
+    test_uint_op!(U65536 BitXor U65536 = U0);
 }
 
 /// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`

@@ -1,5 +1,5 @@
-use std::ops::{BitAnd, BitOr};
-use ::{Not, Xor, Same, Cmp, Greater, Less, Equal, SizeOf};
+use std::ops::{BitAnd, BitOr, BitXor};
+use ::{Not, Same, Cmp, Greater, Less, Equal, SizeOf};
 use ::uint::U1;
 
 /// The compile time bit 0
@@ -87,20 +87,24 @@ impl<Rhs: Bit> BitOr<Rhs> for B1 {
 }
 
 /// Xor between 0 and 0 ( 0 ^ 0 = 0)
-impl Xor<B0> for B0 {
+impl BitXor<B0> for B0 {
     type Output = B0;
+    fn bitxor(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
-impl Xor<B0> for B1 {
+impl BitXor<B0> for B1 {
     type Output = B1;
+    fn bitxor(self, _: B0) -> Self::Output { unreachable!() }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
-impl Xor<B1> for B0 {
+impl BitXor<B1> for B0 {
     type Output = B1;
+    fn bitxor(self, _: B1) -> Self::Output { unreachable!() }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
-impl Xor<B1> for B1 {
+impl BitXor<B1> for B1 {
     type Output = B0;
+    fn bitxor(self, _: B1) -> Self::Output { unreachable!() }
 }
 
 #[test]
@@ -118,10 +122,10 @@ fn bit_operations() {
     test_bit_op!(B1 BitOr B0 = B1);
     test_bit_op!(B1 BitOr B1 = B1);
 
-    test_bit_op!(B0 Xor B0 = B0);
-    test_bit_op!(B0 Xor B1 = B1);
-    test_bit_op!(B1 Xor B0 = B1);
-    test_bit_op!(B1 Xor B1 = B0);
+    test_bit_op!(B0 BitXor B0 = B0);
+    test_bit_op!(B0 BitXor B1 = B1);
+    test_bit_op!(B1 BitXor B0 = B1);
+    test_bit_op!(B1 BitXor B1 = B0);
 }
 
 impl Cmp<B0> for B0 {
