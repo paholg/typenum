@@ -68,6 +68,30 @@ pub trait PrivateXor<Rhs = Self> {
 pub trait PrivateSub<Rhs = Self> {
     type Output;
 }
+
+pub trait PrivatePow<Y, N> {
+    type Output;
+}
+
+pub trait PrivateDiv<C, I, Q, Divisor> {
+    type Output;
+}
+
+pub trait PrivateDivFirstStep<C, Divisor> {
+    type Output;
+}
+
+/// Performs Shl on Lhs so that SizeOf(Lhs) = SizeOf(Rhs)
+/// Fails if SizeOf(Lhs) > SizeOf(Rhs)
+pub trait ShiftDiff<Rhs> {
+    type Output;
+}
+
+/// Gives SizeOf(Lhs) - SizeOf(Rhs)
+pub trait BitDiff<Rhs> {
+    type Output;
+}
+
 /// Inverted unsigned numbers
 pub trait InvertedUnsigned {
     fn to_int() -> u64;
@@ -175,24 +199,5 @@ impl<U: Unsigned> Trim for U
 // Note: Trimming is tested when we do subtraction.
 
 pub trait PrivateCmp<Rhs, SoFar> {
-    type Output;
-}
-
-/// Performs long division.
-/// RvsD is the result of comparing the remainder with the divisor (Rhs)
-/// I is the counter; it should start at N-1 and go to 0. N is the number of bits of the numberator.
-/// Q is the quotient so far
-/// R is the Remainder so far
-// pub trait PrivateDiv<RvsD, I, Quotient, Remainder, Rhs> {
-//     type Output;
-// }
-
-/// Gives the least significant bit
-pub trait LSB {
-    type Output;
-}
-
-/// Gives the bit at `Rhs`
-pub trait BitAt<Rhs> {
     type Output;
 }
