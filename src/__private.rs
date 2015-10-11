@@ -68,6 +68,14 @@ pub trait PrivateXor<Rhs = Self> {
 pub trait PrivateSub<Rhs = Self> {
     type Output;
 }
+
+/// Used for addition of signed integers; C = P.cmp(N)
+/// Assumes P = Self is positive and N is negative
+/// where P and N are both passed as unsigned integers
+pub trait PrivateIntegerAdd<C, N> {
+    type Output;
+}
+
 /// Inverted unsigned numbers
 pub trait InvertedUnsigned {
     fn to_u64() -> u64;

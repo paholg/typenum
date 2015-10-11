@@ -90,7 +90,7 @@ impl<U: Unsigned> Same<U> for U {
 }
 
 #[test]
-fn confirm_nums() {
+fn confirm_uints() {
     assert_eq!(0, U0::to_u64());
     assert_eq!(1, U1::to_u64());
     assert_eq!(2, U2::to_u64());
