@@ -522,19 +522,11 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for NInt<Ul>
 
 #[test]
 fn div_ints() {
-    // test_int_op!(I0 Div P7 = I0);
-    // test_int_op!(I0 Div N9 = I0);
+    test_int_op!(I0 Div P3 = I0);
+    test_int_op!(I0 Div N3 = I0);
 
-
-    // test_int_op!(P6 Div P2 = P3);
-    // test_int_op!(P7 Mul N1 = N7);
-    // test_int_op!(P7 Mul P2 = P14);
-    // test_int_op!(P7 Mul N2 = N14);
-
-    // test_int_op!(N7 Mul N1 = P7);
-    // test_int_op!(N7 Mul P1 = N7);
-    // test_int_op!(N7 Mul N2 = P14);
-    // test_int_op!(N7 Mul P2 = N14);
-
-    // test_int_op!(P32768 Mul P32768 = P1073741824);
+    test_int_op!(P2 Div P2 = P1);
+    test_int_op!(P2 Div N2 = N1);
+    test_int_op!(N2 Div P2 = N1);
+    test_int_op!(N2 Div N2 = P1);
 }
