@@ -5,9 +5,9 @@ Typenum
 =====
 
 Typenum is a library for compile-time numbers in Rust's type system. It will have its
-own [website](http://paholg.com/typenum/).
+own [website](http://paholg.com/project/typenum/).
 
-For more in-depth examples and documentation, click [here](http://paholg.com/doc/typenum)
+For more in-depth examples and documentation, click [here](http://paholg.com/typenum)
 
 Note: This library is in its infancy and is unstable, and you should expect breaking
 changes for now.
