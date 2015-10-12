@@ -1,6 +1,6 @@
 [package]
 name = "typenum"
-version = "0.0.2"
+version = "0.1.0"
 authors = [
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"

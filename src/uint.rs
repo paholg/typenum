@@ -2,7 +2,7 @@
 use std::marker::PhantomData;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div};
-use ::{Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
+use ::{NonZero, Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
 
 use ::bit::{Bit, B0, B1};
 use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
@@ -34,14 +34,34 @@ pub use ::consts::uints::{
 /// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
 /// implemented for anything outside this crate.
 pub trait Unsigned {
-    fn to_int() -> u64;
+    fn to_u8() -> u8;
+    fn to_u16() -> u16;
+    fn to_u32() -> u32;
+    fn to_u64() -> u64;
+    fn to_usize() -> usize;
+
+    fn to_i8() -> i8;
+    fn to_i16() -> i16;
+    fn to_i32() -> i32;
+    fn to_i64() -> i64;
+    fn to_isize() -> isize;
 }
 
 /// The terminating type for `UInt`, it always comes after the most significant bit.
 pub struct UTerm;
 
 impl Unsigned for UTerm {
-    fn to_int() -> u64 { 0 }
+    fn to_u8() -> u8 { 0 }
+    fn to_u16() -> u16 { 0 }
+    fn to_u32() -> u32 { 0 }
+    fn to_u64() -> u64 { 0 }
+    fn to_usize() -> usize { 0 }
+
+    fn to_i8() -> i8 { 0 }
+    fn to_i16() -> i16 { 0 }
+    fn to_i32() -> i32 { 0 }
+    fn to_i64() -> i64 { 0 }
+    fn to_isize() -> isize { 0 }
 }
 
 /// UInt is defined recursevly, where B is the least significant bit and U is the rest
@@ -52,35 +72,45 @@ pub struct UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
-    fn to_int() -> u64 {
-        B::to_int() as u64 + 2*(U::to_int())
-    }
+    fn to_u8() -> u8 { B::to_u8() | U::to_u8() << 1 }
+    fn to_u16() -> u16 { B::to_u8() as u16 | U::to_u16() << 1 }
+    fn to_u32() -> u32 { B::to_u8() as u32 | U::to_u32() << 1 }
+    fn to_u64() -> u64 { B::to_u8() as u64 | U::to_u64() << 1 }
+    fn to_usize() -> usize { B::to_u8() as usize | U::to_usize() << 1 }
+
+    fn to_i8() -> i8 { B::to_u8() as i8 | U::to_i8() << 1 }
+    fn to_i16() -> i16 { B::to_u8() as i16 | U::to_i16() << 1 }
+    fn to_i32() -> i32 { B::to_u8() as i32 | U::to_i32() << 1 }
+    fn to_i64() -> i64 { B::to_u8() as i64 | U::to_i64() << 1 }
+    fn to_isize() -> isize { B::to_u8() as isize | U::to_isize() << 1 }
 }
+
+impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
 
 impl<U: Unsigned> Same<U> for U {
     type Output = U;
 }
 
 #[test]
-fn confirm_nums() {
-    assert_eq!(0, U0::to_int());
-    assert_eq!(1, U1::to_int());
-    assert_eq!(2, U2::to_int());
-    assert_eq!(3, U3::to_int());
-    assert_eq!(4, U4::to_int());
-    assert_eq!(5, U5::to_int());
-    assert_eq!(6, U6::to_int());
-    assert_eq!(7, U7::to_int());
-    assert_eq!(8, U8::to_int());
-    assert_eq!(9, U9::to_int());
-    assert_eq!(10, U10::to_int());
-    assert_eq!(11, U11::to_int());
-    assert_eq!(12, U12::to_int());
-    assert_eq!(13, U13::to_int());
-    assert_eq!(14, U14::to_int());
-    assert_eq!(15, U15::to_int());
+fn confirm_uints() {
+    assert_eq!(0, U0::to_u64());
+    assert_eq!(1, U1::to_u64());
+    assert_eq!(2, U2::to_u64());
+    assert_eq!(3, U3::to_u64());
+    assert_eq!(4, U4::to_u64());
+    assert_eq!(5, U5::to_u64());
+    assert_eq!(6, U6::to_u64());
+    assert_eq!(7, U7::to_u64());
+    assert_eq!(8, U8::to_u64());
+    assert_eq!(9, U9::to_u64());
+    assert_eq!(10, U10::to_u64());
+    assert_eq!(11, U11::to_u64());
+    assert_eq!(12, U12::to_u64());
+    assert_eq!(13, U13::to_u64());
+    assert_eq!(14, U14::to_u64());
+    assert_eq!(15, U15::to_u64());
 
-    assert_eq!(10000, U10000::to_int());
+    assert_eq!(10000, U10000::to_u64());
 }
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
@@ -89,13 +119,13 @@ macro_rules! test_uint_op {
     ($op:ident $Lhs:ident = $Answer:ident) => (
         {
             type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Unsigned>::to_int(), <Test as Unsigned>::to_int());
+            assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
         }
         );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
             type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Unsigned>::to_int(), <Test as Unsigned>::to_int());
+            assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
         }
         );
 }
@@ -1197,26 +1227,18 @@ fn div_uints() {
     test_uint_op!(U0 Div U1 = U0);
     test_uint_op!(U1 Div U1 = U1);
     test_uint_op!(U2 Div U1 = U2);
-    test_uint_op!(U127 Div U1 = U127);
 
     test_uint_op!(U2 Div U2 = U1);
     test_uint_op!(U4 Div U2 = U2);
     test_uint_op!(U8 Div U2 = U4);
-    test_uint_op!(U16 Div U2 = U8);
-    test_uint_op!(U128 Div U2 = U64);
 
-    test_uint_op!(U14 Div U7 = U2);
     test_uint_op!(U3 Div U3 = U1);
     test_uint_op!(U9 Div U3 = U3);
-    test_uint_op!(U49 Div U7 = U7);
 
     test_uint_op!(U16 Div U4 = U4);
 
     test_uint_op!(U27 Div U3 = U9);
     test_uint_op!(U27 Div U9 = U3);
-    test_uint_op!(U27 Div U27 = U1);
-
-    test_uint_op!(U81 Div U9 = U9);
 
     test_uint_op!(U7 Div U3 = U2);
     test_uint_op!(U7 Div U2 = U3);
