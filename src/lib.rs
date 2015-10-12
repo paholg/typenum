@@ -16,6 +16,10 @@ pub trait Same<Rhs = Self> {
     type Output;
 }
 
+pub trait Pow<Rhs = Self> {
+    type Output;
+}
+
 pub trait Ord {
     fn to_ordering() -> Ordering;
 }
