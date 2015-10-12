@@ -16,7 +16,7 @@ script:
   - |
     travis-cargo build &&
     travis-cargo test &&
-    travis-cargo doc
+    travis-cargo --only stable doc
 
 after_success:
   - travis-cargo --only stable doc-upload
@@ -24,4 +24,4 @@ after_success:
 env:
   global:
     # GH_TOKEN
-    - secure: OXWPsRIwbD28t4X2Vc039YpleH97Ant5vaf3ZOM3gaCgnLa+lsTHlAoXJYcJ8b/BaDVw8IkGkdSJ2h13kzZufILmwJBoS9o7qsTji90VO1ig8nvqKIS3ZND3b5+yKRb8PiT0rxOq2D3H8vAQkHmj8AWwIusjLeI94iOHw1wmw7Gn+XpK3yKCI/T5ZkM6jaEteM5zJpz+xW3sawLG3JIwx4ftlCR7L6OvYpgQYG5qP9N4uYfXg2cItS0hpLzDd7ZP7FhQ4Ue+inJfOB51KhpY3yUr3FerqM7oLsUQNQmP+AABCpxrsEmo4OvCAx739+F5DXmKOphfZU5GTYZDR28u9u5v4HVhoyvJ/8jT7L0F3fEBn5VVN1qqYYwQrS1Gqv642FUckc1tmfSTiRoK/olkxKZWm3UcxccOvBx8tP3Vz8gDwto49v6nKWEfe00GbfxDNRhhq0YeBF+/e/hTB3sM/tx3gJ/NrNL9JdlP0LstY0K46jakUiiOqBfJ/9ZEtVSqdts0MlMrqbNp4O3AjnlChE/IpNS31poK/KNdnPNutwTshTAbISSG17WNybJJxcg93plLvPkD4LykBCggJejS4nBbSlsVKuE+0dp7tZ5OKrdaFWVC8vOAERRbaMgvwnysQ7UboXBpn0EiRiZGop6TX7WssjX1r9mDP2yVcmiUhkk=
+    - secure: "OXWPsRIwbD28t4X2Vc039YpleH97Ant5vaf3ZOM3gaCgnLa+lsTHlAoXJYcJ8b/BaDVw8IkGkdSJ2h13kzZufILmwJBoS9o7qsTji90VO1ig8nvqKIS3ZND3b5+yKRb8PiT0rxOq2D3H8vAQkHmj8AWwIusjLeI94iOHw1wmw7Gn+XpK3yKCI/T5ZkM6jaEteM5zJpz+xW3sawLG3JIwx4ftlCR7L6OvYpgQYG5qP9N4uYfXg2cItS0hpLzDd7ZP7FhQ4Ue+inJfOB51KhpY3yUr3FerqM7oLsUQNQmP+AABCpxrsEmo4OvCAx739+F5DXmKOphfZU5GTYZDR28u9u5v4HVhoyvJ/8jT7L0F3fEBn5VVN1qqYYwQrS1Gqv642FUckc1tmfSTiRoK/olkxKZWm3UcxccOvBx8tP3Vz8gDwto49v6nKWEfe00GbfxDNRhhq0YeBF+/e/hTB3sM/tx3gJ/NrNL9JdlP0LstY0K46jakUiiOqBfJ/9ZEtVSqdts0MlMrqbNp4O3AjnlChE/IpNS31poK/KNdnPNutwTshTAbISSG17WNybJJxcg93plLvPkD4LykBCggJejS4nBbSlsVKuE+0dp7tZ5OKrdaFWVC8vOAERRbaMgvwnysQ7UboXBpn0EiRiZGop6TX7WssjX1r9mDP2yVcmiUhkk="
