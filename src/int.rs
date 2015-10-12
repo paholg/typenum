@@ -59,7 +59,7 @@ pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>
 }
 /// The signed integer 0
-pub struct I0;
+pub struct Z0;
 
 pub trait Integer {
     fn to_i8() -> i8;
@@ -72,7 +72,7 @@ pub trait Integer {
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
 
-impl Integer for I0 {
+impl Integer for Z0 {
     fn to_i8() -> i8 { 0 }
     fn to_i16() -> i16 { 0 }
     fn to_i32() -> i32 { 0 }
@@ -96,8 +96,8 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
     fn to_isize() -> isize { -<U as Unsigned>::to_isize() }
 }
 
-impl Same<I0> for I0 {
-    type Output = I0;
+impl Same<Z0> for Z0 {
+    type Output = Z0;
 }
 
 impl<U: Unsigned + NonZero> Same<PInt<U>> for PInt<U> {
@@ -127,7 +127,7 @@ macro_rules! test_int_op {
 
 #[test]
 fn confirm_ints() {
-    assert_eq!(0, I0::to_i64());
+    assert_eq!(0, Z0::to_i64());
     assert_eq!(1, P1::to_i64());
     assert_eq!(2, P2::to_i64());
     assert_eq!(3, P3::to_i64());
@@ -169,9 +169,9 @@ fn confirm_ints() {
 // ---------------------------------------------------------------------------------------
 // Neg
 
-/// `-I0 = I0`
-impl Neg for I0 {
-    type Output = I0;
+/// `-Z0 = Z0`
+impl Neg for Z0 {
+    type Output = Z0;
     fn neg(self) -> Self::Output { unreachable!() }
 }
 
@@ -189,7 +189,7 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 
 #[test]
 fn neg_int() {
-    test_int_op!(Neg I0 = I0);
+    test_int_op!(Neg Z0 = Z0);
     test_int_op!(Neg P1 = N1);
     test_int_op!(Neg N1 = P1);
     test_int_op!(Neg P2305843009213693952 = N2305843009213693952);
@@ -199,22 +199,22 @@ fn neg_int() {
 // ---------------------------------------------------------------------------------------
 // Add
 
-/// `I0 + I = I`
-impl<I: Integer> Add<I> for I0 {
+/// `Z0 + I = I`
+impl<I: Integer> Add<I> for Z0 {
     type Output = I;
     fn add(self, _: I) -> Self::Output { unreachable!() }
 }
 
-/// `PInt + I0 = PInt`
-impl<U: Unsigned + NonZero> Add<I0> for PInt<U> {
+/// `PInt + Z0 = PInt`
+impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
     type Output = PInt<U>;
-    fn add(self, _: I0) -> Self::Output { unreachable!() }
+    fn add(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
-/// `NInt + I0 = NInt`
-impl<U: Unsigned + NonZero> Add<I0> for NInt<U> {
+/// `NInt + Z0 = NInt`
+impl<U: Unsigned + NonZero> Add<Z0> for NInt<U> {
     type Output = NInt<U>;
-    fn add(self, _: I0) -> Self::Output { unreachable!() }
+    fn add(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
 /// `P(Ul) + P(Ur) = P(Ul + Ur)`
@@ -258,7 +258,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
 
 /// `P + N = 0` where `P == N`
 impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Equal, N> for P {
-    type Output = I0;
+    type Output = Z0;
 }
 
 /// `P + N = Positive` where `P > N`
@@ -279,15 +279,15 @@ impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Less, N> for P
 
 #[test]
 fn add_ints() {
-    test_int_op!(I0 Add I0 = I0);
-    test_int_op!(P1 Add I0 = P1);
-    test_int_op!(N1 Add I0 = N1);
+    test_int_op!(Z0 Add Z0 = Z0);
+    test_int_op!(P1 Add Z0 = P1);
+    test_int_op!(N1 Add Z0 = N1);
 
-    test_int_op!(I0 Add P7 = P7);
-    test_int_op!(I0 Add N8 = N8);
+    test_int_op!(Z0 Add P7 = P7);
+    test_int_op!(Z0 Add N8 = N8);
 
-    test_int_op!(P7 Add N7 = I0);
-    test_int_op!(N7 Add P7 = I0);
+    test_int_op!(P7 Add N7 = Z0);
+    test_int_op!(N7 Add P7 = Z0);
 
     test_int_op!(P7 Add P8 = P15);
     test_int_op!(P7 Add N8 = N1);
@@ -298,40 +298,40 @@ fn add_ints() {
     test_int_op!(N7 Add P5 = N2);
 
     test_int_op!(P32768 Add P32768 = P65536);
-    test_int_op!(P32768 Add N32768 = I0);
+    test_int_op!(P32768 Add N32768 = Z0);
 }
 
 // ---------------------------------------------------------------------------------------
 // Sub
 
-/// `I0 - I0 = I0`
-impl Sub<I0> for I0 {
-    type Output = I0;
-    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+/// `Z0 - Z0 = Z0`
+impl Sub<Z0> for Z0 {
+    type Output = Z0;
+    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
-/// `I0 - P = N`
-impl<U: Unsigned + NonZero> Sub<PInt<U>> for I0 {
+/// `Z0 - P = N`
+impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
     type Output = NInt<U>;
     fn sub(self, _: PInt<U>) -> Self::Output { unreachable!() }
 }
 
-/// `I0 - N = P`
-impl<U: Unsigned + NonZero> Sub<NInt<U>> for I0 {
+/// `Z0 - N = P`
+impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
     type Output = PInt<U>;
     fn sub(self, _: NInt<U>) -> Self::Output { unreachable!() }
 }
 
-/// `PInt - I0 = PInt`
-impl<U: Unsigned + NonZero> Sub<I0> for PInt<U> {
+/// `PInt - Z0 = PInt`
+impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
     type Output = PInt<U>;
-    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
-/// `NInt - I0 = NInt`
-impl<U: Unsigned + NonZero> Sub<I0> for NInt<U> {
+/// `NInt - Z0 = NInt`
+impl<U: Unsigned + NonZero> Sub<Z0> for NInt<U> {
     type Output = NInt<U>;
-    fn sub(self, _: I0) -> Self::Output { unreachable!() }
+    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
 /// `P(Ul) - N(Ur) = P(Ul + Ur)`
@@ -375,15 +375,15 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
 
 #[test]
 fn sub_ints() {
-    test_int_op!(I0 Sub I0 = I0);
-    test_int_op!(P1 Sub I0 = P1);
-    test_int_op!(N1 Sub I0 = N1);
+    test_int_op!(Z0 Sub Z0 = Z0);
+    test_int_op!(P1 Sub Z0 = P1);
+    test_int_op!(N1 Sub Z0 = N1);
 
-    test_int_op!(I0 Sub P7 = N7);
-    test_int_op!(I0 Sub N8 = P8);
+    test_int_op!(Z0 Sub P7 = N7);
+    test_int_op!(Z0 Sub N8 = P8);
 
-    test_int_op!(P7 Sub P7 = I0);
-    test_int_op!(N7 Sub N7 = I0);
+    test_int_op!(P7 Sub P7 = Z0);
+    test_int_op!(N7 Sub N7 = Z0);
 
     test_int_op!(P7 Sub P8 = N1);
     test_int_op!(P7 Sub N8 = P15);
@@ -393,29 +393,29 @@ fn sub_ints() {
     test_int_op!(N7 Sub P8 = N15);
     test_int_op!(N7 Sub P5 = N12);
 
-    test_int_op!(P32768 Sub P32768 = I0);
+    test_int_op!(P32768 Sub P32768 = Z0);
     test_int_op!(P32768 Sub N32768 = P65536);
 }
 
 // ---------------------------------------------------------------------------------------
 // Mul
 
-/// `I0 * I = I0`
-impl<I: Integer> Mul<I> for I0 {
-    type Output = I0;
+/// `Z0 * I = Z0`
+impl<I: Integer> Mul<I> for Z0 {
+    type Output = Z0;
     fn mul(self, _: I) -> Self::Output { unreachable!() }
 }
 
-/// `P * I0 = I0`
-impl<U: Unsigned + NonZero> Mul<I0> for PInt<U> {
-    type Output = I0;
-    fn mul(self, _: I0) -> Self::Output { unreachable!() }
+/// `P * Z0 = Z0`
+impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
+    type Output = Z0;
+    fn mul(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
-/// `N * I0 = I0`
-impl<U: Unsigned + NonZero> Mul<I0> for NInt<U> {
-    type Output = I0;
-    fn mul(self, _: I0) -> Self::Output { unreachable!() }
+/// `N * Z0 = Z0`
+impl<U: Unsigned + NonZero> Mul<Z0> for NInt<U> {
+    type Output = Z0;
+    fn mul(self, _: Z0) -> Self::Output { unreachable!() }
 }
 
 /// P(Ul) * P(Ur) = P(Ul * Ur)
@@ -456,11 +456,11 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
 
 #[test]
 fn mul_ints() {
-    test_int_op!(I0 Mul I0 = I0);
-    test_int_op!(I0 Mul P7 = I0);
-    test_int_op!(P7 Mul I0 = I0);
-    test_int_op!(I0 Mul N7 = I0);
-    test_int_op!(N7 Mul I0 = I0);
+    test_int_op!(Z0 Mul Z0 = Z0);
+    test_int_op!(Z0 Mul P7 = Z0);
+    test_int_op!(P7 Mul Z0 = Z0);
+    test_int_op!(Z0 Mul N7 = Z0);
+    test_int_op!(N7 Mul Z0 = Z0);
 
     test_int_op!(P7 Mul P1 = P7);
     test_int_op!(P7 Mul N1 = N7);
@@ -478,9 +478,9 @@ fn mul_ints() {
 // ---------------------------------------------------------------------------------------
 // Div
 
-/// `I0 / I = I0` where `I != 0`
-impl<I: Integer + NonZero> Div<I> for I0 {
-    type Output = I0;
+/// `Z0 / I = Z0` where `I != 0`
+impl<I: Integer + NonZero> Div<I> for Z0 {
+    type Output = Z0;
     fn div(self, _: I) -> Self::Output { unreachable!() }
 }
 
@@ -522,8 +522,8 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for NInt<Ul>
 
 #[test]
 fn div_ints() {
-    test_int_op!(I0 Div P3 = I0);
-    test_int_op!(I0 Div N3 = I0);
+    test_int_op!(Z0 Div P3 = Z0);
+    test_int_op!(Z0 Div N3 = Z0);
 
     test_int_op!(P2 Div P2 = P1);
     test_int_op!(P2 Div N2 = N1);
