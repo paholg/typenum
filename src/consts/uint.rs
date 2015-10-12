@@ -1,5 +1,5 @@
-use ::bit::{B0, B1};
-use ::uint::{UTerm, UInt};
+use bit::{B0, B1};
+use uint::{UTerm, UInt};
 
 pub type U0 = UTerm;
 pub type U1 = UInt<UTerm, B1>;
