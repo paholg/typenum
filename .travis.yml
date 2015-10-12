@@ -19,7 +19,7 @@ script:
     travis-cargo doc
 
 after_success:
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash update_doc.sh
+  - travis-cargo --only stable doc-upload
 
 env:
   global:
