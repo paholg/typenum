@@ -1227,26 +1227,18 @@ fn div_uints() {
     test_uint_op!(U0 Div U1 = U0);
     test_uint_op!(U1 Div U1 = U1);
     test_uint_op!(U2 Div U1 = U2);
-    test_uint_op!(U127 Div U1 = U127);
 
     test_uint_op!(U2 Div U2 = U1);
     test_uint_op!(U4 Div U2 = U2);
     test_uint_op!(U8 Div U2 = U4);
-    test_uint_op!(U16 Div U2 = U8);
-    test_uint_op!(U128 Div U2 = U64);
 
-    test_uint_op!(U14 Div U7 = U2);
     test_uint_op!(U3 Div U3 = U1);
     test_uint_op!(U9 Div U3 = U3);
-    test_uint_op!(U49 Div U7 = U7);
 
     test_uint_op!(U16 Div U4 = U4);
 
     test_uint_op!(U27 Div U3 = U9);
     test_uint_op!(U27 Div U9 = U3);
-    test_uint_op!(U27 Div U27 = U1);
-
-    test_uint_op!(U81 Div U9 = U9);
 
     test_uint_op!(U7 Div U3 = U2);
     test_uint_op!(U7 Div U2 = U3);
