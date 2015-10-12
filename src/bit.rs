@@ -1,5 +1,5 @@
 use std::ops::{BitAnd, BitOr, BitXor, Not};
-use ::{Same, Cmp, Greater, Less, Equal, SizeOf};
+use ::{NonZero, Same, Cmp, Greater, Less, Equal, SizeOf};
 use ::uint::U1;
 
 /// The compile time bit 0
@@ -11,18 +11,20 @@ pub struct B1;
 /// The trait for compile time bits; nothing besides B0 and B1 should implement this.
 pub trait Bit {
     /// Gives the integer value for this bit.
-    fn to_int() -> u8;
+    fn to_u8() -> u8;
     fn to_bool() -> bool;
 }
 
 impl Bit for B0 {
-    fn to_int() -> u8 { 0 }
+    fn to_u8() -> u8 { 0 }
     fn to_bool() -> bool { false }
 }
 impl Bit for B1 {
-    fn to_int() -> u8 { 1 }
+    fn to_u8() -> u8 { 1 }
     fn to_bool() -> bool { true }
 }
+
+impl NonZero for B1 {}
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.
@@ -30,13 +32,13 @@ macro_rules! test_bit_op {
     ($op:ident $Lhs:ident = $Answer:ident) => (
         {
             type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
         }
         );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
             type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_int(), <Test as Bit>::to_int());
+            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
         }
         );
 }
