@@ -7,6 +7,7 @@ pub mod consts;
 pub mod bit;
 pub mod uint;
 pub mod int;
+pub mod build;
 
 pub mod __private;
 
