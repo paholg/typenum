@@ -142,15 +142,16 @@ fn sample_runtime_tests() {
     run_tests(tests);
 }
 
-#[test]
-fn test_all() {
-    fn test_ints(inputs: Vec<(i64, i64)>) -> bool {
-        let tests = inputs.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b))
-        .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
-        .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)));
-        //.chain(inputs.iter().map(|&(a, b)| uint_binary_test(a, "Div", b, a / b)));
-        run_tests(tests.collect())
-    }
-    quickcheck(test_ints as fn(Vec<(i64, i64)>) -> bool);
-}
+// #[test]
+// fn test_all() {
+//     fn test_ints(inputs: Vec<(i64, i64)>) -> bool {
+//         let tests = inputs.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b))
+//             .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
+//             .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
+//             .chain(inputs.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
+//             ;
+//         run_tests(tests.collect())
+//     }
+//     quickcheck(test_ints as fn(Vec<(i64, i64)>) -> bool);
+// }
 
