@@ -29,8 +29,8 @@ pub fn gen_int(i: i64) -> String {
     }
 }
 
-
-fn run_test(test: &str) {
+/// Runs the test strings. Expects output from the test functions in this module.
+pub fn run_tests(tests: &[&str]) {
     use std::process::Command;
     let out_dir = env::var("OUT_DIR").unwrap();
     let test_dir = Path::new(&out_dir).join("test/");
@@ -68,7 +68,7 @@ use typenum::int::{{Integer, NInt, PInt, Z0}};
 fn main() {{
     {}
 }}
-", test).as_bytes()).unwrap();
+", tests.join("\n")).as_bytes()).unwrap();
     }
 
     let test_out = Command::new("cargo").arg("test").current_dir(&test_dir).output().unwrap();
@@ -84,31 +84,33 @@ fn main() {{
 /// `B` is the type-level equivalent to 'b',
 /// `Op` is trait named in 'op', which has associated type `Output`, and
 /// `Result` is the type-level equivalent to 'result'
-pub fn uint_binary_test(a: u64, op: &str, b: u64, result: u64) {
-    let test = format!("
-type A = {};
-type B = {};
-type Result = {};
+pub fn uint_binary_test(a: u64, op: &str, b: u64, result: u64) -> String {
+    format!("
+{{
+    type A = {};
+    type B = {};
+    type Result = {};
 
-type Computed = <<A as {}<B>>::Output as Same<Result>>::Output;
-assert_eq!(<Computed as Unsigned>::to_u64(), <Result as Unsigned>::to_u64());
-", gen_uint(a), gen_uint(b), gen_uint(result), op);
-    run_test(&test);
+    type Computed = <<A as {}<B>>::Output as Same<Result>>::Output;
+    assert_eq!(<Computed as Unsigned>::to_u64(), <Result as Unsigned>::to_u64());
+}}
+", gen_uint(a), gen_uint(b), gen_uint(result), op)
 }
 
 /// Ensures that `<A as Op>::Output` is the same type as `Result` where
 /// `A` is the type-level equivalent to 'a',
 /// `Op` is trait named in 'op', which has associated type `Output`, and
 /// `Result` is the type-level equivalent to 'result'
-pub fn uint_unary_test(op: &str, a: u64, result: u64) {
-    let test = format!("
-type A = {};
-type Result = {};
+pub fn uint_unary_test(op: &str, a: u64, result: u64) -> String {
+    format!("
+{{
+    type A = {};
+    type Result = {};
 
-type Computed = <<A as {}>::Output as Same<Result>>::Output;
-assert_eq!(<Computed as Unsigned>::to_u64(), <Result as Unsigned>::to_u64());
-", gen_uint(a), gen_uint(result), op);
-    run_test(&test);
+    type Computed = <<A as {}>::Output as Same<Result>>::Output;
+    assert_eq!(<Computed as Unsigned>::to_u64(), <Result as Unsigned>::to_u64());
+}}
+", gen_uint(a), gen_uint(result), op)
 }
 
 /// Ensures that `<A as Op<B>>::Output` is the same type as `Result` where
@@ -116,33 +118,37 @@ assert_eq!(<Computed as Unsigned>::to_u64(), <Result as Unsigned>::to_u64());
 /// `B` is the type-level equivalent to 'b',
 /// `Op` is trait named in 'op', which has associated type `Output`, and
 /// `Result` is the type-level equivalent to 'result'
-pub fn int_binary_test(a: i64, op: &str, b: i64, result: i64) {
-    let test = format!("
-type A = {};
-type B = {};
-type Result = {};
+pub fn int_binary_test(a: i64, op: &str, b: i64, result: i64) -> String {
+    format!("
+{{
+    type A = {};
+    type B = {};
+    type Result = {};
 
-type Computed = <<A as {}<B>>::Output as Same<Result>>::Output;
-assert_eq!(<Computed as Integer>::to_i64(), <Result as Integer>::to_i64());
-", gen_int(a), gen_int(b), gen_int(result), op);
-    run_test(&test);
+    type Computed = <<A as {}<B>>::Output as Same<Result>>::Output;
+    assert_eq!(<Computed as Integer>::to_i64(), <Result as Integer>::to_i64());
+}}
+", gen_int(a), gen_int(b), gen_int(result), op)
 }
 
 /// Ensures that `<A as Op>::Output` is the same type as `Result` where
 /// `A` is the type-level equivalent to 'a',
 /// `Op` is trait named in 'op', which has associated type `Output`, and
 /// `Result` is the type-level equivalent to 'result'
-pub fn int_unary_test(op: &str, a: i64, result: i64) {
-    let test = format!("
-type A = {};
-type Result = {};
+pub fn int_unary_test(op: &str, a: i64, result: i64) -> String {
+    format!("
+{{
+    type A = {};
+    type Result = {};
 
-type Computed = <<A as {}>::Output as Same<Result>>::Output;
-assert_eq!(<Computed as Integer>::to_i64(), <Result as Integer>::to_i64());
-", gen_int(a), gen_int(result), op);
-    run_test(&test);
+    type Computed = <<A as {}>::Output as Same<Result>>::Output;
+    assert_eq!(<Computed as Integer>::to_i64(), <Result as Integer>::to_i64());
+}}
+", gen_int(a), gen_int(result), op)
 }
 
+// fixme: get a warning when testing without this
+#[allow(dead_code)]
 fn main() {
     // If you change this, change also the comments in src/consts.rs
     let highest: u64 = 1024;
