@@ -1,10 +1,12 @@
+/*!
+Typenum!
+*/
 use std::cmp::{Ordering};
 
+pub mod consts;
 pub mod bit;
 pub mod uint;
 pub mod int;
-
-pub mod consts;
 
 pub mod __private;
 

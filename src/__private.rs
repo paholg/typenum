@@ -16,8 +16,8 @@ Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyy
 use std::marker::PhantomData;
 
 // use ::{Sub};
-use ::bit::{Bit, B1, B0};
-use ::uint::{Unsigned, UInt, UTerm};
+use bit::{Bit, B1, B0};
+use uint::{Unsigned, UInt, UTerm};
 
 /// Convenience trait. Calls Invert -> TrimTrailingZeros -> Invert
 pub trait Trim {
@@ -137,10 +137,10 @@ impl<IU: InvertedUnsigned, U: Unsigned, B: Bit> PrivateInvert<IU> for UInt<U, B>
 
 #[test]
 fn test_inversion() {
-    type Test4 = <::uint::U4 as Invert>::Output;
-    type Test5 = <::uint::U5 as Invert>::Output;
-    type Test12 = <::uint::U12 as Invert>::Output;
-    type Test16 = <::uint::U16 as Invert>::Output;
+    type Test4 = <::consts::U4 as Invert>::Output;
+    type Test5 = <::consts::U5 as Invert>::Output;
+    type Test12 = <::consts::U12 as Invert>::Output;
+    type Test16 = <::consts::U16 as Invert>::Output;
 
     assert_eq!(1, <Test4 as InvertedUnsigned>::to_u64());
     assert_eq!(5, <Test5 as InvertedUnsigned>::to_u64());
@@ -170,10 +170,10 @@ impl<U: Unsigned, IU: InvertedUnsigned, B: Bit> PrivateInvert<U> for InvertedUIn
 
 #[test]
 fn test_double_inversion() {
-    type Test4 = <<::uint::U4 as Invert>::Output as Invert>::Output;
-    type Test5 = <<::uint::U5 as Invert>::Output as Invert>::Output;
-    type Test12 = <<::uint::U12 as Invert>::Output as Invert>::Output;
-    type Test16 = <<::uint::U16 as Invert>::Output as Invert>::Output;
+    type Test4 = <<::consts::U4 as Invert>::Output as Invert>::Output;
+    type Test5 = <<::consts::U5 as Invert>::Output as Invert>::Output;
+    type Test12 = <<::consts::U12 as Invert>::Output as Invert>::Output;
+    type Test16 = <<::consts::U16 as Invert>::Output as Invert>::Output;
 
     assert_eq!(4, <Test4 as Unsigned>::to_u64());
     assert_eq!(5, <Test5 as Unsigned>::to_u64());

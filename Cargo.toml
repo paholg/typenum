@@ -1,16 +1,17 @@
 [package]
-name = "typenum"
-version = "0.1.0"
-authors = [
+  name = "typenum"
+  build = "src/build.rs"
+  version = "0.1.0"
+  authors = [
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"
-]
-description = "Type-level numbers."
-homepage = "http://paholg.com/project/typenum"
-documentation = "http://paholg.com/typenum"
-repository = "https://github.com/paholg/typenum"
-readme = "README.md"
-license = "MIT/Apache-2.0"
+  ]
+  description = "Type-level numbers."
+  homepage = "http://paholg.com/project/typenum"
+  documentation = "http://paholg.com/typenum"
+  repository = "https://github.com/paholg/typenum"
+  readme = "README.md"
+  license = "MIT/Apache-2.0"
 
 [lib]
-name = "typenum"
+  name = "typenum"

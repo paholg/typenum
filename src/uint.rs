@@ -2,13 +2,14 @@
 use std::marker::PhantomData;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div};
-use ::{NonZero, Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
-
-use ::bit::{Bit, B0, B1};
-use ::__private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
+use {NonZero, Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
+use bit::{Bit, B0, B1};
+use __private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
                   ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 
-pub use ::consts::uints::{
+// fimxe: remove when changing tests
+#[allow(unused_imports)]
+use consts::{
     U0, U1, U2, U3, U4, U5, U6, U7, U8, U9, U10, U11, U12, U13, U14,
     U15, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27, U28, U29, U30, U31,
     U32, U33, U34, U35, U36, U37, U38, U39, U40, U41, U42, U43, U44, U45, U46, U47, U48,
@@ -27,7 +28,7 @@ pub use ::consts::uints::{
     U562949953421312, U1125899906842624, U2251799813685248, U4503599627370496,
     U9007199254740992, U18014398509481984, U36028797018963968, U72057594037927936,
     U144115188075855872, U288230376151711744, U576460752303423488, U1152921504606846976,
-    U2305843009213693952, U4611686018427387904, U9223372036854775808
+    U2305843009213693952, U4611686018427387904
 };
 
 /// This trait is implemented for the all things that a `UInt` can take as a parameter,

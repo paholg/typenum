@@ -1,6 +1,6 @@
 use std::ops::{BitAnd, BitOr, BitXor, Not};
-use ::{NonZero, Same, Cmp, Greater, Less, Equal, SizeOf};
-use ::uint::U1;
+use {NonZero, Same, Cmp, Greater, Less, Equal, SizeOf};
+use consts::U1;
 
 /// The compile time bit 0
 pub struct B0;

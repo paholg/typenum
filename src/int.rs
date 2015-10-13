@@ -2,11 +2,13 @@
 use std::marker::PhantomData;
 
 use std::ops::{Neg, Add, Sub, Mul, Div};
-use ::{NonZero, Same, Cmp, Greater, Equal, Less};
-use ::uint::{Unsigned};
-use ::__private::{PrivateIntegerAdd};
+use {NonZero, Same, Cmp, Greater, Equal, Less};
+use uint::{Unsigned};
+use __private::{PrivateIntegerAdd};
 
-pub use ::consts::ints::{
+// fimxe: remove when changing tests
+#[allow(unused_imports)]
+use consts::{
     P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14,
     P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29, P30, P31,
     P32, P33, P34, P35, P36, P37, P38, P39, P40, P41, P42, P43, P44, P45, P46, P47, P48,
@@ -47,7 +49,6 @@ pub use ::consts::ints::{
     N144115188075855872, N288230376151711744, N576460752303423488, N1152921504606846976,
     N2305843009213693952, N4611686018427387904
 };
-
 
 
 /// Positive integers
