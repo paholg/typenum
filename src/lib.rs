@@ -1,3 +1,6 @@
+/*!
+Typenum!
+*/
 use std::cmp::{Ordering};
 
 pub mod consts;
