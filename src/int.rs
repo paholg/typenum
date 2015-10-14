@@ -4,7 +4,8 @@ use std::marker::PhantomData;
 use std::ops::{Neg, Add, Sub, Mul, Div};
 use {NonZero, Same, Cmp, Greater, Equal, Less};
 use uint::{Unsigned};
-use __private::{PrivateIntegerAdd};
+use __private::{PrivateIntegerAdd, PrivateDivFirstStep};
+use consts::U1;
 
 // fimxe: remove when changing tests
 #[allow(unused_imports)]
@@ -485,41 +486,37 @@ impl<I: Integer + NonZero> Div<I> for Z0 {
     fn div(self, _: I) -> Self::Output { unreachable!() }
 }
 
-/// P(Ul) / P(Ur) = P(Ul / Ur)
-impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for PInt<Ul>
-    where Ul: Div<Ur>,
-          <Ul as Div<Ur>>::Output: Unsigned + NonZero
-{
-    type Output = PInt<<Ul as Div<Ur>>::Output>;
-    fn div(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+macro_rules! impl_int_div {
+    ($A:ident, $B:ident, $R:ident) => (
+        /// `$A<Ul> / $B<Ur> = $R<Ul / Ur>`
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<$B<Ur>> for $A<Ul>
+            where Ul: Cmp<Ur>,
+                  $A<Ul>: PrivateDivFirstStep<<Ul as Cmp<Ur>>::Output, $B<Ur>>
+        {
+            type Output = <$A<Ul> as PrivateDivFirstStep<
+                <Ul as Cmp<Ur>>::Output,
+                $B<Ur>>>::Output;
+            fn div(self, _: $B<Ur>) -> Self::Output { unreachable!() }
+        }
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Less, $B<Ur>> for $A<Ul> {
+            type Output = Z0;
+        }
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Equal, $B<Ur>> for $A<Ul> {
+            type Output = $R<U1>;
+        }
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Greater, $B<Ur>> for $A<Ul>
+            where Ul: Div<Ur>,
+                  <Ul as Div<Ur>>::Output: Unsigned + NonZero
+        {
+            type Output = $R<<Ul as Div<Ur>>::Output>;
+        }
+        );
 }
 
-/// N(Ul) / N(Ur) = P(Ul / Ur)
-impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<NInt<Ur>> for NInt<Ul>
-    where Ul: Div<Ur>,
-          <Ul as Div<Ur>>::Output: Unsigned + NonZero
-{
-    type Output = PInt<<Ul as Div<Ur>>::Output>;
-    fn div(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
-}
-
-/// P(Ul) / N(Ur) = N(Ul / Ur)
-impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<NInt<Ur>> for PInt<Ul>
-    where Ul: Div<Ur>,
-          <Ul as Div<Ur>>::Output: Unsigned + NonZero
-{
-    type Output = NInt<<Ul as Div<Ur>>::Output>;
-    fn div(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
-}
-
-/// N(Ul) / P(Ur) = N(Ul / Ur)
-impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<PInt<Ur>> for NInt<Ul>
-    where Ul: Div<Ur>,
-          <Ul as Div<Ur>>::Output: Unsigned + NonZero
-{
-    type Output = NInt<<Ul as Div<Ur>>::Output>;
-    fn div(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
-}
+impl_int_div!(PInt, PInt, PInt);
+impl_int_div!(PInt, NInt, NInt);
+impl_int_div!(NInt, PInt, NInt);
+impl_int_div!(NInt, NInt, PInt);
 
 #[test]
 fn div_ints() {
