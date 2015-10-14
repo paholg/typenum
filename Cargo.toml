@@ -1,7 +1,7 @@
 [package]
   name = "typenum"
   build = "src/build.rs"
-  version = "0.1.0"
+  version = "0.1.1"
   authors = [
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"
@@ -17,4 +17,4 @@
   name = "typenum"
 
 [dev-dependencies]
-  quickcheck = "0.2"
+  compiletest_rs = "<0.1"

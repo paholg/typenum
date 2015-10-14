@@ -29,6 +29,7 @@ These alias definitions look like this:
 # use typenum::uint::{UInt, UTerm};
 # use typenum::int::{PInt, NInt};
 # use typenum::bit::{B0, B1};
+# #[allow(dead_code)]
 struct Z0;
 type P5 = PInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>>;
 type N5 = NInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>>;
@@ -36,8 +37,11 @@ type N5 = NInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>>;
 
 # Example
 ```rust
+# #[allow(unused_imports)]
 use typenum::consts::{U0, U1, U2, U3, U4, U5, U6};
+# #[allow(unused_imports)]
 use typenum::consts::{N3, N2, N1, Z0, P1, P2, P3};
+# #[allow(unused_imports)]
 use typenum::consts::{U774, N17, N10000, P1024, P4096};
 ```
 */
