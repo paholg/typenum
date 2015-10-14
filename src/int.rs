@@ -353,15 +353,3 @@ impl_int_div!(PInt, PInt, PInt);
 impl_int_div!(PInt, NInt, NInt);
 impl_int_div!(NInt, PInt, NInt);
 impl_int_div!(NInt, NInt, PInt);
-
-#[test]
-fn testes() {
-    use bit::{B0, B1};
-    use uint::{UTerm, UInt};
-    type A = PInt<UInt<UTerm, B1>>;
-    type B = PInt<UInt<UInt<UTerm, B1>, B0>>;
-    type Result = Z0;
-
-    type Computed = <<A as Div<B>>::Output as Same<Result>>::Output;
-    assert_eq!(<Computed as Integer>::to_i64(), <Result as Integer>::to_i64());
-}

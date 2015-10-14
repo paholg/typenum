@@ -15,6 +15,3 @@
 
 [lib]
   name = "typenum"
-
-[dev-dependencies]
-  compiletest_rs = "<0.1"
