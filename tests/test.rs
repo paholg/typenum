@@ -90,14 +90,14 @@ fn run_tests(tests: Vec<String>) -> bool {
     // Write cargo file
     {
         let mut f = File::create(&cargo).unwrap();
-        f.write(b"
+        f.write(format!("
 [package]
 name = \"test\"
 version = \"0.0.1\"
 
 [dependencies.typenum]
-git = \"https://github.com/paholg/typenum\"
-").unwrap();
+git = \"file:{}\"
+", env::var("CARGO_MANIFEST_DIR").unwrap()).as_bytes()).unwrap();
     }
 
     // Write main.rs
@@ -142,16 +142,16 @@ fn sample_runtime_tests() {
     run_tests(tests);
 }
 
-// #[test]
-// fn test_all() {
-//     fn test_ints(inputs: Vec<(i64, i64)>) -> bool {
-//         let tests = inputs.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b))
-//             .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
-//             .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
-//             .chain(inputs.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
-//             ;
-//         run_tests(tests.collect())
-//     }
-//     quickcheck(test_ints as fn(Vec<(i64, i64)>) -> bool);
-// }
+#[test]
+fn test_all() {
+    fn test_ints(inputs: Vec<(i64, i64)>) -> bool {
+        let tests = inputs.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b))
+            .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
+            .chain(inputs.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
+            .chain(inputs.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
+            ;
+        run_tests(tests.collect())
+    }
+    quickcheck(test_ints as fn(Vec<(i64, i64)>) -> bool);
+}
 
