@@ -9,81 +9,128 @@ use std::process::Command;
 
 use typenum::__private::build::{gen_int, gen_uint};
 
-fn uint_binary_test(a: u64, op: &str, b: u64, result: u64) -> String {
-    format!("
-{{
-    type A = {a};
-    type B = {b};
-    type {result_name} = {result};
-
-    type {computed_name} = <<A as {op}<B>>::Output as Same<{result_name}>>::Output;
-    assert_eq!(<{computed_name} as Unsigned>::to_u64(), <{result_name} as Unsigned>::to_u64());
-}}
-",
-            a = gen_uint(a),
-            b=gen_uint(b),
-            result_name=format!("U{}", result),
-            result=gen_uint(result),
-            computed_name=format!("U{}_{}_U{}", a, op, b),
-            op=op)
+fn sign(i: i64) -> char {
+    if i > 0 { 'P' } else if i < 0 { 'N' } else { '_' }
 }
 
-fn uint_unary_test(op: &str, a: u64, result: u64) -> String {
-    format!("
-{{
-    type A = {a};
-    type {result_name} = {result};
-
-    type {computed_name} = <<A as {op}>::Output as Same<{result_name}>>::Output;
-    assert_eq!(<{computed_name} as Unsigned>::to_u64(), <{result_name} as Unsigned>::to_u64());
-}}
-",
-            a = gen_uint(a),
-            result_name=format!("U{}", result),
-            result=gen_uint(result),
-            computed_name=format!("U{}_{}", a, op),
-            op=op)
+struct UIntTest {
+    a: u64,
+    op: &'static str,
+    b: Option<u64>,
+    r: u64,
 }
 
-fn int_binary_test(a: i64, op: &str, b: i64, result: i64) -> String {
-    let signa = if a > 0 { 'P' } else if a < 0 { 'N' } else { '_' };
-    let signb = if b > 0 { 'P' } else if b < 0 { 'N' } else { '_' };
-    let signr = if result > 0 { 'P' } else if result < 0 { 'N' } else { '_' };
-    format!("
+impl fmt::Display for UIntTest {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self.b {
+            Some(b) => write!(f, "
 {{
-    type A = {a};
-    type B = {b};
-    type {result_name} = {result};
+    type A = {gen_a};
+    type B = {gen_b};
+    type U{r} = {result};
 
-    type {computed_name} = <<A as {op}<B>>::Output as Same<{result_name}>>::Output;
-    assert_eq!(<{computed_name} as Integer>::to_i64(), <{result_name} as Integer>::to_i64());
+    type U{a}{op}U{b} = <<A as {op}<B>>::Output as Same<U{r}>>::Output;
+    assert_eq!(<U{a}{op}U{b} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
 }}
 ",
-            a = gen_int(a),
-            b=gen_int(b),
-            result_name=format!("{}{}", signr, result.abs()),
-            result=gen_int(result),
-            computed_name=format!("{}{}_{}_{}{}", signa, a.abs(), op, signb, b.abs()),
-            op=op)
+                              gen_a = gen_uint(self.a),
+                              gen_b = gen_uint(b),
+                              r = self.r,
+                              result = gen_uint(self.r),
+                              a = self.a,
+                              b = b,
+                              op = self.op),
+            None => write!(f, "
+{{
+    type A = {gen_a};
+    type U{r} = {result};
+
+    type {op}U{a} = <<A as {op}>::Output as Same<U{r}>>::Output;
+    assert_eq!(<{op}U{a} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
+}}
+",
+                           gen_a = gen_uint(self.a),
+                           r = self.r,
+                           result = gen_uint(self.r),
+                           a = self.a,
+                           op = self.op)
+        }
+    }
 }
 
-fn int_unary_test(op: &str, a: i64, result: i64) -> String {
-    let signa = if a > 0 { 'P' } else if a < 0 { 'N' } else { '_' };
-    let signr = if result > 0 { 'P' } else if result < 0 { 'N' } else { '_' };
-    format!("
-{{
-    type A = {a};
-    type {result_name} = {result};
+fn uint_binary_test(a: u64, op: &'static str, b: u64, result: u64) -> UIntTest {
+    UIntTest { a: a, op: op, b: Option::Some(b), r: result }
+}
 
-    type {computed_name} = <<A as {op}>::Output as Same<{result_name}>>::Output;
-    assert_eq!(<{computed_name} as Integer>::to_i64(), <{result_name} as Integer>::to_i64());
+fn uint_unary_test(op: &'static str, a: u64, result: u64) -> UIntTest {
+    UIntTest { a: a, op: op, b: Option::None, r: result }
+}
+
+struct IntBinaryTest {
+    a: i64,
+    op: &'static str,
+    b: i64,
+    r: i64,
+}
+
+impl fmt::Display for IntBinaryTest {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "
+{{
+    type A = {gen_a};
+    type B = {gen_b};
+    type {sr}{r} = {result};
+
+    type {sa}{a}{op}{sb}{b} = <<A as {op}<B>>::Output as Same<{sr}{r}>>::Output;
+    assert_eq!(<{sa}{a}{op}{sb}{b} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
 }}
 ",
-            a = gen_int(a),
-            result_name=format!("{}{}", signr, result.abs()),
-            result=gen_int(result),
-            computed_name=format!("{}{}_{}", signa, a.abs(), op),
-            op=op)
+               gen_a = gen_int(self.a),
+               gen_b = gen_int(self.b),
+               r = self.r.abs(),
+               sr = sign(self.r),
+               result = gen_int(self.r),
+               a = self.a.abs(),
+               b = self.b.abs(),
+               sa = sign(self.a),
+               sb = sign(self.b),
+               op = self.op)
+    }
+}
+
+fn int_binary_test(a: i64, op: &'static str, b: i64, result: i64) -> IntBinaryTest {
+    IntBinaryTest { a: a, op: op, b: b, r: result }
+}
+
+struct IntUnaryTest {
+    op: &'static str,
+    a: i64,
+    r: i64,
+}
+
+impl fmt::Display for IntUnaryTest {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "
+{{
+    type A = {gen_a};
+    type {sr}{r} = {result};
+
+    type {op}{sa}{a} = <<A as {op}>::Output as Same<{sr}{r}>>::Output;
+    assert_eq!(<{op}{sa}{a} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
+}}
+",
+               gen_a = gen_int(self.a),
+               r = self.r.abs(),
+               sr = sign(self.r),
+               result = gen_int(self.r),
+               a = self.a.abs(),
+               sa = sign(self.a),
+               op = self.op)
+    }
+}
+
+fn int_unary_test(op: &'static str, a: i64, result: i64) -> IntUnaryTest {
+    IntUnaryTest { op: op, a: a, r: result }
 }
 
 fn uint_cmp_test(a: u64, b: u64) -> String {
@@ -109,21 +156,6 @@ fn test_all() {
     let uints = vec![(0, 0), (0, 1), (1, 0), (1, 1), (1, 2), (3, 4)];
     let ints = vec![(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1), (1, 2), (3, 4)];
 
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
-    // fixme: add cmp and sizeof
-    // let uint_tests = uints.iter().map(|&(a, b)| uint_binary_test(a, "BitAnd", b, a & b))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitOr", b, a | b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitXor", b, a ^ b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shl", b, a << b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shr", b, a >> b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Add", b, a + b)))
-    //     .chain(uints.iter().filter(|&&(a, b)| a >= b).map(|&(a, b)| uint_binary_test(a, "Sub", b, a - b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Mul", b, a * b)))
-    //     .chain(uints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| uint_binary_test(a, "Div", b, a / b)))
-    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Pow", b, a.pow(b as u32))))
-    //     .chain(uints.iter().map(|&(a, b)| uint_cmp_test(a, b)))
-    //     ;
-    // run_tests(uint_tests.collect());
 
     // int operators: Neg, Add, Sub, Mul, Div, Pow, Cmp
     // let int_tests = ints.iter().map(|&(a, _)| int_unary_test("Neg", a, -a))
@@ -133,6 +165,7 @@ fn test_all() {
     //     .chain(ints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
     //     ;
     // run_tests(int_tests.collect());
+
     let out_dir = env::var("OUT_DIR").unwrap();
     let test_dir = Path::new(&out_dir).join("test/");
     let cargo = Path::new(&out_dir).join("test/Cargo.toml");
@@ -167,8 +200,8 @@ use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
 
 fn main() {
-    println!(\"testing! woohoo!\");
 ").unwrap();
+    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
     for (a, b) in uints {
         write!(mainf, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
         write!(mainf, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
@@ -185,6 +218,15 @@ fn main() {
         }
         write!(mainf, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
     }
+    for (a, b) in ints {
+        write!(mainf, "{}", int_unary_test("Neg", a, -a)).unwrap();
+        write!(mainf, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
+        write!(mainf, "{}", int_binary_test(a, "Sub", b, a - b)).unwrap();
+        write!(mainf, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
+        if b != 0 {
+            write!(mainf, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
+        }
+    }
     mainf.write(b"}").unwrap();
 
     Command::new("cargo").arg("update").current_dir(&test_dir).output().unwrap();
@@ -195,4 +237,3 @@ fn main() {
         panic!("Exit status: {}.\nStdout: {}\nStderr: {}\n", test_out.status, stdout, stderr);
     }
 }
-
