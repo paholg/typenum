@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::fmt;
+use std::process::Command;
 
 use typenum::__private::build::{gen_int, gen_uint};
 
@@ -102,9 +103,36 @@ fn uint_cmp_test(a: u64, b: u64) -> String {
             computed_name = format!("U{}_Cmp_U{}", a, b))
 }
 
-/// Runs the test strings. Expects output from the test functions in this module.
-fn run_tests(tests: Vec<String>) {
-    use std::process::Command;
+#[test]
+fn test_all() {
+    //let uints = (0..9).map(|a| );
+    let uints = vec![(0, 0), (0, 1), (1, 0), (1, 1), (1, 2), (3, 4)];
+    let ints = vec![(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1), (1, 2), (3, 4)];
+
+    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
+    // fixme: add cmp and sizeof
+    // let uint_tests = uints.iter().map(|&(a, b)| uint_binary_test(a, "BitAnd", b, a & b))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitOr", b, a | b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitXor", b, a ^ b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shl", b, a << b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shr", b, a >> b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Add", b, a + b)))
+    //     .chain(uints.iter().filter(|&&(a, b)| a >= b).map(|&(a, b)| uint_binary_test(a, "Sub", b, a - b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Mul", b, a * b)))
+    //     .chain(uints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| uint_binary_test(a, "Div", b, a / b)))
+    //     .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Pow", b, a.pow(b as u32))))
+    //     .chain(uints.iter().map(|&(a, b)| uint_cmp_test(a, b)))
+    //     ;
+    // run_tests(uint_tests.collect());
+
+    // int operators: Neg, Add, Sub, Mul, Div, Pow, Cmp
+    // let int_tests = ints.iter().map(|&(a, _)| int_unary_test("Neg", a, -a))
+    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b)))
+    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
+    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
+    //     .chain(ints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
+    //     ;
+    // run_tests(int_tests.collect());
     let out_dir = env::var("OUT_DIR").unwrap();
     let test_dir = Path::new(&out_dir).join("test/");
     let cargo = Path::new(&out_dir).join("test/Cargo.toml");
@@ -113,9 +141,8 @@ fn run_tests(tests: Vec<String>) {
     Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
 
     // Write cargo file
-    {
-        let mut f = File::create(&cargo).unwrap();
-        f.write(format!("
+    let mut cargof = File::create(&cargo).unwrap();
+    write!(cargof, "
 [package]
 name = \"test\"
 version = \"0.0.1\"
@@ -123,30 +150,42 @@ version = \"0.0.1\"
 [dependencies.typenum]
 # typenum = \"0.1.0\"
 git = \"file:{}\"
-", env::var("CARGO_MANIFEST_DIR").unwrap()).as_bytes()).unwrap();
-    }
+", env::var("CARGO_MANIFEST_DIR").unwrap()).unwrap();
 
     // Write main.rs
-    {
-        let mut f = File::create(&main).unwrap();
-        f.write(format!("
+    let mut mainf = File::create(&main).unwrap();
+    mainf.write(b"
 #![allow(unused_imports)]
 #![allow(non_camel_case_types)]
 extern crate typenum;
 
-use std::ops::{{BitAnd, BitOr, BitXor, Shl, Shr, Neg, Add, Sub, Mul, Div, Rem}};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Neg, Add, Sub, Mul, Div, Rem};
 use std::cmp::Ordering;
-use typenum::{{NonZero, Same, Pow, Ord, Cmp, SizeOf, Greater, Less, Equal}};
-use typenum::bit::{{Bit, B0, B1}};
-use typenum::uint::{{Unsigned, UInt, UTerm}};
-use typenum::int::{{Integer, NInt, PInt, Z0}};
+use typenum::{NonZero, Same, Pow, Ord, Cmp, SizeOf, Greater, Less, Equal};
+use typenum::bit::{Bit, B0, B1};
+use typenum::uint::{Unsigned, UInt, UTerm};
+use typenum::int::{Integer, NInt, PInt, Z0};
 
-fn main() {{
+fn main() {
     println!(\"testing! woohoo!\");
-    {}
-}}
-", tests.join("\n")).as_bytes()).unwrap();
+").unwrap();
+    for (a, b) in uints {
+        write!(mainf, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
+        write!(mainf, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
+        write!(mainf, "{}", uint_binary_test(a, "BitXor", b, a ^ b)).unwrap();
+        write!(mainf, "{}", uint_binary_test(a, "Shl", b, a << b)).unwrap();
+        write!(mainf, "{}", uint_binary_test(a, "Shr", b, a >> b)).unwrap();
+        write!(mainf, "{}", uint_binary_test(a, "Add", b, a + b)).unwrap();
+        if a >= b {
+            write!(mainf, "{}", uint_binary_test(a, "Sub", b, a - b)).unwrap();
+        }
+        write!(mainf, "{}", uint_binary_test(a, "Mul", b, a * b)).unwrap();
+        if b != 0 {
+            write!(mainf, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
+        }
+        write!(mainf, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
     }
+    mainf.write(b"}").unwrap();
 
     Command::new("cargo").arg("update").current_dir(&test_dir).output().unwrap();
     let test_out = Command::new("cargo").arg("run").current_dir(&test_dir).output().unwrap();
@@ -157,34 +196,3 @@ fn main() {{
     }
 }
 
-#[test]
-fn test_all() {
-    //let uints = (0..9).map(|a| );
-    let uints = vec![(0, 0), (0, 1), (1, 0), (1, 1), (1, 2), (3, 4)];
-    let ints = vec![(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1), (1, 2), (3, 4)];
-
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
-    // fixme: add cmp and sizeof
-    let uint_tests = uints.iter().map(|&(a, b)| uint_binary_test(a, "BitAnd", b, a & b))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitOr", b, a | b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "BitXor", b, a ^ b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shl", b, a << b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Shr", b, a >> b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Add", b, a + b)))
-        .chain(uints.iter().filter(|&&(a, b)| a >= b).map(|&(a, b)| uint_binary_test(a, "Sub", b, a - b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Mul", b, a * b)))
-        .chain(uints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| uint_binary_test(a, "Div", b, a / b)))
-        .chain(uints.iter().map(|&(a, b)| uint_binary_test(a, "Pow", b, a.pow(b as u32))))
-        .chain(uints.iter().map(|&(a, b)| uint_cmp_test(a, b)))
-        ;
-    // run_tests(uint_tests.collect());
-
-    // int operators: Neg, Add, Sub, Mul, Div, Pow, Cmp
-    let int_tests = ints.iter().map(|&(a, _)| int_unary_test("Neg", a, -a))
-        .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b)))
-        .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
-        .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
-        .chain(ints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
-        ;
-    // run_tests(int_tests.collect());
-}

@@ -88,21 +88,20 @@ fn main() {
     let mut f = File::create(&dest).unwrap();
 
     // Header stuff here!
-    let header = b"
+    f.write(b"
 use bit::{B0, B1};
 use uint::{UInt, UTerm};
 use int::{PInt, NInt};
 
 pub use int::Z0; // re-export for convenience.
-";
-    f.write(header).unwrap();
+").unwrap();
 
     for u in uints {
-        f.write(format!("pub type U{} = {};\n", u, gen_uint(u)).as_bytes()).unwrap();
+        write!(f, "pub type U{} = {};\n", u, gen_uint(u)).unwrap();
         if u <= ::std::i64::MAX as u64 && u != 0 {
             let i = u as i64;
-            f.write(format!("pub type P{} = {};\n", i, gen_int(i)).as_bytes()).unwrap();
-            f.write(format!("pub type N{} = {};\n", i, gen_int(-i)).as_bytes()).unwrap();
+            write!(f, "pub type P{} = {};\n", i, gen_int(i)).unwrap();
+            write!(f, "pub type N{} = {};\n", i, gen_int(-i)).unwrap();
         }
     }
 }
