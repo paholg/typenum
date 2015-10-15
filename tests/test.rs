@@ -4,8 +4,9 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use std::fmt;
 
-use typenum::build::{gen_uint, gen_int};
+use typenum::__private::build::{gen_int, gen_uint};
 
 fn uint_binary_test(a: u64, op: &str, b: u64, result: u64) -> String {
     format!("

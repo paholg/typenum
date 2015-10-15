@@ -919,4 +919,3 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor
         >>::Output;
 }
 
-// ---------------------------------------------------------------------------------------
