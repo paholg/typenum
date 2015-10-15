@@ -601,11 +601,11 @@ macro_rules! test_ord {
 #[test]
 fn test_ord() {
     use Ord;
-    
+
     test_ord!(Z0 == Z0);
     test_ord!(P1 > Z0);
     test_ord!(Z0 < P1);
-    
+
     test_ord!(P1 > N2);
     test_ord!(N4 < P6);
 
@@ -620,10 +620,10 @@ fn test_ord() {
 
     test_ord!(P125 == P125);
     test_ord!(P512 == P512);
-    
+
     test_ord!(N2 < N1);
     test_ord!(N1 > N2);
-    
+
     test_ord!(N1024 == N1024);
     test_ord!(N100 == N100);
 }
