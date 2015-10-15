@@ -531,3 +531,102 @@ fn div_ints() {
     test_int_op!(N2 Div P2 = N1);
     test_int_op!(N2 Div N2 = P1);
 }
+
+// ---------------------------------------------------------------------------------------
+// Cmp
+
+/// 0 == 0
+impl Cmp<Z0> for Z0 {
+    type Output = Equal;
+}
+
+/// 0 > -X
+impl<U: Unsigned + NonZero> Cmp<NInt<U>> for Z0 {
+    type Output = Greater;
+}
+
+/// 0 < X
+impl<U: Unsigned + NonZero> Cmp<PInt<U>> for Z0 {
+    type Output = Less;
+}
+
+/// X > 0
+impl<U: Unsigned + NonZero> Cmp<Z0> for PInt<U> {
+    type Output = Greater;
+}
+
+/// -X < 0
+impl<U: Unsigned + NonZero> Cmp<Z0> for NInt<U> {
+    type Output = Less;
+}
+
+/// -X < Y
+impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<PInt<P>> for NInt<N> {
+    type Output = Less;
+}
+
+/// X > - Y
+impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<NInt<N>> for PInt<P> {
+    type Output = Greater;
+}
+
+/// X <==> Y
+impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for PInt<Pl> {
+    type Output = <Pl as Cmp<Pr>>::Output;
+}
+
+/// -X <==> -Y
+impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
+    type Output = <Nr as Cmp<Nl>>::Output;
+}
+
+macro_rules! test_ord {
+    ($Lhs:ident > $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
+        }
+        );
+    ($Lhs:ident == $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
+        }
+        );
+    ($Lhs:ident < $Rhs:ident) => (
+        {
+            type Test = <$Lhs as Cmp<$Rhs>>::Output;
+            assert_eq!(::std::cmp::Ordering::Less, <Test as Ord>::to_ordering());
+        }
+        );
+}
+
+#[test]
+fn test_ord() {
+    use Ord;
+    
+    test_ord!(Z0 == Z0);
+    test_ord!(P1 > Z0);
+    test_ord!(Z0 < P1);
+    
+    test_ord!(P1 > N2);
+    test_ord!(N4 < P6);
+
+    test_ord!(P85 > Z0);
+    test_ord!(Z0 < P85);
+
+    test_ord!(P2 > P1);
+    test_ord!(P1 < P2);
+
+    test_ord!(P128 > P127);
+    test_ord!(P127 < P128);
+
+    test_ord!(P125 == P125);
+    test_ord!(P512 == P512);
+    
+    test_ord!(N2 < N1);
+    test_ord!(N1 > N2);
+    
+    test_ord!(N1024 == N1024);
+    test_ord!(N100 == N100);
+}
