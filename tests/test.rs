@@ -2,7 +2,7 @@ extern crate typenum;
 
 use std::env;
 use std::fs::File;
-use std::io::Write;
+use std::io::{Write, BufWriter};
 use std::path::Path;
 use std::fmt;
 use std::process::Command;
@@ -186,8 +186,9 @@ git = \"file:{}\"
 ", env::var("CARGO_MANIFEST_DIR").unwrap()).unwrap();
 
     // Write main.rs
-    let mut mainf = File::create(&main).unwrap();
-    mainf.write(b"
+    let mainf = File::create(&main).unwrap();
+    let mut writer = BufWriter::new(&mainf);
+    writer.write(b"
 #![allow(unused_imports)]
 #![allow(non_camel_case_types)]
 extern crate typenum;
@@ -203,31 +204,32 @@ fn main() {
 ").unwrap();
     // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
     for (a, b) in uints {
-        write!(mainf, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
-        write!(mainf, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
-        write!(mainf, "{}", uint_binary_test(a, "BitXor", b, a ^ b)).unwrap();
-        write!(mainf, "{}", uint_binary_test(a, "Shl", b, a << b)).unwrap();
-        write!(mainf, "{}", uint_binary_test(a, "Shr", b, a >> b)).unwrap();
-        write!(mainf, "{}", uint_binary_test(a, "Add", b, a + b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "BitXor", b, a ^ b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Shl", b, a << b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Shr", b, a >> b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Add", b, a + b)).unwrap();
         if a >= b {
-            write!(mainf, "{}", uint_binary_test(a, "Sub", b, a - b)).unwrap();
+            write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b)).unwrap();
         }
-        write!(mainf, "{}", uint_binary_test(a, "Mul", b, a * b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Mul", b, a * b)).unwrap();
         if b != 0 {
-            write!(mainf, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
+            write!(writer, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
         }
-        write!(mainf, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
     }
     for (a, b) in ints {
-        write!(mainf, "{}", int_unary_test("Neg", a, -a)).unwrap();
-        write!(mainf, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
-        write!(mainf, "{}", int_binary_test(a, "Sub", b, a - b)).unwrap();
-        write!(mainf, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
+        write!(writer, "{}", int_unary_test("Neg", a, -a)).unwrap();
+        write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
+        write!(writer, "{}", int_binary_test(a, "Sub", b, a - b)).unwrap();
+        write!(writer, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
         if b != 0 {
-            write!(mainf, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
+            write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
         }
     }
-    mainf.write(b"}").unwrap();
+    writer.write(b"}").unwrap();
+    writer.flush();
 
     Command::new("cargo").arg("update").current_dir(&test_dir).output().unwrap();
     let test_out = Command::new("cargo").arg("run").current_dir(&test_dir).output().unwrap();
