@@ -196,12 +196,11 @@ fn test_all() {
     let mut cargof = File::create(&cargo).unwrap();
     write!(cargof, "
 [package]
-name = \"test\"
-version = \"0.0.1\"
+  name = \"test\"
+  version = \"0.0.1\"
 
 [dependencies.typenum]
-# typenum = \"0.1.0\"
-git = \"file:{}\"
+  path = \"{}\"
 ", env::var("CARGO_MANIFEST_DIR").unwrap()).unwrap();
 
     // Write main.rs
@@ -240,7 +239,7 @@ fn main() {
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
     }
-    // int operators: Add, Sub, Mul, Div, Cmp
+    // int operators: Neg, Add, Sub, Mul, Div, Cmp
     for (a, b) in ints {
         write!(writer, "{}", int_unary_test("Neg", a, -a)).unwrap();
         write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
