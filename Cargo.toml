@@ -1,7 +1,7 @@
 [package]
   name = "typenum"
-  build = "src/build.rs"
-  version = "0.1.0"
+  build = "src/__private/build.rs"
+  version = "0.1.1"
   authors = [
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"

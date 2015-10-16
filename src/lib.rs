@@ -7,7 +7,6 @@ pub mod consts;
 pub mod bit;
 pub mod uint;
 pub mod int;
-
 pub mod __private;
 
 /// Only things that aren't zero should impl this.
