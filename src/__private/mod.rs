@@ -17,6 +17,8 @@ If you do manage to find something of use in here, please let me know. If you ca
 compelling case, it may be moved out of __private.
  */
 
+#![doc(hidden)]
+
 pub mod build;
 
 use std::marker::PhantomData;
