@@ -2,11 +2,12 @@
 use std::marker::PhantomData;
 
 use std::ops::{Neg, Add, Sub, Mul, Div, Rem};
-use {NonZero, Same, Cmp, Greater, Equal, Less};
+
+use {NonZero, Same, Pow, Cmp, Greater, Equal, Less};
 use uint::{Unsigned, UInt};
-use bit::Bit;
+use bit::{Bit, B0, B1};
 use __private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
-use consts::{U0, U1};
+use consts::{U0, U1, P1, N1};
 
 /// Positive integers
 pub struct PInt<U: Unsigned + NonZero> {
@@ -460,3 +461,70 @@ impl_int_rem!(PInt, PInt, PInt);
 impl_int_rem!(PInt, NInt, PInt);
 impl_int_rem!(NInt, PInt, NInt);
 impl_int_rem!(NInt, NInt, NInt);
+
+// ---------------------------------------------------------------------------------------
+// Pow
+
+/// 0^0 = 1
+impl Pow<Z0> for Z0 {
+    type Output = P1;
+}
+
+/// 0^P = 0
+impl<U: Unsigned + NonZero> Pow<PInt<U>> for Z0 {
+    type Output = Z0;
+}
+
+/// 0^N = 0
+impl<U: Unsigned + NonZero> Pow<NInt<U>> for Z0 {
+    type Output = Z0;
+}
+
+/// 1^N = 1
+impl<U: Unsigned + NonZero> Pow<NInt<U>> for P1 {
+    type Output = P1;
+}
+
+/// (-1)^N = 1 if N is even
+impl<U: Unsigned> Pow<NInt<UInt<U, B0>>> for N1 {
+    type Output = P1;
+}
+
+/// (-1)^N = -1 if N is odd
+impl<U: Unsigned> Pow<NInt<UInt<U, B1>>> for N1 {
+    type Output = N1;
+}
+
+/// P^0 = 1
+impl<U: Unsigned + NonZero> Pow<Z0> for PInt<U> {
+    type Output = P1;
+}
+
+/// N^0 = 1
+impl<U: Unsigned + NonZero> Pow<Z0> for NInt<U> {
+    type Output = P1;
+}
+
+/// P(Ul)^P(Ur) = P(Ul^Ur)
+impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Pow<PInt<Ur>> for PInt<Ul>
+    where Ul: Pow<Ur>,
+          <Ul as Pow<Ur>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Pow<Ur>>::Output>;
+}
+
+/// N(Ul)^P(Ur) = P(Ul^Ur) if Ur is even
+impl<Ul: Unsigned + NonZero, Ur: Unsigned> Pow<PInt<UInt<Ur, B0>>> for NInt<Ul>
+    where Ul: Pow<UInt<Ur, B0>>,
+          <Ul as Pow<UInt<Ur, B0>>>::Output: Unsigned + NonZero
+{
+    type Output = PInt<<Ul as Pow<UInt<Ur, B0>>>::Output>;
+}
+
+/// N(Ul)^P(Ur) = N(Ul^Ur) if Ur is odd
+impl<Ul: Unsigned + NonZero, Ur: Unsigned> Pow<PInt<UInt<Ur, B1>>> for NInt<Ul>
+    where Ul: Pow<UInt<Ur, B1>>,
+          <Ul as Pow<UInt<Ur, B1>>>::Output: Unsigned + NonZero
+{
+    type Output = NInt<<Ul as Pow<UInt<Ur, B1>>>::Output>;
+}

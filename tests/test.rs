@@ -244,6 +244,16 @@ fn main() {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
             write!(writer, "{}", int_binary_test(a, "Rem", b, a % b)).unwrap();
         }
+        if b >= 0 || a == 1 || a == -1 {
+            let result = if b < 0 {
+                if a == 1 { a }
+                else if a == -1 { a.pow((-b) as u32) }
+                else { panic!("THIS CAN'T HAPPEN"); }
+            } else {
+                a.pow(b as u32)
+            };
+            write!(writer, "{}", int_binary_test(a, "Pow", b, result)).unwrap();
+        }
         write!(writer, "{}", int_cmp_test(a, b)).unwrap();
     }
     writer.write(b"}").unwrap();
