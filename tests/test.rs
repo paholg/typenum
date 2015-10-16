@@ -62,9 +62,9 @@ fn uint_binary_test(a: u64, op: &'static str, b: u64, result: u64) -> UIntTest {
     UIntTest { a: a, op: op, b: Option::Some(b), r: result }
 }
 
-fn uint_unary_test(op: &'static str, a: u64, result: u64) -> UIntTest {
-    UIntTest { a: a, op: op, b: Option::None, r: result }
-}
+// fn uint_unary_test(op: &'static str, a: u64, result: u64) -> UIntTest {
+//     UIntTest { a: a, op: op, b: Option::None, r: result }
+// }
 
 struct IntBinaryTest {
     a: i64,
@@ -206,14 +206,14 @@ extern crate typenum;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Neg, Add, Sub, Mul, Div, Rem};
 use std::cmp::Ordering;
-use typenum::{NonZero, Same, Pow, Ord, Cmp, SizeOf, Greater, Less, Equal};
+use typenum::{NonZero, Same, Pow, Ord, Cmp, Greater, Less, Equal};
 use typenum::bit::{Bit, B0, B1};
 use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
 
 fn main() {
 ").unwrap();
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp, SizeOf
+    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp
     for (a, b) in uints {
         write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
         write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
@@ -231,8 +231,6 @@ fn main() {
         }
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
-        let size = if a == 0 { 0 } else { format!("{:b}", a).len() as u64 };
-        write!(writer, "{}", uint_unary_test("SizeOf", a, size)).unwrap();
     }
     // int operators: Neg, Add, Sub, Mul, Div, Rem, Cmp
     for (a, b) in ints {

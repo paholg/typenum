@@ -1,5 +1,5 @@
 /*!
-This module is for things that are conceptually private but that must be made public for
+**Ignore me!** This module is for things that are conceptually private but that must be made public for
 typenum to work correctly.
 
 Unless you are working on typenum itself, **there is no need to view anything here**.
@@ -11,6 +11,10 @@ Just look away.
 
 
 Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
+
+
+If you do manage to find something of use in here, please let me know. If you can make a
+compelling case, it may be moved out of __private.
  */
 
 pub mod build;
@@ -20,6 +24,11 @@ use std::marker::PhantomData;
 // use ::{Sub};
 use bit::{Bit, B1, B0};
 use uint::{Unsigned, UInt, UTerm};
+
+/// Gives the size of a type number in bits as a `UInt`
+pub trait SizeOf {
+    type Output;
+}
 
 /// Convenience trait. Calls Invert -> TrimTrailingZeros -> Invert
 pub trait Trim {

@@ -1,3 +1,14 @@
+/*!
+
+Type-level signed integers.
+
+
+**Type operators** implemented:
+
+* From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+* From typenum: `Same`, `Cmp`, and `Pow`.
+
+*/
 
 use std::marker::PhantomData;
 

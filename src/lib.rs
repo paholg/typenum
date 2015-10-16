@@ -1,5 +1,35 @@
 /*!
-Typenum!
+This crate provides type-level numbers, evaluated at compile time.
+
+None of the traits defined or used in this crate are used in a typical manner. They can
+be divided into two categories: **marker traits** or **type operators**.
+
+Many of the marker traits have functions defined, but they all do essentially the same
+thing; convert a type into its runtime counterpart, and are really just there for
+debugging. For example,
+
+```rust
+# use typenum::consts::N4;
+# use typenum::int::Integer;
+assert_eq!(N4::to_i32(), -4);
+```
+
+**Type operators** are traits that behave as functions at the type level. These are the
+meat of this library. Where possible, traits defined in the stdlib have been used, but
+their attached functions have not been implemented.
+
+For example, the `Add` trait is implemented for both unsigned and signed integers, but
+the `add` function is not. As there are never any objects of the types defined here, it
+wouldn't make sense to implement it. What is important is its associated type `Output`,
+which is where the addition happens.
+
+```rust
+# use std::ops::Add;
+# use typenum::consts::{P3, P4};
+type X = <P3 as Add<P4>>::Output; // X is an alias for P7
+```
+
+Documented in each module is the full list of type operators implemented.
 */
 use std::cmp::{Ordering};
 
@@ -9,42 +39,93 @@ pub mod uint;
 pub mod int;
 pub mod __private;
 
-/// Only things that aren't zero should impl this.
+/// A **marker trait** to designate that a type is not zero. All types in this crate
+/// implement `NonZero` except `B0`, `U0`, and `Z0`.
 pub trait NonZero {}
 
+/**
+A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
+for writing macros that can take arbitrary binary or unary operators.
+
+# Example
+```rust
+use typenum::Same;
+use typenum::consts::{U4, U5};
+use typenum::uint::Unsigned;
+
+assert_eq!(<U5 as Same<U5>>::Output::to_u32(), 5);
+
+// Compile error:
+// <U5 as Same<U4>>::Output::to_u32();
+```
+*/
 pub trait Same<Rhs = Self> {
-    /// `Output` should always be `Self`
+    /// Should always be `Self`
     type Output;
 }
 
+/**
+A **type operator** that provides exponentiation by repeated squaring.
+
+# Example
+```rust
+use typenum::Pow;
+use typenum::int::Integer;
+use typenum::consts::{N3, P2};
+
+assert_eq!(<N3 as Pow<P2>>::Output::to_i32(), 9);
+```
+*/
 pub trait Pow<Rhs = Self> {
     type Output;
 }
 
+/**
+A **marker trait** for the types `Greater`, `Equal`, and `Less`, this trait also provides a
+function to get the appropriate enum variant from a given type for debugging.
+*/
 pub trait Ord {
     fn to_ordering() -> Ordering;
 }
 
+/// A potential output from `Cmp`, this is the type equivalent to the enum variant
+/// `std::cmp::Ordering::Greater`.
 pub struct Greater;
+/// A potential output from `Cmp`, this is the type equivalent to the enum variant
+/// `std::cmp::Ordering::Less`.
 pub struct Less;
+/// A potential output from `Cmp`, this is the type equivalent to the enum variant
+/// `std::cmp::Ordering::Equal`.
 pub struct Equal;
 
+/// Returns `std::cmp::Ordering::Greater`
 impl Ord for Greater {
     fn to_ordering() -> Ordering { Ordering::Greater }
 }
+/// Returns `std::cmp::Ordering::Less`
 impl Ord for Less {
     fn to_ordering() -> Ordering { Ordering::Less }
 }
+/// Returns `std::cmp::Ordering::Equal`
 impl Ord for Equal {
     fn to_ordering() -> Ordering { Ordering::Equal }
 }
 
-/// Compares `Self` and `Rhs`. Should only ever return one of `Greater`, `Less`, or `Equal`.
-pub trait Cmp<Rhs = Self> {
-    type Output;
-}
+/**
+A **type operator** that compares `Self` and `Rhs`. It provides a similar functionality to
+the function [`std::cmp::Ord::cmp`](https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#tymethod.cmp) but for types.
 
-/// Gives the size of a type number in bits as a `UInt`
-pub trait SizeOf {
+# Example
+```rust
+use typenum::{Cmp, Ord, Greater, Less, Equal};
+use typenum::consts::{N3, P2, P5};
+
+assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Greater::to_ordering());
+assert_eq!(<P2 as Cmp<P2>>::Output::to_ordering(), Equal::to_ordering());
+assert_eq!(<P2 as Cmp<P5>>::Output::to_ordering(), Less::to_ordering());
+```
+*/
+pub trait Cmp<Rhs = Self> {
+    /// The result of the comparison, it should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;
 }

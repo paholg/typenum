@@ -1,10 +1,21 @@
+/*!
+
+Type-level unsigned integers.
+
+
+**Type operators** implemented:
+
+* From std::ops: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+* From typenum: `Same`, `Cmp`, and `Pow`.
+
+*/
 
 use std::marker::PhantomData;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use {NonZero, Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
+use {NonZero, Same, Ord, Greater, Equal, Less, Cmp, Pow};
 use bit::{Bit, B0, B1};
-use __private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
+use __private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
                   ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 use consts::{U0, U1};
 

@@ -1,6 +1,16 @@
+/*!
+
+Type-level bits.
+
+
+**Type operators** implemented:
+
+* From std::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
+* From typenum: `Same` and `Cmp`.
+
+*/
 use std::ops::{BitAnd, BitOr, BitXor, Not};
-use {NonZero, Same, Cmp, Greater, Less, Equal, SizeOf};
-use consts::U1;
+use { NonZero, Same, Cmp, Greater, Less, Equal };
 
 /// The compile time bit 0
 pub struct B0;
@@ -48,13 +58,6 @@ impl Same<B0> for B0 {
 }
 impl Same<B1> for B1 {
     type Output = B1;
-}
-
-impl SizeOf for B0 {
-    type Output = U1;
-}
-impl SizeOf for B1 {
-    type Output = U1;
 }
 
 /// Not of 0 (!0 = 1)
