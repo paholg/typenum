@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{Neg, Add, Sub, Mul, Div};
+use std::ops::{Neg, Add, Sub, Mul, Div, Pow};
 use {NonZero, Same, Cmp, Greater, Equal, Less};
 use uint::{Unsigned};
 use __private::{PrivateIntegerAdd, PrivateDivFirstStep};
@@ -422,3 +422,31 @@ macro_rules! test_ord {
         }
         );
 }
+
+// ---------------------------------------------------------------------------------------
+// Pow
+
+impl Pow<Z0> for Z0 {
+    type Output = P1;
+}
+
+impl<U: Unsigned> Pow<PInt<U>> for Z0 {
+    type Output = Z0;
+}
+
+impl<U: Unsigned> Pow<NInt<U>> for Z0 {
+    type Output = Z0;
+}
+
+impl<U: Unsigned> Pow<NInt<U>> for P1 {
+    type Output = P1;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> Pow<PInt<Ur>> for PInt<Ul> where Ul: Pow<Ur> {
+    type Output = PInt<<Ul as Pow<Ur>>::Output>
+}
+
+// fixme: use `Rem` to find if `Ur` is even
+// impl<Ul: Unsigned, Ur: Unsigned> Pow<PInt<Ur>> for NInt<Ul> where Ul: Pow<Ur> {
+//     type Output = PInt<<Ul as Pow<Ur>>::Output>
+// }
