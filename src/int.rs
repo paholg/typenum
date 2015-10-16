@@ -1,11 +1,12 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{Neg, Add, Sub, Mul, Div};
+use std::ops::{Neg, Add, Sub, Mul, Div, Rem};
 use {NonZero, Same, Cmp, Greater, Equal, Less};
-use uint::{Unsigned};
-use __private::{PrivateIntegerAdd, PrivateDivFirstStep};
-use consts::U1;
+use uint::{Unsigned, UInt};
+use bit::Bit;
+use __private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
+use consts::{U0, U1};
 
 /// Positive integers
 pub struct PInt<U: Unsigned + NonZero> {
@@ -327,22 +328,22 @@ macro_rules! impl_int_div {
         /// `$A<Ul> / $B<Ur> = $R<Ul / Ur>`
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<$B<Ur>> for $A<Ul>
             where Ul: Cmp<Ur>,
-                  $A<Ul>: PrivateDivFirstStep<<Ul as Cmp<Ur>>::Output, $B<Ur>>
+                  $A<Ul>: PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>
         {
-            type Output = <$A<Ul> as PrivateDivFirstStep<
+            type Output = <$A<Ul> as PrivateDivInt<
                 <Ul as Cmp<Ur>>::Output,
                 $B<Ur>>>::Output;
             fn div(self, _: $B<Ur>) -> Self::Output { unreachable!() }
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Less, $B<Ur>> for $A<Ul> {
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Less, $B<Ur>> for $A<Ul> {
             type Output = Z0;
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Equal, $B<Ur>> for $A<Ul> {
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Equal, $B<Ur>> for $A<Ul> {
             type Output = $R<U1>;
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivFirstStep<Greater, $B<Ur>> for $A<Ul>
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Greater, $B<Ur>> for $A<Ul>
             where Ul: Div<Ur>,
-                  <Ul as Div<Ur>>::Output: Unsigned + NonZero
+                  <Ul as Div<Ur>>::Output: Unsigned + NonZero,
         {
             type Output = $R<<Ul as Div<Ur>>::Output>;
         }
@@ -422,3 +423,40 @@ macro_rules! test_ord {
         }
         );
 }
+
+// ---------------------------------------------------------------------------------------
+// Rem
+
+/// `Z0 % I = Z0` where `I != 0`
+impl<I: Integer + NonZero> Rem<I> for Z0 {
+    type Output = Z0;
+    fn rem(self, _: I) -> Self::Output { unreachable!() }
+}
+
+macro_rules! impl_int_rem {
+    ($A:ident, $B:ident, $R:ident) => (
+        /// `$A<Ul> % $B<Ur> = $R<Ul % Ur>`
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Rem<$B<Ur>> for $A<Ul>
+            where Ul: Rem<Ur>,
+                  $A<Ul>: PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>
+        {
+            type Output = <$A<Ul> as PrivateRem<
+                <Ul as Rem<Ur>>::Output,
+                $B<Ur>>>::Output;
+            fn rem(self, _: $B<Ur>) -> Self::Output { unreachable!() }
+        }
+        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateRem<U0, $B<Ur>> for $A<Ul> {
+            type Output = Z0;
+        }
+        impl<Ul, Ur, U, B> PrivateRem<UInt<U, B>, $B<Ur>> for $A<Ul>
+            where Ul: Unsigned + NonZero, Ur: Unsigned + NonZero, U: Unsigned, B: Bit,
+        {
+            type Output = $R<UInt<U, B>>;
+        }
+        );
+}
+
+impl_int_rem!(PInt, PInt, PInt);
+impl_int_rem!(PInt, NInt, PInt);
+impl_int_rem!(NInt, PInt, NInt);
+impl_int_rem!(NInt, NInt, NInt);
