@@ -1,7 +1,7 @@
 
 use std::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div};
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Same, Ord, Greater, Equal, Less, Cmp, SizeOf, Pow};
 use bit::{Bit, B0, B1};
 use __private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
@@ -797,7 +797,7 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UInt<Ul
     type Output = <UInt<Ul, Bl> as PrivateDivFirstStep<
         <UInt<Ul, Bl> as Cmp<UInt<Ur, Br>>>::Output,
         UInt<Ur, Br>
-    >>::Output;
+    >>::Quotient;
     fn div(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
 }
 
@@ -806,11 +806,13 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UInt<Ul
 
 // Numerator < Denominator: return 0
 impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Less, Divisor> for Numerator {
-    type Output = U0;
+    type Quotient = U0;
+    type Remainder = Numerator;
 }
 // Numerator == Denominator: return 1
 impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor> for Numerator {
-    type Output = U1;
+    type Quotient = U1;
+    type Remainder = U0;
 }
 // Numerator > Denominator:
 // I = SizeOf(Numerator) - SizeOf(Denominator), Q = 0, Divisor <<= I, C = Numerator.Cmp(Divisor), Remainder = Numerator
@@ -825,12 +827,18 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Diviso
              <Divisor as ShiftDiff<Numerator>>::Output
           >
 {
-    type Output = <Numerator as PrivateDiv<
+    type Quotient = <Numerator as PrivateDiv<
         <Numerator as Cmp<<Divisor as ShiftDiff<Numerator>>::Output>>::Output,
         <Numerator as BitDiff<Divisor>>::Output, // I
         U0, // Q
         <Divisor as ShiftDiff<Numerator>>::Output // Divisor
-    >>::Output;
+        >>::Quotient;
+    type Remainder = <Numerator as PrivateDiv<
+        <Numerator as Cmp<<Divisor as ShiftDiff<Numerator>>::Output>>::Output,
+        <Numerator as BitDiff<Divisor>>::Output, // I
+        U0, // Q
+        <Divisor as ShiftDiff<Numerator>>::Output // Divisor
+        >>::Remainder;
 }
 
 //  -----------------------------------------
@@ -840,7 +848,8 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Diviso
 impl<Q, Divisor, Remainder> PrivateDiv<Less, U0, Q, Divisor> for Remainder
     where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned
 {
-    type Output = Q;
+    type Quotient = Q;
+    type Remainder = Remainder;
 }
 
 // Remainder == Divisor: return Q + 1
@@ -848,15 +857,17 @@ impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
     where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
           Q: Add<U1>
 {
-    type Output = <Q as Add<U1>>::Output;
+    type Quotient = <Q as Add<U1>>::Output;
+    type Remainder = U0;
 }
 
 // Remainder > Divisor: return Q + 1
 impl<Q, Divisor, Remainder> PrivateDiv<Greater, U0, Q, Divisor> for Remainder
     where Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
-          Q: Add<U1>
+          Q: Add<U1>, Remainder: Sub<Divisor>
 {
-    type Output = <Q as Add<U1>>::Output;
+    type Quotient = <Q as Add<U1>>::Output;
+    type Remainder = <Remainder as Sub<Divisor>>::Output;
 }
 
 //  -----------------------------------------
@@ -868,7 +879,8 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> 
           U1: Shl<UInt<Ui, Bi>>,
           Q: Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>
 {
-    type Output = <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output;
+    type Quotient = <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output;
+    type Remainder = U0;
 }
 
 // Remainder < Divisor: Divisor >>= 1, I -= 1, C = Remainder.cmp(Divisor)
@@ -885,12 +897,18 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
               <Divisor as Shr<B1>>::Output
           >
 {
-    type Output = <Remainder as PrivateDiv<
+    type Quotient = <Remainder as PrivateDiv<
         <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output, // Remainder.cmp(New Divisor)
         <UInt<Ui, Bi> as Sub<U1>>::Output,
         Q,
         <Divisor as Shr<B1>>::Output
-    >>::Output;
+    >>::Quotient;
+    type Remainder = <Remainder as PrivateDiv<
+        <Remainder as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
+        <UInt<Ui, Bi> as Sub<U1>>::Output,
+        Q,
+        <Divisor as Shr<B1>>::Output
+    >>::Remainder;
 }
 
 // Remainder > Divisor:
@@ -911,11 +929,36 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor
               <Divisor as Shr<B1>>::Output
           >
 {
-    type Output = <<Remainder as Sub<Divisor>>::Output as PrivateDiv<
+    type Quotient = <<Remainder as Sub<Divisor>>::Output as PrivateDiv<
         <<Remainder as Sub<Divisor>>::Output as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
     <UInt<Ui, Bi> as Sub<U1>>::Output,
     <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output,
     <Divisor as Shr<B1>>::Output
-        >>::Output;
+        >>::Quotient;
+    type Remainder = <<Remainder as Sub<Divisor>>::Output as PrivateDiv<
+        <<Remainder as Sub<Divisor>>::Output as Cmp<<Divisor as Shr<B1>>::Output>>::Output,
+    <UInt<Ui, Bi> as Sub<U1>>::Output,
+    <Q as Add<<U1 as Shl<UInt<Ui, Bi>>>::Output>>::Output,
+    <Divisor as Shr<B1>>::Output
+        >>::Remainder;
 }
 
+// ---------------------------------------------------------------------------------------
+// Rem
+
+impl<Ur: Unsigned, Br: Bit> Rem<UInt<Ur, Br>> for UTerm {
+    type Output = UTerm;
+    fn rem(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
+}
+
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Rem<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: Cmp<UInt<Ur, Br>>,
+          UInt<Ul, Bl>: PrivateDivFirstStep<<UInt<Ul, Bl> as Cmp<UInt<Ur, Br>>>::Output,
+              UInt<Ur, Br>>
+{
+    type Output = <UInt<Ul, Bl> as PrivateDivFirstStep<
+        <UInt<Ul, Bl> as Cmp<UInt<Ur, Br>>>::Output,
+        UInt<Ur, Br>
+    >>::Remainder;
+    fn rem(self, _: UInt<Ur, Br>) -> Self::Output { unreachable!() }
+}

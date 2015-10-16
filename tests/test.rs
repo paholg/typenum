@@ -213,8 +213,7 @@ use typenum::int::{Integer, NInt, PInt, Z0};
 
 fn main() {
 ").unwrap();
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Pow, Cmp, SizeOf
-    // todo: SizeOf
+    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp, SizeOf
     for (a, b) in uints {
         write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
         write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
@@ -228,13 +227,14 @@ fn main() {
         write!(writer, "{}", uint_binary_test(a, "Mul", b, a * b)).unwrap();
         if b != 0 {
             write!(writer, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
+            write!(writer, "{}", uint_binary_test(a, "Rem", b, a % b)).unwrap();
         }
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
         let size = if a == 0 { 0 } else { format!("{:b}", a).len() as u64 };
         write!(writer, "{}", uint_unary_test("SizeOf", a, size)).unwrap();
     }
-    // int operators: Neg, Add, Sub, Mul, Div, Cmp
+    // int operators: Neg, Add, Sub, Mul, Div, Rem, Cmp
     for (a, b) in ints {
         write!(writer, "{}", int_unary_test("Neg", a, -a)).unwrap();
         write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
@@ -242,6 +242,7 @@ fn main() {
         write!(writer, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
         if b != 0 {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
+            write!(writer, "{}", int_binary_test(a, "Rem", b, a % b)).unwrap();
         }
         write!(writer, "{}", int_cmp_test(a, b)).unwrap();
     }

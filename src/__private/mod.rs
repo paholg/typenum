@@ -83,10 +83,20 @@ pub trait PrivatePow<Y, N> {
 }
 
 pub trait PrivateDiv<C, I, Q, Divisor> {
-    type Output;
+    type Quotient;
+    type Remainder;
 }
 
 pub trait PrivateDivFirstStep<C, Divisor> {
+    type Quotient;
+    type Remainder;
+}
+
+pub trait PrivateDivInt<C, Divisor> {
+    type Output;
+}
+
+pub trait PrivateRem<URem, Divisor> {
     type Output;
 }
 
