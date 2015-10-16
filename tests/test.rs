@@ -171,19 +171,12 @@ fn int_cmp_test(a: i64, b: i64) -> String {
 
 #[test]
 fn test_all() {
-    //let uints = (0..9).map(|a| );
-    let uints = vec![(0, 0), (0, 1), (1, 0), (1, 1), (1, 2), (3, 4)];
-    let ints = vec![(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1), (1, 2), (3, 4)];
+    // will test all permutations of number pairs up to this (and down to its opposite for ints)
+    let high: i64 = 3;
 
+    let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a+1).cycle().zip((0..high as u64 + 1)));
+    let ints = (-high..high + 1).flat_map(|a| (a..a+1).cycle().zip((-high..high + 1)));
 
-    // int operators: Neg, Add, Sub, Mul, Div, Pow, Cmp
-    // let int_tests = ints.iter().map(|&(a, _)| int_unary_test("Neg", a, -a))
-    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Add", b, a + b)))
-    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Sub", b, a - b)))
-    //     .chain(ints.iter().map(|&(a, b)| int_binary_test(a, "Mul", b, a * b)))
-    //     .chain(ints.iter().filter(|&&(_, b)| b != 0).map(|&(a, b)| int_binary_test(a, "Div", b, a / b)))
-    //     ;
-    // run_tests(int_tests.collect());
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let test_dir = Path::new(&out_dir).join("test/");
@@ -238,6 +231,8 @@ fn main() {
         }
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
+        let size = if a == 0 { 0 } else { format!("{:b}", a).len() as u64 };
+        write!(writer, "{}", uint_unary_test("SizeOf", a, size)).unwrap();
     }
     // int operators: Neg, Add, Sub, Mul, Div, Cmp
     for (a, b) in ints {
