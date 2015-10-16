@@ -13,6 +13,8 @@ Just look away.
 Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
  */
 
+#![doc(hidden)]
+
 pub mod build;
 
 use std::marker::PhantomData;
