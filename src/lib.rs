@@ -1,7 +1,7 @@
 /*!
 This crate provides type-level numbers, evaluated at compile time.
 
-None of the traits defined or used in this crate are used in a typical manner. They can
+The traits defined or used in this crate are used in a typical manner. They can
 be divided into two categories: **marker traits** or **type operators**.
 
 Many of the marker traits have functions defined, but they all do essentially the same
@@ -24,9 +24,12 @@ wouldn't make sense to implement it. What is important is its associated type `O
 which is where the addition happens.
 
 ```rust
-# use std::ops::Add;
-# use typenum::consts::{P3, P4};
-type X = <P3 as Add<P4>>::Output; // X is an alias for P7
+use std::ops::Add;
+use typenum::consts::{P3, P4};
+use typenum::int::Integer;
+
+type X = <P3 as Add<P4>>::Output;
+assert_eq!(<X as Integer>::to_i32(), 7);
 ```
 
 Documented in each module is the full list of type operators implemented.
@@ -39,13 +42,16 @@ pub mod uint;
 pub mod int;
 pub mod __private;
 
-/// A **marker trait** to designate that a type is not zero. All types in this crate
-/// implement `NonZero` except `B0`, `U0`, and `Z0`.
+/// A **marker trait** to designate that a type is not zero. All number types in this
+/// crate implement `NonZero` except `B0`, `U0`, and `Z0`.
 pub trait NonZero {}
 
 /**
 A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 for writing macros that can take arbitrary binary or unary operators.
+
+Note that Rust lazily evaluates types, so this will only fail for two different types if
+the `Output` is used.
 
 # Example
 ```rust
@@ -55,8 +61,10 @@ use typenum::uint::Unsigned;
 
 assert_eq!(<U5 as Same<U5>>::Output::to_u32(), 5);
 
-// Compile error:
-// <U5 as Same<U4>>::Output::to_u32();
+// Only an error if we use it:
+type Undefined = <U5 as Same<U4>>::Output;
+// Compiler error:
+// Undefined::to_u32();
 ```
 */
 pub trait Same<Rhs = Self> {
@@ -81,8 +89,11 @@ pub trait Pow<Rhs = Self> {
 }
 
 /**
-A **marker trait** for the types `Greater`, `Equal`, and `Less`, this trait also provides a
-function to get the appropriate enum variant from a given type for debugging.
+
+A **Marker trait** for the types `Greater`, `Equal`, and `Less`.
+
+This trait should not be implemented for anything outside this crate.
+
 */
 pub trait Ord {
     fn to_ordering() -> Ordering;
@@ -112,7 +123,7 @@ impl Ord for Equal {
 }
 
 /**
-A **type operator** that compares `Self` and `Rhs`. It provides a similar functionality to
+A **type operator** for comparing `Self` and `Rhs`. It provides a similar functionality to
 the function [`std::cmp::Ord::cmp`](https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#tymethod.cmp) but for types.
 
 # Example
@@ -126,6 +137,6 @@ assert_eq!(<P2 as Cmp<P5>>::Output::to_ordering(), Less::to_ordering());
 ```
 */
 pub trait Cmp<Rhs = Self> {
-    /// The result of the comparison, it should only ever be one of `Greater`, `Less`, or `Equal`.
+    /// The result of the comparison. It should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;
 }

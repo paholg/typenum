@@ -1,6 +1,7 @@
 /*!
 
-Type-level bits.
+Type-level bits. These are rather simple and are used as the building blocks of the
+other number types in this crate.
 
 
 **Type operators** implemented:
@@ -12,15 +13,18 @@ Type-level bits.
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 use { NonZero, Same, Cmp, Greater, Less, Equal };
 
-/// The compile time bit 0
+/// The compile time bit 0.
 pub struct B0;
 
-/// The compile time bit 1
+/// The compile time bit 1.
 pub struct B1;
 
-/// The trait for compile time bits; nothing besides B0 and B1 should implement this.
+/**
+The **marker trait** for compile time bits.
+
+This trait should not be implemented for anything outside this crate.
+*/
 pub trait Bit {
-    /// Gives the integer value for this bit.
     fn to_u8() -> u8;
     fn to_bool() -> bool;
 }

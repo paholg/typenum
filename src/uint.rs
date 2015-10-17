@@ -19,9 +19,11 @@ use __private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, Pr
                   ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 use consts::{U0, U1};
 
-/// This trait is implemented for the all things that a `UInt` can take as a parameter,
-/// which is just `UInt` and `UTerm` (used to terminate the `UInt`). It should not be
-/// implemented for anything outside this crate.
+/**
+The **marker trait** for compile time unsigned integers.
+
+This trait should not be implemented for anything outside this crate.
+*/
 pub trait Unsigned {
     fn to_u8() -> u8;
     fn to_u16() -> u16;
@@ -36,7 +38,10 @@ pub trait Unsigned {
     fn to_isize() -> isize;
 }
 
-/// The terminating type for `UInt`, it always comes after the most significant bit.
+/**
+The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
+ by itself represents zero, which is aliased to `U0`.
+*/
 pub struct UTerm;
 
 impl Unsigned for UTerm {
@@ -53,9 +58,24 @@ impl Unsigned for UTerm {
     fn to_isize() -> isize { 0 }
 }
 
-/// UInt is defined recursevly, where B is the least significant bit and U is the rest
-/// of the number. U can be another UInt or UTerm. In order to keep numbers unique, leading
-/// zeros are not allowed, so `UInt<UTerm, B0>` should never show up anywhere ever.
+/**
+`UInt` is defined recursively, where `B` is the least significant bit and `U` is the rest
+of the number. Conceptually, `U` should be bound by the trait `Unsigned` and `B` should
+be bound by the trait `Bit`, but enforcing these bounds causes linear instead of
+logrithmic scaling in some places, so they are left off for now. They may be enforced in
+future.
+
+In order to keep numbers unique, leading zeros are not allowed, so `UInt<UTerm, B0>` is
+forbidden.
+
+# Example
+```rust
+use typenum::uint::{UInt, UTerm, Unsigned};
+use typenum::bit::{B1, B0};
+
+type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
+```
+*/
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>
 }

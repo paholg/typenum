@@ -8,6 +8,10 @@ Type-level signed integers.
 * From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 * From typenum: `Same`, `Cmp`, and `Pow`.
 
+Note that operators that work on the underlying structure of the number are
+intentionally not implemented. This is because this implementation of signed integers
+does *not* use twos-complement, so implementing those operators would require us to make
+a choice. Either we mimic twos-complement behavior, where e.g. 3 & -3 = 1, or we do what would make sense for our implementation, where e.g. 3 & -3 = -3 or 3 depending on what we choose f
 */
 
 use std::marker::PhantomData;
@@ -31,6 +35,11 @@ pub struct NInt<U: Unsigned + NonZero> {
 /// The signed integer 0
 pub struct Z0;
 
+/**
+The **marker trait** for compile time unsigned integers.
+
+This trait should not be implemented for anything outside this crate.
+*/
 pub trait Integer {
     fn to_i8() -> i8;
     fn to_i16() -> i16;
