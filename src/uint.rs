@@ -8,6 +8,26 @@ Type-level unsigned integers.
 * From std::ops: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 * From typenum: `Same`, `Cmp`, and `Pow`.
 
+Rather than directly using the structs defined in this module, it is recommended that
+you import and use the relevant aliases from the [consts](../consts/index.html) module.
+
+# Example
+```rust
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
+use typenum::consts::{U1, U2, U3, U4};
+use typenum::uint::Unsigned;
+
+assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
+assert_eq!(<U3 as BitOr<U4>>::Output::to_u32(), 7);
+assert_eq!(<U3 as BitXor<U2>>::Output::to_u32(), 1);
+assert_eq!(<U3 as Shl<U1>>::Output::to_u32(), 6);
+assert_eq!(<U3 as Shr<U1>>::Output::to_u32(), 1);
+assert_eq!(<U3 as Add<U2>>::Output::to_u32(), 5);
+assert_eq!(<U3 as Sub<U2>>::Output::to_u32(), 1);
+assert_eq!(<U3 as Mul<U2>>::Output::to_u32(), 6);
+assert_eq!(<U3 as Div<U2>>::Output::to_u32(), 1);
+assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
+```
 */
 
 use std::marker::PhantomData;
@@ -23,6 +43,14 @@ use consts::{U0, U1};
 The **marker trait** for compile time unsigned integers.
 
 This trait should not be implemented for anything outside this crate.
+
+# Example
+```rust
+use typenum::consts::U3;
+use typenum::uint::Unsigned;
+
+assert_eq!(U3::to_u32(), 3);
+```
 */
 pub trait Unsigned {
     fn to_u8() -> u8;

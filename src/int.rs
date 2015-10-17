@@ -8,10 +8,26 @@ Type-level signed integers.
 * From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 * From typenum: `Same`, `Cmp`, and `Pow`.
 
+Rather than directly using the structs defined in this module, it is recommended that
+you import and use the relevant aliases from the [consts](../consts/index.html) module.
+
 Note that operators that work on the underlying structure of the number are
 intentionally not implemented. This is because this implementation of signed integers
-does *not* use twos-complement, so implementing those operators would require us to make
-a choice. Either we mimic twos-complement behavior, where e.g. 3 & -3 = 1, or we do what would make sense for our implementation, where e.g. 3 & -3 = -3 or 3 depending on what we choose f
+does *not* use twos-complement, and implementing them would require making arbitrary
+choices, causing the results of such operators to be difficult to reason about.
+
+# Example
+```rust
+use std::ops::{Add, Sub, Mul, Div, Rem};
+use typenum::consts::{N3, P2};
+use typenum::int::Integer;
+
+assert_eq!(<N3 as Add<P2>>::Output::to_i32(), -1);
+assert_eq!(<N3 as Sub<P2>>::Output::to_i32(), -5);
+assert_eq!(<N3 as Mul<P2>>::Output::to_i32(), -6);
+assert_eq!(<N3 as Div<P2>>::Output::to_i32(), -1);
+assert_eq!(<N3 as Rem<P2>>::Output::to_i32(), -1);
+```
 */
 
 use std::marker::PhantomData;
@@ -24,21 +40,37 @@ use bit::{Bit, B0, B1};
 use __private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
 use consts::{U0, U1, P1, N1};
 
-/// Positive integers
+/**
+Type-level signed integers with positive sign.
+*/
 pub struct PInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>
 }
-/// Negative integers
+
+/**
+Type-level signed integers with negative sign.
+*/
 pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>
 }
-/// The signed integer 0
+
+/**
+The type-level signed integer 0.
+*/
 pub struct Z0;
 
 /**
-The **marker trait** for compile time unsigned integers.
+The **marker trait** for compile time signed integers.
 
 This trait should not be implemented for anything outside this crate.
+
+# Example
+```rust
+use typenum::consts::P3;
+use typenum::int::Integer;
+
+assert_eq!(P3::to_i32(), 3);
+```
 */
 pub trait Integer {
     fn to_i8() -> i8;

@@ -79,9 +79,9 @@ A **type operator** that provides exponentiation by repeated squaring.
 ```rust
 use typenum::Pow;
 use typenum::int::Integer;
-use typenum::consts::{N3, P2};
+use typenum::consts::{N3, P3};
 
-assert_eq!(<N3 as Pow<P2>>::Output::to_i32(), 9);
+assert_eq!(<N3 as Pow<P3>>::Output::to_i32(), -27);
 ```
 */
 pub trait Pow<Rhs = Self> {

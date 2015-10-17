@@ -13,10 +13,10 @@ other number types in this crate.
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 use { NonZero, Same, Cmp, Greater, Less, Equal };
 
-/// The compile time bit 0.
+/// The type-level bit 0.
 pub struct B0;
 
-/// The compile time bit 1.
+/// The type-level bit 1.
 pub struct B1;
 
 /**
