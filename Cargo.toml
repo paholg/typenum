@@ -6,10 +6,7 @@
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"
   ]
-
-  description = "Typenum is a Rust library for type-level numbers evaluated at compile
-    time. It currently supports bits, unsigned integers, and signed integers."
-
+  description = "Typenum is a Rust library for type-level numbers evaluated at compile time. It currently supports bits, unsigned integers, and signed integers."
   homepage = "http://paholg.com/project/typenum"
   documentation = "http://paholg.com/typenum"
   repository = "https://github.com/paholg/typenum"
