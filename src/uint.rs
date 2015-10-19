@@ -73,17 +73,17 @@ The terminating type for `UInt`; it always comes after the most significant bit.
 pub struct UTerm;
 
 impl Unsigned for UTerm {
-    fn to_u8() -> u8 { 0 }
-    fn to_u16() -> u16 { 0 }
-    fn to_u32() -> u32 { 0 }
-    fn to_u64() -> u64 { 0 }
-    fn to_usize() -> usize { 0 }
+    #[inline] fn to_u8() -> u8 { 0 }
+    #[inline] fn to_u16() -> u16 { 0 }
+    #[inline] fn to_u32() -> u32 { 0 }
+    #[inline] fn to_u64() -> u64 { 0 }
+    #[inline] fn to_usize() -> usize { 0 }
 
-    fn to_i8() -> i8 { 0 }
-    fn to_i16() -> i16 { 0 }
-    fn to_i32() -> i32 { 0 }
-    fn to_i64() -> i64 { 0 }
-    fn to_isize() -> isize { 0 }
+    #[inline] fn to_i8() -> i8 { 0 }
+    #[inline] fn to_i16() -> i16 { 0 }
+    #[inline] fn to_i32() -> i32 { 0 }
+    #[inline] fn to_i64() -> i64 { 0 }
+    #[inline] fn to_isize() -> isize { 0 }
 }
 
 /**
@@ -109,17 +109,17 @@ pub struct UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
-    fn to_u8() -> u8 { B::to_u8() | U::to_u8() << 1 }
-    fn to_u16() -> u16 { B::to_u8() as u16 | U::to_u16() << 1 }
-    fn to_u32() -> u32 { B::to_u8() as u32 | U::to_u32() << 1 }
-    fn to_u64() -> u64 { B::to_u8() as u64 | U::to_u64() << 1 }
-    fn to_usize() -> usize { B::to_u8() as usize | U::to_usize() << 1 }
+    #[inline] fn to_u8() -> u8 { B::to_u8() | U::to_u8() << 1 }
+    #[inline] fn to_u16() -> u16 { B::to_u8() as u16 | U::to_u16() << 1 }
+    #[inline] fn to_u32() -> u32 { B::to_u8() as u32 | U::to_u32() << 1 }
+    #[inline] fn to_u64() -> u64 { B::to_u8() as u64 | U::to_u64() << 1 }
+    #[inline] fn to_usize() -> usize { B::to_u8() as usize | U::to_usize() << 1 }
 
-    fn to_i8() -> i8 { B::to_u8() as i8 | U::to_i8() << 1 }
-    fn to_i16() -> i16 { B::to_u8() as i16 | U::to_i16() << 1 }
-    fn to_i32() -> i32 { B::to_u8() as i32 | U::to_i32() << 1 }
-    fn to_i64() -> i64 { B::to_u8() as i64 | U::to_i64() << 1 }
-    fn to_isize() -> isize { B::to_u8() as isize | U::to_isize() << 1 }
+    #[inline] fn to_i8() -> i8 { B::to_u8() as i8 | U::to_i8() << 1 }
+    #[inline] fn to_i16() -> i16 { B::to_u8() as i16 | U::to_i16() << 1 }
+    #[inline] fn to_i32() -> i32 { B::to_u8() as i32 | U::to_i32() << 1 }
+    #[inline] fn to_i64() -> i64 { B::to_u8() as i64 | U::to_i64() << 1 }
+    #[inline] fn to_isize() -> isize { B::to_u8() as isize | U::to_isize() << 1 }
 }
 
 impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}

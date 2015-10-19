@@ -111,15 +111,15 @@ pub struct Equal;
 
 /// Returns `std::cmp::Ordering::Greater`
 impl Ord for Greater {
-    fn to_ordering() -> Ordering { Ordering::Greater }
+    #[inline] fn to_ordering() -> Ordering { Ordering::Greater }
 }
 /// Returns `std::cmp::Ordering::Less`
 impl Ord for Less {
-    fn to_ordering() -> Ordering { Ordering::Less }
+    #[inline] fn to_ordering() -> Ordering { Ordering::Less }
 }
 /// Returns `std::cmp::Ordering::Equal`
 impl Ord for Equal {
-    fn to_ordering() -> Ordering { Ordering::Equal }
+    #[inline] fn to_ordering() -> Ordering { Ordering::Equal }
 }
 
 /**

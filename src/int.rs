@@ -84,27 +84,27 @@ impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
 
 impl Integer for Z0 {
-    fn to_i8() -> i8 { 0 }
-    fn to_i16() -> i16 { 0 }
-    fn to_i32() -> i32 { 0 }
-    fn to_i64() -> i64 { 0 }
-    fn to_isize() -> isize { 0 }
+    #[inline] fn to_i8() -> i8 { 0 }
+    #[inline] fn to_i16() -> i16 { 0 }
+    #[inline] fn to_i32() -> i32 { 0 }
+    #[inline] fn to_i64() -> i64 { 0 }
+    #[inline] fn to_isize() -> isize { 0 }
 }
 
 impl<U: Unsigned + NonZero> Integer for PInt<U> {
-    fn to_i8() -> i8 { <U as Unsigned>::to_i8() }
-    fn to_i16() -> i16 { <U as Unsigned>::to_i16() }
-    fn to_i32() -> i32 { <U as Unsigned>::to_i32() }
-    fn to_i64() -> i64 { <U as Unsigned>::to_i64() }
-    fn to_isize() -> isize { <U as Unsigned>::to_isize() }
+    #[inline] fn to_i8() -> i8 { <U as Unsigned>::to_i8() }
+    #[inline] fn to_i16() -> i16 { <U as Unsigned>::to_i16() }
+    #[inline] fn to_i32() -> i32 { <U as Unsigned>::to_i32() }
+    #[inline] fn to_i64() -> i64 { <U as Unsigned>::to_i64() }
+    #[inline] fn to_isize() -> isize { <U as Unsigned>::to_isize() }
 }
 
 impl<U: Unsigned + NonZero> Integer for NInt<U> {
-    fn to_i8() -> i8 { -<U as Unsigned>::to_i8() }
-    fn to_i16() -> i16 { -<U as Unsigned>::to_i16() }
-    fn to_i32() -> i32 { -<U as Unsigned>::to_i32() }
-    fn to_i64() -> i64 { -<U as Unsigned>::to_i64() }
-    fn to_isize() -> isize { -<U as Unsigned>::to_isize() }
+    #[inline] fn to_i8() -> i8 { -<U as Unsigned>::to_i8() }
+    #[inline] fn to_i16() -> i16 { -<U as Unsigned>::to_i16() }
+    #[inline] fn to_i32() -> i32 { -<U as Unsigned>::to_i32() }
+    #[inline] fn to_i64() -> i64 { -<U as Unsigned>::to_i64() }
+    #[inline] fn to_isize() -> isize { -<U as Unsigned>::to_isize() }
 }
 
 impl Same<Z0> for Z0 {
