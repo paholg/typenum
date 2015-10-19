@@ -1,11 +1,11 @@
 /*!
-This crate provides type-level numbers, evaluated at compile time.
+This crate provides type-level numbers evaluated at compile time.
 
 The traits defined or used in this crate are used in a typical manner. They can
-be divided into two categories: **marker traits** or **type operators**.
+be divided into two categories: **marker traits** and **type operators**.
 
 Many of the marker traits have functions defined, but they all do essentially the same
-thing; convert a type into its runtime counterpart, and are really just there for
+thing: convert a type into its runtime counterpart, and are really just there for
 debugging. For example,
 
 ```rust

@@ -4,10 +4,22 @@
 Typenum
 =====
 
-Typenum is a library for compile-time numbers in Rust's type system. It will have its
-own [website](http://paholg.com/project/typenum/).
+Typenum is a Rust library for type-level numbers evaluated at compile time. It currently
+supports bits, unsigned integers, and signed integers.
 
-For more in-depth examples and documentation, click [here](http://paholg.com/typenum)
+For the full documentation, go [here](http://paholg.com/typenum).
 
-Note: This library is in its infancy and is unstable, and you should expect breaking
-changes for now.
+Here is a short example of its use:
+
+```rust
+use std::ops::Add;
+use typenum::consts::{N2, P3, P4};
+use typenum::int::Integer;
+use typenum::Pow;
+
+type X = <P3 as Add<P4>>::Output;
+assert_eq!(<X as Integer>::to_i32(), 7);
+
+type Y = <N2 as Pow<P3>>::Output;
+assert_eq!(<Y as Integer>::to_i32(), -8);
+```
