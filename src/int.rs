@@ -34,7 +34,7 @@ use std::marker::PhantomData;
 
 use std::ops::{Neg, Add, Sub, Mul, Div, Rem};
 
-use {NonZero, Same, Pow, Cmp, Greater, Equal, Less};
+use {NonZero, Pow, Cmp, Greater, Equal, Less};
 use uint::{Unsigned, UInt};
 use bit::{Bit, B0, B1};
 use __private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
@@ -107,30 +107,18 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
     #[inline] fn to_isize() -> isize { -<U as Unsigned>::to_isize() }
 }
 
-impl Same<Z0> for Z0 {
-    type Output = Z0;
-}
-
-impl<U: Unsigned + NonZero> Same<PInt<U>> for PInt<U> {
-    type Output = PInt<U>;
-}
-
-impl<U: Unsigned + NonZero> Same<NInt<U>> for NInt<U> {
-    type Output = NInt<U>;
-}
-
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.
 macro_rules! test_int_op {
     ($op:ident $Lhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Integer>::to_i64(), <Test as Integer>::to_i64());
         }
         );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Integer>::to_i64(), <Test as Integer>::to_i64());
         }
         );

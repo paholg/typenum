@@ -33,7 +33,7 @@ assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
 use std::marker::PhantomData;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use {NonZero, Same, Ord, Greater, Equal, Less, Cmp, Pow};
+use {NonZero, Ord, Greater, Equal, Less, Cmp, Pow};
 use bit::{Bit, B0, B1};
 use __private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
                   ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
@@ -124,22 +124,18 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
 
 impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
 
-impl<U: Unsigned> Same<U> for U {
-    type Output = U;
-}
-
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.
 macro_rules! test_uint_op {
     ($op:ident $Lhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
         }
         );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
         }
         );

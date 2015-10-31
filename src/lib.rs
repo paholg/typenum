@@ -50,6 +50,9 @@ pub trait NonZero {}
 A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 for writing macros that can take arbitrary binary or unary operators.
 
+`Same` is implemented generically for all types; it should never need to be implemented
+for anything else.
+
 Note that Rust lazily evaluates types, so this will only fail for two different types if
 the `Output` is used.
 
@@ -70,6 +73,10 @@ type Undefined = <U5 as Same<U4>>::Output;
 pub trait Same<Rhs = Self> {
     /// Should always be `Self`
     type Output;
+}
+
+impl<T> Same<T> for T {
+    type Output = T;
 }
 
 /**
