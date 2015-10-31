@@ -11,7 +11,7 @@ other number types in this crate.
 
 */
 use std::ops::{BitAnd, BitOr, BitXor, Not};
-use { NonZero, Same, Cmp, Greater, Less, Equal };
+use {NonZero, Cmp, Greater, Less, Equal};
 
 /// The type-level bit 0.
 pub struct B0;
@@ -45,23 +45,16 @@ impl NonZero for B1 {}
 macro_rules! test_bit_op {
     ($op:ident $Lhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
         }
         );
     ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
         {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as Same<$Answer>>::Output;
+            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
             assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
         }
         );
-}
-
-impl Same<B0> for B0 {
-    type Output = B0;
-}
-impl Same<B1> for B1 {
-    type Output = B1;
 }
 
 /// Not of 0 (!0 = 1)
