@@ -30,12 +30,12 @@ pub trait Bit {
 }
 
 impl Bit for B0 {
-    fn to_u8() -> u8 { 0 }
-    fn to_bool() -> bool { false }
+    #[inline] fn to_u8() -> u8 { 0 }
+    #[inline] fn to_bool() -> bool { false }
 }
 impl Bit for B1 {
-    fn to_u8() -> u8 { 1 }
-    fn to_bool() -> bool { true }
+    #[inline] fn to_u8() -> u8 { 1 }
+    #[inline] fn to_bool() -> bool { true }
 }
 
 impl NonZero for B1 {}
