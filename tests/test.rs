@@ -7,6 +7,7 @@ use std::process::Command;
 
 use builder::{gen_int, gen_uint};
 
+#[path="../src/__private/build.rs"]
 mod builder;
 
 fn sign(i: i64) -> char {
