@@ -34,6 +34,11 @@ assert_eq!(<X as Integer>::to_i32(), 7);
 
 Documented in each module is the full list of type operators implemented.
 */
+#![cfg_attr(feature="no_std", feature(core, no_std))]
+#![cfg_attr(feature="no_std", no_std)]
+#[cfg(feature="no_std")]
+extern crate core as std;
+
 use std::cmp::{Ordering};
 
 pub mod consts;

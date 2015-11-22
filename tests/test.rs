@@ -1,5 +1,3 @@
-extern crate typenum;
-
 use std::env;
 use std::fs::File;
 use std::io::{Write, BufWriter};
@@ -7,7 +5,10 @@ use std::path::Path;
 use std::fmt;
 use std::process::Command;
 
-use typenum::__private::build::{gen_int, gen_uint};
+use builder::{gen_int, gen_uint};
+
+#[path="../src/__private/build.rs"]
+mod builder;
 
 fn sign(i: i64) -> char {
     if i > 0 { 'P' } else if i < 0 { 'N' } else { '_' }

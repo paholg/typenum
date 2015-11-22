@@ -19,6 +19,7 @@ compelling case, it may be moved out of __private.
 
 #![doc(hidden)]
 
+#[cfg(not(feature="no_std"))]
 pub mod build;
 
 use std::marker::PhantomData;
