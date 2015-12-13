@@ -70,7 +70,7 @@ pub trait Unsigned {
 The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
  by itself represents zero, which is aliased to `U0`.
 */
-pub struct UTerm;
+pub enum UTerm {}
 
 impl Unsigned for UTerm {
     #[inline] fn to_u8() -> u8 { 0 }

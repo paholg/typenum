@@ -61,7 +61,7 @@ pub trait PrivateSizeOf {
 }
 
 /// Terminating character for `InvertedUInt`s
-pub struct InvertedUTerm;
+pub enum InvertedUTerm {}
 
 /// Inverted UInt (has most significant digit on the outside)
 pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
