@@ -57,7 +57,7 @@ pub struct NInt<U: Unsigned + NonZero> {
 /**
 The type-level signed integer 0.
 */
-pub struct Z0;
+pub enum Z0 {}
 
 /**
 The **marker trait** for compile time signed integers.

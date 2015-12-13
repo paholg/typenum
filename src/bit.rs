@@ -14,10 +14,10 @@ use std::ops::{BitAnd, BitOr, BitXor, Not};
 use {NonZero, Cmp, Greater, Less, Equal};
 
 /// The type-level bit 0.
-pub struct B0;
+pub enum B0 {}
 
 /// The type-level bit 1.
-pub struct B1;
+pub enum B1 {}
 
 /**
 The **marker trait** for compile time bits.

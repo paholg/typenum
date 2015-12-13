@@ -113,13 +113,13 @@ pub trait Ord {
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Greater`.
-pub struct Greater;
+pub enum Greater {}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Less`.
-pub struct Less;
+pub enum Less {}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Equal`.
-pub struct Equal;
+pub enum Equal {}
 
 /// Returns `std::cmp::Ordering::Greater`
 impl Ord for Greater {
