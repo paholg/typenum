@@ -203,15 +203,25 @@ pub type Add1<A> = <A as Add<bit::B1>>::Output;
 /// Alias to make it easy to subtract 1: `Sub1<A> = <A as Sub<B1>>::Output`
 pub type Sub1<A> = <A as Sub<bit::B1>>::Output;
 
-/// Alias to make it easy to multiply by 2: `Mul2<A> = <A as Mul<U2>>::Output`
-pub type Mul2<A> = <A as Mul<consts::U2>>::Output;
-/// Alias to make it easy to multiply by 10: `Mul10<A> = <A as Mul<U10>>::Output`
-pub type Mul10<A> = <A as Mul<consts::U10>>::Output;
+/// Alias to make it easy to multiply by `U2`: `MulU2<A> = <A as Mul<U2>>::Output`
+pub type MulU2<A> = <A as Mul<consts::U2>>::Output;
+/// Alias to make it easy to multiply by `U10`: `MulU10<A> = <A as Mul<U10>>::Output`
+pub type MulU10<A> = <A as Mul<consts::U10>>::Output;
 
-/// Alias to make it easy to divide by 2: `Div2<A> = <A as Div<U2>>::Output`
-pub type Div2<A> = <A as Div<consts::U2>>::Output;
-/// Alias to make it easy to divide by 10: `Div10<A> = <A as Div<U10>>::Output`
-pub type Div10<A> = <A as Div<consts::U10>>::Output;
+/// Alias to make it easy to multiply by `P2`: `MulP2<A> = <A as Mul<P2>>::Output`
+pub type MulP2<A> = <A as Mul<consts::P2>>::Output;
+/// Alias to make it easy to multiply by `P10`: `MulP10<A> = <A as Mul<P10>>::Output`
+pub type MulP10<A> = <A as Mul<consts::P10>>::Output;
+
+/// Alias to make it easy to divide by `U2`: `DivU2<A> = <A as Div<U2>>::Output`
+pub type DivU2<A> = <A as Div<consts::U2>>::Output;
+/// Alias to make it easy to divide by `U10`: `DivU10<A> = <A as Div<U10>>::Output`
+pub type DivU10<A> = <A as Div<consts::U10>>::Output;
+
+/// Alias to make it easy to divide by `P2`: `DivP2<A> = <A as Div<P2>>::Output`
+pub type DivP2<A> = <A as Div<consts::P2>>::Output;
+/// Alias to make it easy to divide by `P10`: `DivP10<A> = <A as Div<P10>>::Output`
+pub type DivP10<A> = <A as Div<consts::P10>>::Output;
 
 /// Alias to make it easy to square. `Square<A> = <A as Mul<A>>::Output`
 pub type Square<A> = <A as Mul>::Output;
