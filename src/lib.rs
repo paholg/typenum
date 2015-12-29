@@ -14,7 +14,7 @@ debugging. For example,
 assert_eq!(N4::to_i32(), -4);
 ```
 
-**Type operators** are traits that behave as functions at the type level. These are the
+*Type operators** are traits that behave as functions at the type level. These are the
 meat of this library. Where possible, traits defined in the stdlib have been used, but
 their attached functions have not been implemented.
 
@@ -39,7 +39,7 @@ Documented in each module is the full list of type operators implemented.
 #[cfg(feature="no_std")]
 extern crate core as std;
 
-use std::cmp::{Ordering};
+use std::cmp::Ordering;
 
 pub mod consts;
 pub mod bit;
@@ -123,15 +123,24 @@ pub enum Equal {}
 
 /// Returns `std::cmp::Ordering::Greater`
 impl Ord for Greater {
-    #[inline] fn to_ordering() -> Ordering { Ordering::Greater }
+    #[inline]
+    fn to_ordering() -> Ordering {
+        Ordering::Greater
+    }
 }
 /// Returns `std::cmp::Ordering::Less`
 impl Ord for Less {
-    #[inline] fn to_ordering() -> Ordering { Ordering::Less }
+    #[inline]
+    fn to_ordering() -> Ordering {
+        Ordering::Less
+    }
 }
 /// Returns `std::cmp::Ordering::Equal`
 impl Ord for Equal {
-    #[inline] fn to_ordering() -> Ordering { Ordering::Equal }
+    #[inline]
+    fn to_ordering() -> Ordering {
+        Ordering::Equal
+    }
 }
 
 /**
@@ -152,3 +161,62 @@ pub trait Cmp<Rhs = Self> {
     /// The result of the comparison. It should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;
 }
+
+
+
+// Aliases!!!
+use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
+
+/// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
+pub type And<A, B> = <A as BitAnd<B>>::Output;
+/// Alias for the associated type of `BitOr`: `Or<A, B> = <A as BitOr<B>>::Output`
+pub type Or<A, B> = <A as BitOr<B>>::Output;
+/// Alias for the associated type of `BitXor`: `Xor<A, B> = <A as BitXor<B>>::Output`
+pub type Xor<A, B> = <A as BitXor<B>>::Output;
+
+/// Alias for the associated type of `Shl`: `Shleft<A, B> = <A as Shl<B>>::Output`
+pub type Shleft<A, B> = <A as Shl<B>>::Output;
+/// Alias for the associated type of `Shr`: `Shright<A, B> = <A as Shr<B>>::Output`
+pub type Shright<A, B> = <A as Shr<B>>::Output;
+
+
+/// Alias for the associated type of `Add`: `Sum<A, B> = <A as Add<B>>::Output`
+pub type Sum<A, B> = <A as Add<B>>::Output;
+/// Alias for the associated type of `Sub`: `Diff<A, B> = <A as Sub<B>>::Output`
+pub type Diff<A, B> = <A as Sub<B>>::Output;
+/// Alias for the associated type of `Mul`: `Prod<A, B> = <A as Mul<B>>::Output`
+pub type Prod<A, B> = <A as Mul<B>>::Output;
+/// Alias for the associated type of `Div`: `Quot<A, B> = <A as Div<B>>::Output`
+pub type Quot<A, B> = <A as Div<B>>::Output;
+/// Alias for the associated type of `Rem`: `Mod<A, B> = <A as Rem<B>>::Output`
+pub type Mod<A, B> = <A as Rem<B>>::Output;
+
+/// Alias for the associated type of `Neg`: `Negate<A> = <A as Neg>::Output`
+pub type Negate<A> = <A as Neg>::Output;
+
+/// Alias for the associated type of `Pow`: `Exp<A, B> = <A as Pow<B>>::Output`
+pub type Exp<A, B> = <A as Pow<B>>::Output;
+
+
+/// Alias to make it easy to add 1: `Add1<A> = <A as Add<B1>>::Output`
+pub type Add1<A> = <A as Add<bit::B1>>::Output;
+/// Alias to make it easy to subtract 1: `Sub1<A> = <A as Sub<B1>>::Output`
+pub type Sub1<A> = <A as Sub<bit::B1>>::Output;
+
+/// Alias to make it easy to multiply by 2: `Mul2<A> = <A as Mul<U2>>::Output`
+pub type Mul2<A> = <A as Mul<consts::U2>>::Output;
+/// Alias to make it easy to multiply by 10: `Mul10<A> = <A as Mul<U10>>::Output`
+pub type Mul10<A> = <A as Mul<consts::U10>>::Output;
+
+/// Alias to make it easy to divide by 2: `Div2<A> = <A as Div<U2>>::Output`
+pub type Div2<A> = <A as Div<consts::U2>>::Output;
+/// Alias to make it easy to divide by 10: `Div10<A> = <A as Div<U10>>::Output`
+pub type Div10<A> = <A as Div<consts::U10>>::Output;
+
+/// Alias to make it easy to square. `Square<A> = <A as Mul<A>>::Output`
+pub type Square<A> = <A as Mul>::Output;
+/// Alias to make it easy to square. `Cube<A> = <Square<A> as Mul<A>>::Output`
+pub type Cube<A> = <Square<A> as Mul<A>>::Output;
+
+/// Alias for the associated type of `Cmp`: `Compare<A, B> = <A as Cmp<B>>::Output`
+pub type Compare<A, B> = <A as Cmp<B>>::Output;
