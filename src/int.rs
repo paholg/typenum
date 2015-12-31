@@ -3,10 +3,10 @@
 Type-level signed integers.
 
 
-**Type operators** implemented:
+*Type operators** implemented:
 
-* From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
-* From typenum: `Same`, `Cmp`, and `Pow`.
+From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+From typenum: `Same`, `Cmp`, and `Pow`.
 
 Rather than directly using the structs defined in this module, it is recommended that
 you import and use the relevant aliases from the [consts](../consts/index.html) module.
@@ -44,14 +44,14 @@ use consts::{U0, U1, P1, N1};
 Type-level signed integers with positive sign.
 */
 pub struct PInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>
+    _marker: PhantomData<U>,
 }
 
 /**
 Type-level signed integers with negative sign.
 */
 pub struct NInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>
+    _marker: PhantomData<U>,
 }
 
 /**
@@ -84,27 +84,72 @@ impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
 
 impl Integer for Z0 {
-    #[inline] fn to_i8() -> i8 { 0 }
-    #[inline] fn to_i16() -> i16 { 0 }
-    #[inline] fn to_i32() -> i32 { 0 }
-    #[inline] fn to_i64() -> i64 { 0 }
-    #[inline] fn to_isize() -> isize { 0 }
+    #[inline]
+    fn to_i8() -> i8 {
+        0
+    }
+    #[inline]
+    fn to_i16() -> i16 {
+        0
+    }
+    #[inline]
+    fn to_i32() -> i32 {
+        0
+    }
+    #[inline]
+    fn to_i64() -> i64 {
+        0
+    }
+    #[inline]
+    fn to_isize() -> isize {
+        0
+    }
 }
 
 impl<U: Unsigned + NonZero> Integer for PInt<U> {
-    #[inline] fn to_i8() -> i8 { <U as Unsigned>::to_i8() }
-    #[inline] fn to_i16() -> i16 { <U as Unsigned>::to_i16() }
-    #[inline] fn to_i32() -> i32 { <U as Unsigned>::to_i32() }
-    #[inline] fn to_i64() -> i64 { <U as Unsigned>::to_i64() }
-    #[inline] fn to_isize() -> isize { <U as Unsigned>::to_isize() }
+    #[inline]
+    fn to_i8() -> i8 {
+        <U as Unsigned>::to_i8()
+    }
+    #[inline]
+    fn to_i16() -> i16 {
+        <U as Unsigned>::to_i16()
+    }
+    #[inline]
+    fn to_i32() -> i32 {
+        <U as Unsigned>::to_i32()
+    }
+    #[inline]
+    fn to_i64() -> i64 {
+        <U as Unsigned>::to_i64()
+    }
+    #[inline]
+    fn to_isize() -> isize {
+        <U as Unsigned>::to_isize()
+    }
 }
 
 impl<U: Unsigned + NonZero> Integer for NInt<U> {
-    #[inline] fn to_i8() -> i8 { -<U as Unsigned>::to_i8() }
-    #[inline] fn to_i16() -> i16 { -<U as Unsigned>::to_i16() }
-    #[inline] fn to_i32() -> i32 { -<U as Unsigned>::to_i32() }
-    #[inline] fn to_i64() -> i64 { -<U as Unsigned>::to_i64() }
-    #[inline] fn to_isize() -> isize { -<U as Unsigned>::to_isize() }
+    #[inline]
+    fn to_i8() -> i8 {
+        -<U as Unsigned>::to_i8()
+    }
+    #[inline]
+    fn to_i16() -> i16 {
+        -<U as Unsigned>::to_i16()
+    }
+    #[inline]
+    fn to_i32() -> i32 {
+        -<U as Unsigned>::to_i32()
+    }
+    #[inline]
+    fn to_i64() -> i64 {
+        -<U as Unsigned>::to_i64()
+    }
+    #[inline]
+    fn to_isize() -> isize {
+        -<U as Unsigned>::to_isize()
+    }
 }
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
@@ -130,19 +175,25 @@ macro_rules! test_int_op {
 /// `-Z0 = Z0`
 impl Neg for Z0 {
     type Output = Z0;
-    fn neg(self) -> Self::Output { unreachable!() }
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `-PInt = NInt`
 impl<U: Unsigned + NonZero> Neg for PInt<U> {
     type Output = NInt<U>;
-    fn neg(self) -> Self::Output { unreachable!() }
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `-NInt = PInt`
 impl<U: Unsigned + NonZero> Neg for NInt<U> {
     type Output = PInt<U>;
-    fn neg(self) -> Self::Output { unreachable!() }
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -151,19 +202,25 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 /// `Z0 + I = I`
 impl<I: Integer> Add<I> for Z0 {
     type Output = I;
-    fn add(self, _: I) -> Self::Output { unreachable!() }
+    fn add(self, _: I) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `PInt + Z0 = PInt`
 impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
     type Output = PInt<U>;
-    fn add(self, _: Z0) -> Self::Output { unreachable!() }
+    fn add(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `NInt + Z0 = NInt`
 impl<U: Unsigned + NonZero> Add<Z0> for NInt<U> {
     type Output = NInt<U>;
-    fn add(self, _: Z0) -> Self::Output { unreachable!() }
+    fn add(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P(Ul) + P(Ur) = P(Ul + Ur)`
@@ -172,7 +229,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for PInt<Ul>
           <Ul as Add<Ur>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
-    fn add(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn add(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `N(Ul) + N(Ur) = N(Ul + Ur)`
@@ -181,7 +240,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for NInt<Ul>
           <Ul as Add<Ur>>::Output: Unsigned + NonZero
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
-    fn add(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn add(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P(Ul) + N(Ur)`: We resolve this with our `PrivateAdd`
@@ -191,7 +252,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
     type Output = <Ul as PrivateIntegerAdd<
         <Ul as Cmp<Ur>>::Output, Ur
         >>::Output;
-    fn add(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn add(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P(Ul) + P(Ur)`: We resolve this with our `PrivateAdd`
@@ -202,7 +265,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
     type Output = <Ur as PrivateIntegerAdd<
         <Ur as Cmp<Ul>>::Output, Ul
         >>::Output;
-    fn add(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn add(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P + N = 0` where `P == N`
@@ -232,31 +297,41 @@ impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Less, N> for P
 /// `Z0 - Z0 = Z0`
 impl Sub<Z0> for Z0 {
     type Output = Z0;
-    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
+    fn sub(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `Z0 - P = N`
 impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
     type Output = NInt<U>;
-    fn sub(self, _: PInt<U>) -> Self::Output { unreachable!() }
+    fn sub(self, _: PInt<U>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `Z0 - N = P`
 impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
     type Output = PInt<U>;
-    fn sub(self, _: NInt<U>) -> Self::Output { unreachable!() }
+    fn sub(self, _: NInt<U>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `PInt - Z0 = PInt`
 impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
     type Output = PInt<U>;
-    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
+    fn sub(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `NInt - Z0 = NInt`
 impl<U: Unsigned + NonZero> Sub<Z0> for NInt<U> {
     type Output = NInt<U>;
-    fn sub(self, _: Z0) -> Self::Output { unreachable!() }
+    fn sub(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P(Ul) - N(Ur) = P(Ul + Ur)`
@@ -265,7 +340,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for PInt<Ul>
           <Ul as Add<Ur>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
-    fn sub(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn sub(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `N(Ul) - P(Ur) = N(Ul + Ur)`
@@ -274,7 +351,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for NInt<Ul>
           <Ul as Add<Ur>>::Output: Unsigned + NonZero
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
-    fn sub(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn sub(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P(Ul) - P(Ur)`: We resolve this with our `PrivateAdd`
@@ -284,7 +363,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
     type Output = <Ul as PrivateIntegerAdd<
         <Ul as Cmp<Ur>>::Output, Ur
         >>::Output;
-    fn sub(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn sub(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `N(Ul) - N(Ur)`: We resolve this with our `PrivateAdd`
@@ -295,7 +376,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
     type Output = <Ur as PrivateIntegerAdd<
         <Ur as Cmp<Ul>>::Output, Ul
         >>::Output;
-    fn sub(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn sub(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -304,19 +387,25 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
 /// `Z0 * I = Z0`
 impl<I: Integer> Mul<I> for Z0 {
     type Output = Z0;
-    fn mul(self, _: I) -> Self::Output { unreachable!() }
+    fn mul(self, _: I) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `P * Z0 = Z0`
 impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
     type Output = Z0;
-    fn mul(self, _: Z0) -> Self::Output { unreachable!() }
+    fn mul(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// `N * Z0 = Z0`
 impl<U: Unsigned + NonZero> Mul<Z0> for NInt<U> {
     type Output = Z0;
-    fn mul(self, _: Z0) -> Self::Output { unreachable!() }
+    fn mul(self, _: Z0) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// P(Ul) * P(Ur) = P(Ul * Ur)
@@ -325,7 +414,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for PInt<Ul>
           <Ul as Mul<Ur>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
-    fn mul(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn mul(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// N(Ul) * N(Ur) = P(Ul * Ur)
@@ -334,7 +425,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for NInt<Ul>
           <Ul as Mul<Ur>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
-    fn mul(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn mul(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// P(Ul) * N(Ur) = N(Ul * Ur)
@@ -343,7 +436,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for PInt<Ul>
           <Ul as Mul<Ur>>::Output: Unsigned + NonZero
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
-    fn mul(self, _: NInt<Ur>) -> Self::Output { unreachable!() }
+    fn mul(self, _: NInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 /// N(Ul) * P(Ur) = N(Ul * Ur)
@@ -352,7 +447,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
           <Ul as Mul<Ur>>::Output: Unsigned + NonZero
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
-    fn mul(self, _: PInt<Ur>) -> Self::Output { unreachable!() }
+    fn mul(self, _: PInt<Ur>) -> Self::Output {
+        unreachable!()
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -361,7 +458,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
 /// `Z0 / I = Z0` where `I != 0`
 impl<I: Integer + NonZero> Div<I> for Z0 {
     type Output = Z0;
-    fn div(self, _: I) -> Self::Output { unreachable!() }
+    fn div(self, _: I) -> Self::Output {
+        unreachable!()
+    }
 }
 
 macro_rules! impl_int_div {
@@ -471,7 +570,9 @@ macro_rules! test_ord {
 /// `Z0 % I = Z0` where `I != 0`
 impl<I: Integer + NonZero> Rem<I> for Z0 {
     type Output = Z0;
-    fn rem(self, _: I) -> Self::Output { unreachable!() }
+    fn rem(self, _: I) -> Self::Output {
+        unreachable!()
+    }
 }
 
 macro_rules! impl_int_rem {

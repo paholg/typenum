@@ -7,25 +7,21 @@ use std::fmt;
 pub enum UIntCode {
     Term,
     Zero(Box<UIntCode>),
-    One(Box<UIntCode>)
+    One(Box<UIntCode>),
 }
 
 pub enum IntCode {
     Zero,
     Pos(Box<UIntCode>),
-    Neg(Box<UIntCode>)
+    Neg(Box<UIntCode>),
 }
 
 impl fmt::Display for UIntCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             UIntCode::Term => write!(f, "UTerm"),
-            UIntCode::Zero(ref inner) => {
-                write!(f, "UInt<{}, B0>", inner)
-            },
-            UIntCode::One(ref inner) => {
-                write!(f, "UInt<{}, B1>", inner)
-            }
+            UIntCode::Zero(ref inner) => write!(f, "UInt<{}, B0>", inner),
+            UIntCode::One(ref inner) => write!(f, "UInt<{}, B1>", inner),
         }
     }
 }
@@ -34,22 +30,24 @@ impl fmt::Display for IntCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             IntCode::Zero => write!(f, "Z0"),
-            IntCode::Pos(ref inner) => {
-                write!(f, "PInt<{}>", inner)
-            },
-            IntCode::Neg(ref inner) => {
-                write!(f, "NInt<{}>", inner)
-            }
+            IntCode::Pos(ref inner) => write!(f, "PInt<{}>", inner),
+            IntCode::Neg(ref inner) => write!(f, "NInt<{}>", inner),
         }
     }
 }
 
-pub fn gen_uint(u: u64)  -> UIntCode {
+pub fn gen_uint(u: u64) -> UIntCode {
     let mut result = UIntCode::Term;
     let mut x = 1u64 << 63;
-    while x > u { x = x >> 1 }
+    while x > u {
+        x = x >> 1
+    }
     while x > 0 {
-        result = if x & u > 0 { UIntCode::One(Box::new(result)) } else { UIntCode::Zero(Box::new(result)) };
+        result = if x & u > 0 {
+            UIntCode::One(Box::new(result))
+        } else {
+            UIntCode::Zero(Box::new(result))
+        };
         x = x >> 1;
     }
     result
@@ -58,11 +56,9 @@ pub fn gen_uint(u: u64)  -> UIntCode {
 pub fn gen_int(i: i64) -> IntCode {
     if i > 0 {
         IntCode::Pos(Box::new(gen_uint(i as u64)))
-    }
-    else if i < 0 {
+    } else if i < 0 {
         IntCode::Neg(Box::new(gen_uint(i.abs() as u64)))
-    }
-    else {
+    } else {
         IntCode::Zero
     }
 }
@@ -76,10 +72,9 @@ fn main() {
 
     let first2: u32 = (highest as f64).log(2.0) as u32 + 1;
     let first10: u32 = (highest as f64).log(10.0) as u32 + 1;
-    let uints = (0..(highest+1))
-        .chain((first2..64).map(|i| 2u64.pow(i))) // powers of 2
-        .chain((first10..20).map(|i| 10u64.pow(i))) // powers of 10
-        ;
+    let uints = (0..(highest + 1))
+                    .chain((first2..64).map(|i| 2u64.pow(i)))
+                    .chain((first10..20).map(|i| 10u64.pow(i)));
 
 
     let out_dir = env::var("OUT_DIR").unwrap();
@@ -94,7 +89,8 @@ use uint::{UInt, UTerm};
 use int::{PInt, NInt};
 
 pub use int::Z0; // re-export for convenience.
-").unwrap();
+")
+     .unwrap();
 
     for u in uints {
         write!(f, "pub type U{} = {};\n", u, gen_uint(u)).unwrap();
