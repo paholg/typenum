@@ -14,9 +14,17 @@ use std::ops::{BitAnd, BitOr, BitXor, Not};
 use {NonZero, Cmp, Greater, Less, Equal};
 
 /// The type-level bit 0.
+#[cfg(feature="no_std")]
+pub enum B0 {}
+#[cfg(not(feature="no_std"))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub enum B0 {}
 
 /// The type-level bit 1.
+#[cfg(feature="no_std")]
+pub enum B1 {}
+#[cfg(not(feature="no_std"))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub enum B1 {}
 
 /**

@@ -75,7 +75,11 @@ pub trait Unsigned {
 /**
 The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
  by itself represents zero, which is aliased to `U0`.
-*/
+ */
+#[cfg(feature="no_std")]
+pub enum UTerm {}
+#[cfg(not(feature="no_std"))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub enum UTerm {}
 
 impl Unsigned for UTerm {
@@ -139,7 +143,13 @@ use typenum::bit::{B1, B0};
 
 type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```
-*/
+ */
+#[cfg(feature="no_std")]
+pub struct UInt<U, B> {
+    _marker: PhantomData<(U, B)>,
+}
+#[cfg(not(feature="no_std"))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>,
 }
