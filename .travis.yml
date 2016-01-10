@@ -16,6 +16,7 @@ script:
   - |
     travis-cargo build &&
     travis-cargo test &&
+    travis-cargo --only beta test -- --features "no_std" &&
     travis-cargo --only nightly test -- --features "no_std" &&
     travis-cargo --only stable doc
 
