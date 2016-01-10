@@ -22,9 +22,6 @@
 
 #![doc(hidden)]
 
-#[cfg(not(feature="no_std"))]
-pub mod build;
-
 use std::marker::PhantomData;
 
 // use ::{Sub};
