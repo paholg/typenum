@@ -112,24 +112,15 @@ pub trait Ord {
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Greater`.
-#[cfg(feature="no_std")]
-pub enum Greater {}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum Greater {}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Less`.
-#[cfg(feature="no_std")]
-pub enum Less {}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum Less {}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `std::cmp::Ordering::Equal`.
-#[cfg(feature="no_std")]
-pub enum Equal {}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum Equal {}
 
 /// Returns `std::cmp::Ordering::Greater`

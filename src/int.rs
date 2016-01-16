@@ -43,12 +43,7 @@ use consts::{U0, U1, P1, N1};
 /**
 Type-level signed integers with positive sign.
  */
-#[cfg(feature="no_std")]
-pub struct PInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
-}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub struct PInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
@@ -56,12 +51,7 @@ pub struct PInt<U: Unsigned + NonZero> {
 /**
 Type-level signed integers with negative sign.
 */
-#[cfg(feature="no_std")]
-pub struct NInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
-}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
@@ -69,10 +59,7 @@ pub struct NInt<U: Unsigned + NonZero> {
 /**
 The type-level signed integer 0.
 */
-#[cfg(feature="no_std")]
-pub enum Z0 {}
-#[cfg(not(feature="no_std"))]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum Z0 {}
 
 /**
