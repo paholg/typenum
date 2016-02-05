@@ -1,5 +1,5 @@
 /*!
-This crate provides type-level numbers evaluated at compile time.
+This crate provides type-level numbers evaluated at compile time. It depends only on libcore.
 
 The traits defined or used in this crate are used in a typical manner. They can
 be divided into two categories: **marker traits** and **type operators**.
@@ -15,7 +15,7 @@ assert_eq!(N4::to_i32(), -4);
 ```
 
 *Type operators** are traits that behave as functions at the type level. These are the
-meat of this library. Where possible, traits defined in the stdlib have been used, but
+meat of this library. Where possible, traits defined in libcore have been used, but
 their attached functions have not been implemented.
 
 For example, the `Add` trait is implemented for both unsigned and signed integers, but
@@ -33,12 +33,40 @@ assert_eq!(<X as Integer>::to_i32(), 7);
 ```
 
 Documented in each module is the full list of type operators implemented.
-*/
-#![cfg_attr(feature="no_std", no_std)]
-#[cfg(feature="no_std")]
-extern crate core as std;
+ */
+#![no_std]
 
-use std::cmp::Ordering;
+use core::cmp::Ordering;
+
+macro_rules! impl_derivable {
+    ($Type: ty) => (
+        impl ::core::cmp::PartialEq for $Type {
+            fn eq(&self, _: &Self) -> bool { match *self {} }
+        }
+        impl ::core::cmp::Eq for $Type { }
+        impl ::core::cmp::PartialOrd for $Type {
+            fn partial_cmp(&self, _: &Self) -> Option<::core::cmp::Ordering> { match *self {} }
+        }
+        impl ::core::cmp::Ord for $Type {
+            fn cmp(&self, _: &Self) -> ::core::cmp::Ordering { match *self {} }
+        }
+        impl ::core::clone::Clone for $Type {
+            fn clone(&self) -> Self { match *self {} }
+        }
+        impl ::core::marker::Copy for $Type {}
+        impl ::core::hash::Hash for $Type {
+            fn hash<H>(&self, _: &mut H) where H: ::core::hash::Hasher { match *self {} }
+        }
+        impl ::core::default::Default for $Type {
+            fn default() -> Self { unreachable!() }
+        }
+        impl ::core::fmt::Debug for $Type {
+            fn fmt(&self, _: &mut ::core::fmt::Formatter) -> ::core::result::Result<(), ::core::fmt::Error> {
+                match *self {}
+            }
+        }
+        );
+}
 
 pub mod consts;
 pub mod bit;
@@ -111,33 +139,33 @@ pub trait Ord {
 }
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
-/// `std::cmp::Ordering::Greater`.
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+/// `core::cmp::Ordering::Greater`.
 pub enum Greater {}
+impl_derivable!{Greater}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
-/// `std::cmp::Ordering::Less`.
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+/// `core::cmp::Ordering::Less`.
 pub enum Less {}
+impl_derivable!{Less}
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
-/// `std::cmp::Ordering::Equal`.
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+/// `core::cmp::Ordering::Equal`.
 pub enum Equal {}
+impl_derivable!{Equal}
 
-/// Returns `std::cmp::Ordering::Greater`
+/// Returns `core::cmp::Ordering::Greater`
 impl Ord for Greater {
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Greater
     }
 }
-/// Returns `std::cmp::Ordering::Less`
+/// Returns `core::cmp::Ordering::Less`
 impl Ord for Less {
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Less
     }
 }
-/// Returns `std::cmp::Ordering::Equal`
+/// Returns `core::cmp::Ordering::Equal`
 impl Ord for Equal {
     #[inline]
     fn to_ordering() -> Ordering {
@@ -147,16 +175,17 @@ impl Ord for Equal {
 
 /**
 A **type operator** for comparing `Self` and `Rhs`. It provides a similar functionality to
-the function [`std::cmp::Ord::cmp`](https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#tymethod.cmp) but for types.
+the function [`core::cmp::Ord::cmp`](https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#tymethod.cmp) but for types.
 
 # Example
 ```rust
 use typenum::{Cmp, Ord, Greater, Less, Equal};
 use typenum::consts::{N3, P2, P5};
+use std::cmp::Ordering;
 
-assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Greater::to_ordering());
-assert_eq!(<P2 as Cmp<P2>>::Output::to_ordering(), Equal::to_ordering());
-assert_eq!(<P2 as Cmp<P5>>::Output::to_ordering(), Less::to_ordering());
+assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Ordering::Greater);
+assert_eq!(<P2 as Cmp<P2>>::Output::to_ordering(), Ordering::Equal);
+assert_eq!(<P2 as Cmp<P5>>::Output::to_ordering(), Ordering::Less);
 ```
 */
 pub trait Cmp<Rhs = Self> {
@@ -167,7 +196,7 @@ pub trait Cmp<Rhs = Self> {
 
 
 // Aliases!!!
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
+use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;

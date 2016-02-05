@@ -16,8 +16,8 @@ script:
   - |
     travis-cargo build &&
     travis-cargo test &&
-    travis-cargo --only beta test -- --features "no_std" &&
-    travis-cargo --only nightly test -- --features "no_std" &&
+    # Note: The "no_std" flag is deprecated and this test remains to make sure we don't break compatibility.
+    travis-cargo --only stable test -- --features "no_std" &&
     travis-cargo --only stable doc
 
 after_success:

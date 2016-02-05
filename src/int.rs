@@ -5,7 +5,7 @@ Type-level signed integers.
 
 *Type operators** implemented:
 
-From std::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+From core::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 From typenum: `Same`, `Cmp`, and `Pow`.
 
 Rather than directly using the structs defined in this module, it is recommended that
@@ -30,9 +30,9 @@ assert_eq!(<N3 as Rem<P2>>::Output::to_i32(), -1);
 ```
 */
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
-use std::ops::{Neg, Add, Sub, Mul, Div, Rem};
+use core::ops::{Neg, Add, Sub, Mul, Div, Rem};
 
 use {NonZero, Pow, Cmp, Greater, Equal, Less};
 use uint::{Unsigned, UInt};
@@ -43,7 +43,7 @@ use consts::{U0, U1, P1, N1};
 /**
 Type-level signed integers with positive sign.
  */
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct PInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
@@ -51,7 +51,7 @@ pub struct PInt<U: Unsigned + NonZero> {
 /**
 Type-level signed integers with negative sign.
 */
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
@@ -59,8 +59,8 @@ pub struct NInt<U: Unsigned + NonZero> {
 /**
 The type-level signed integer 0.
 */
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum Z0 {}
+impl_derivable!{Z0}
 
 /**
 The **marker trait** for compile time signed integers.
@@ -550,19 +550,19 @@ macro_rules! test_ord {
     ($Lhs:ident > $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
         }
         );
     ($Lhs:ident == $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
         }
         );
     ($Lhs:ident < $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Less, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Less, <Test as Ord>::to_ordering());
         }
         );
 }

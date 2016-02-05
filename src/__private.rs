@@ -22,7 +22,7 @@
 
 #![doc(hidden)]
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 // use ::{Sub};
 use bit::{Bit, B1, B0};
