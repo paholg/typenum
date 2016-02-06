@@ -24,7 +24,7 @@ after_success:
   - test $TRAVIS_PULL_REQUEST == "false" &&
     test $TRAVIS_BRANCH == "master" &&
     cargo publish --token ${CRATESIO_TOKEN} &&
-    travis-cargo --only stable doc-upload &&
+    travis-cargo --only stable doc-upload
 
 env:
   global:
