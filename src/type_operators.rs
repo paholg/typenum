@@ -1,3 +1,9 @@
+/*!
+
+This module provides useful **type operators** that are not defined in `core`.
+
+*/
+
 /**
 A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 for writing macros that can take arbitrary binary or unary operators.
@@ -10,9 +16,7 @@ the `Output` is used.
 
 # Example
 ```rust
-use typenum::Same;
-use typenum::consts::{U4, U5};
-use typenum::uint::Unsigned;
+use typenum::{Same, U4, U5, Unsigned};
 
 assert_eq!(<U5 as Same<U5>>::Output::to_u32(), 5);
 
@@ -36,9 +40,7 @@ A **type operator** that provides exponentiation by repeated squaring.
 
 # Example
 ```rust
-use typenum::Pow;
-use typenum::int::Integer;
-use typenum::consts::{N3, P3};
+use typenum::{Pow, N3, P3, Integer};
 
 assert_eq!(<N3 as Pow<P3>>::Output::to_i32(), -27);
 ```
@@ -54,8 +56,7 @@ the function [`core::cmp::Ord::cmp`](https://doc.rust-lang.org/nightly/core/cmp/
 
 # Example
 ```rust
-use typenum::{Cmp, Ord, Greater, Less, Equal};
-use typenum::consts::{N3, P2, P5};
+use typenum::{Cmp, Ord, Greater, Less, Equal, N3, P2, P5};
 use std::cmp::Ordering;
 
 assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Ordering::Greater);

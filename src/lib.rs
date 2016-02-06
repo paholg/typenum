@@ -9,12 +9,12 @@ thing: convert a type into its runtime counterpart, and are really just there fo
 debugging. For example,
 
 ```rust
-# use typenum::consts::N4;
-# use typenum::int::Integer;
+use typenum::{N4, Integer};
+
 assert_eq!(N4::to_i32(), -4);
 ```
 
-*Type operators** are traits that behave as functions at the type level. These are the
+**Type operators** are traits that behave as functions at the type level. These are the
 meat of this library. Where possible, traits defined in libcore have been used, but
 their attached functions have not been implemented.
 
@@ -25,10 +25,19 @@ which is where the addition happens.
 
 ```rust
 use std::ops::Add;
-use typenum::consts::{P3, P4};
-use typenum::int::Integer;
+use typenum::{Integer, P3, P4};
 
 type X = <P3 as Add<P4>>::Output;
+assert_eq!(<X as Integer>::to_i32(), 7);
+```
+
+In addition, helper aliases are defined for type operators. For example, the above
+snippet could be replaced with
+
+```rust
+use typenum::{Sum, Integer, P3, P4};
+
+type X = Sum<P3, P4>;
 assert_eq!(<X as Integer>::to_i32(), 7);
 ```
 

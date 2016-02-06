@@ -1,5 +1,26 @@
-/// A **marker trait** to designate that a type is not zero. All number types in this
-/// crate implement `NonZero` except `B0`, `U0`, and `Z0`.
+/*!
+
+These are all of the **marker traits** used in typenum. Note that the definition here
+for marker traits is slightly different than the conventional one --- we include traits
+with functions that convert a type to the corresponding value.
+
+For example, the `Integer` trait includes the function (among others) `fn to_i32() ->
+i32` so that one can do this:
+
+```
+use typenum::{N42, Integer};
+
+assert_eq!(-42, N42::to_i32());
+```
+
+ */
+
+/**
+
+A **marker trait** to designate that a type is not zero. All number types in this crate
+implement `NonZero` except `B0`, `U0`, and `Z0`.
+
+*/
 pub trait NonZero {}
 
 /**
@@ -33,8 +54,7 @@ This trait should not be implemented for anything outside this crate.
 
 # Example
 ```rust
-use typenum::consts::U3;
-use typenum::uint::Unsigned;
+use typenum::{U3, Unsigned};
 
 assert_eq!(U3::to_u32(), 3);
 ```
@@ -70,8 +90,7 @@ This trait should not be implemented for anything outside this crate.
 
 # Example
 ```rust
-use typenum::consts::P3;
-use typenum::int::Integer;
+use typenum::{P3, Integer};
 
 assert_eq!(P3::to_i32(), 3);
 ```

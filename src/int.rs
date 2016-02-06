@@ -19,8 +19,7 @@ choices, causing the results of such operators to be difficult to reason about.
 # Example
 ```rust
 use std::ops::{Add, Sub, Mul, Div, Rem};
-use typenum::consts::{N3, P2};
-use typenum::int::Integer;
+use typenum::{Integer, N3, P2};
 
 assert_eq!(<N3 as Add<P2>>::Output::to_i32(), -1);
 assert_eq!(<N3 as Sub<P2>>::Output::to_i32(), -5);

@@ -14,8 +14,7 @@ you import and use the relevant aliases from the [consts](../consts/index.html) 
 # Example
 ```rust
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use typenum::consts::{U1, U2, U3, U4};
-use typenum::uint::Unsigned;
+use typenum::{Unsigned, U1, U2, U3, U4};
 
 assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
 assert_eq!(<U3 as BitOr<U4>>::Output::to_u32(), 7);
@@ -110,8 +109,7 @@ forbidden.
 
 # Example
 ```rust
-use typenum::uint::{UInt, UTerm, Unsigned};
-use typenum::bit::{B1, B0};
+use typenum::{B0, B1, UInt, UTerm, Unsigned};
 
 type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```

@@ -11,8 +11,8 @@ For unsigned integers, the format is `U` followed by the number. We define alias
 These alias definitions look like this:
 
 ```rust
-# use typenum::uint::{UInt, UTerm};
-# use typenum::bit::{B0, B1};
+use typenum::{B0, B1, UInt, UTerm};
+
 type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```
 
@@ -27,11 +27,9 @@ signed integers it is `N` followed by the number. For the signed integer zero, w
 These alias definitions look like this:
 
 ```rust
-# use typenum::uint::{UInt, UTerm};
-# use typenum::int::{PInt, NInt};
-# use typenum::bit::{B0, B1};
+use typenum::{B0, B1, UInt, UTerm, PInt, NInt};
+
 # #[allow(dead_code)]
-struct Z0;
 type P6 = PInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>>;
 type N6 = NInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>>;
 ```
@@ -39,11 +37,11 @@ type N6 = NInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>>;
 # Example
 ```rust
 # #[allow(unused_imports)]
-use typenum::consts::{U0, U1, U2, U3, U4, U5, U6};
+use typenum::{U0, U1, U2, U3, U4, U5, U6};
 # #[allow(unused_imports)]
-use typenum::consts::{N3, N2, N1, Z0, P1, P2, P3};
+use typenum::{N3, N2, N1, Z0, P1, P2, P3};
 # #[allow(unused_imports)]
-use typenum::consts::{U774, N17, N10000, P1024, P4096};
+use typenum::{U774, N17, N10000, P1024, P4096};
 ```
 */
 #![allow(missing_docs)]
