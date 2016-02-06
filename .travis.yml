@@ -14,17 +14,17 @@ before_script:
   - export TRAVIS_CARGO_NIGHTLY_FEATURE=""
 script:
   - |
-    travis-cargo build
-    && travis-cargo test
+    travis-cargo build &&
+    travis-cargo test &&
     # Note: The "no_std" flag is deprecated and this test remains to make sure we don't break compatibility.
-    && travis-cargo --only stable test -- --features "no_std"
-    && travis-cargo --only stable doc
+    travis-cargo --only stable test -- --features "no_std" &&
+    travis-cargo --only stable doc
 
 after_success:
-  - test $TRAVIS_PULL_REQUEST == "false"
-    && test $TRAVIS_BRANCH == "master"
-    && cargo publish --token ${CRATESIO_TOKEN}
-    && travis-cargo --only stable doc-upload
+  - test $TRAVIS_PULL_REQUEST == "false" &&
+    test $TRAVIS_BRANCH == "master" &&
+    cargo publish --token ${CRATESIO_TOKEN} &&
+    travis-cargo --only stable doc-upload &&
 
 env:
   global:
