@@ -14,15 +14,12 @@ For the full documentation, go [here](http://paholg.com/typenum).
 Here is a trivial example of its use:
 
 ```rust
-use std::ops::Add;
-use typenum::consts::{N2, P3, P4};
-use typenum::int::Integer;
-use typenum::Pow;
+use typenum::{Sum, Exp, Integer, N2, P3, P4};
 
-type X = <P3 as Add<P4>>::Output;
+type X = Sum<P3, P4>;
 assert_eq!(<X as Integer>::to_i32(), 7);
 
-type Y = <N2 as Pow<P3>>::Output;
+type Y = Exp<N2, P3>;
 assert_eq!(<Y as Integer>::to_i32(), -8);
 ```
 
