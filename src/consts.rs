@@ -13,7 +13,7 @@ These alias definitions look like this:
 ```rust
 # use typenum::uint::{UInt, UTerm};
 # use typenum::bit::{B0, B1};
-type U5 = UInt<UInt<UInt<UTerm, B1>, B0>, B1>;
+type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```
 
 For positive signed integers, the format is `P` followed by the number and for negative
@@ -32,8 +32,8 @@ These alias definitions look like this:
 # use typenum::bit::{B0, B1};
 # #[allow(dead_code)]
 struct Z0;
-type P5 = PInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>>;
-type N5 = NInt<UInt<UInt<UInt<UTerm, B1>, B0>, B1>>;
+type P6 = PInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>>;
+type N6 = NInt<UInt<UInt<UInt<UTerm, B1>, B1>, B0>>;
 ```
 
 # Example
@@ -46,5 +46,5 @@ use typenum::consts::{N3, N2, N1, Z0, P1, P2, P3};
 use typenum::consts::{U774, N17, N10000, P1024, P4096};
 ```
 */
-
+#![allow(missing_docs)]
 include!(concat!(env!("OUT_DIR"), "/consts.rs"));

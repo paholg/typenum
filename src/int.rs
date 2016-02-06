@@ -3,7 +3,7 @@
 Type-level signed integers.
 
 
-*Type operators** implemented:
+**Type operators** implemented:
 
 From core::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 From typenum: `Same`, `Cmp`, and `Pow`.
@@ -37,8 +37,10 @@ use core::ops::{Neg, Add, Sub, Mul, Div, Rem};
 use {NonZero, Pow, Cmp, Greater, Equal, Less};
 use uint::{Unsigned, UInt};
 use bit::{Bit, B0, B1};
-use __private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
+use private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
 use consts::{U0, U1, P1, N1};
+
+pub use marker_traits::Integer;
 
 /**
 Type-level signed integers with positive sign.
@@ -61,27 +63,6 @@ The type-level signed integer 0.
 */
 pub enum Z0 {}
 impl_derivable!{Z0}
-
-/**
-The **marker trait** for compile time signed integers.
-
-This trait should not be implemented for anything outside this crate.
-
-# Example
-```rust
-use typenum::consts::P3;
-use typenum::int::Integer;
-
-assert_eq!(P3::to_i32(), 3);
-```
-*/
-pub trait Integer {
-    fn to_i8() -> i8;
-    fn to_i16() -> i16;
-    fn to_i32() -> i32;
-    fn to_i64() -> i64;
-    fn to_isize() -> isize;
-}
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}

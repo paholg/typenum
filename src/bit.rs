@@ -4,14 +4,16 @@ Type-level bits. These are rather simple and are used as the building blocks of 
 other number types in this crate.
 
 
-*Type operators** implemented:
+**Type operators** implemented:
 
-From core::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
-From typenum: `Same` and `Cmp`.
+- From core::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
+- From typenum: `Same` and `Cmp`.
 */
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 use {NonZero, Cmp, Greater, Less, Equal};
+
+pub use marker_traits::Bit;
 
 /// The type-level bit 0.
 pub enum B0 {}
@@ -20,16 +22,6 @@ impl_derivable!{B0}
 /// The type-level bit 1.
 pub enum B1 {}
 impl_derivable!{B1}
-
-/**
-The **marker trait** for compile time bits.
-
-This trait should not be implemented for anything outside this crate.
-*/
-pub trait Bit {
-    fn to_u8() -> u8;
-    fn to_bool() -> bool;
-}
 
 impl Bit for B0 {
     #[inline]
