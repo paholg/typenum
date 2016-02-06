@@ -5,7 +5,7 @@ Type-level unsigned integers.
 
 *Type operators** implemented:
 
-From std::ops: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+From core::ops: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
 From typenum: `Same`, `Cmp`, and `Pow`.
 
 Rather than directly using the structs defined in this module, it is recommended that
@@ -30,9 +30,9 @@ assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
 ```
 */
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
+use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Ord, Greater, Equal, Less, Cmp, Pow};
 use bit::{Bit, B0, B1};
 
@@ -76,8 +76,8 @@ pub trait Unsigned {
 The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
  by itself represents zero, which is aliased to `U0`.
  */
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum UTerm {}
+impl_derivable!{UTerm}
 
 impl Unsigned for UTerm {
     #[inline]
@@ -141,7 +141,7 @@ use typenum::bit::{B1, B0};
 type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```
  */
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>,
 }
@@ -918,19 +918,19 @@ macro_rules! test_ord {
     ($Lhs:ident > $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
         }
         );
     ($Lhs:ident == $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
         }
         );
     ($Lhs:ident < $Rhs:ident) => (
         {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::std::cmp::Ordering::Less, <Test as Ord>::to_ordering());
+            assert_eq!(::core::cmp::Ordering::Less, <Test as Ord>::to_ordering());
         }
         );
 }

@@ -6,20 +6,20 @@ other number types in this crate.
 
 *Type operators** implemented:
 
-From std::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
+From core::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 From typenum: `Same` and `Cmp`.
 */
 
-use std::ops::{BitAnd, BitOr, BitXor, Not};
+use core::ops::{BitAnd, BitOr, BitXor, Not};
 use {NonZero, Cmp, Greater, Less, Equal};
 
 /// The type-level bit 0.
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum B0 {}
+impl_derivable!{B0}
 
 /// The type-level bit 1.
-#[cfg_attr(not(feature="no_std"), derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug))]
 pub enum B1 {}
+impl_derivable!{B1}
 
 /**
 The **marker trait** for compile time bits.
