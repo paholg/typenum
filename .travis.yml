@@ -21,10 +21,10 @@ script:
     travis-cargo --only stable doc
 
 after_success:
+  - travis-cargo --only stable doc-upload
   - test $TRAVIS_PULL_REQUEST == "false" &&
     test $TRAVIS_BRANCH == "master" &&
-    cargo publish --token ${CRATESIO_TOKEN} &&
-    travis-cargo doc-upload
+    cargo publish --token ${CRATESIO_TOKEN}
 
 env:
   global:
