@@ -3,6 +3,8 @@
 This project follows semantic versioning.
 
 ### Unpublished
+
+### 1.3.0 (2016-02-07)
     - [changed] Removed dependency on libstd. (Issue #53, PR #55)
     - [changed] Reorganized module structure. (PR #57)
 
