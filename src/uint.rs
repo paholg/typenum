@@ -14,8 +14,7 @@ you import and use the relevant aliases from the [consts](../consts/index.html) 
 # Example
 ```rust
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use typenum::consts::{U1, U2, U3, U4};
-use typenum::uint::Unsigned;
+use typenum::{Unsigned, U1, U2, U3, U4};
 
 assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
 assert_eq!(<U3 as BitOr<U4>>::Output::to_u32(), 7);
@@ -36,41 +35,16 @@ use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Ord, Greater, Equal, Less, Cmp, Pow};
 use bit::{Bit, B0, B1};
 
-use __private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
+use private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
                 ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 
-use __private::{TrimOut, SizeOfOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut,
+use private::{TrimOut, SizeOfOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut,
                 PrivateSizeOfOut, PrivatePowOut, BitDiffOut};
 
 use consts::{U0, U1};
 use {Or, Shleft, Shright, Sum, Prod, Add1, Sub1, Square};
 
-/**
-The **marker trait** for compile time unsigned integers.
-
-This trait should not be implemented for anything outside this crate.
-
-# Example
-```rust
-use typenum::consts::U3;
-use typenum::uint::Unsigned;
-
-assert_eq!(U3::to_u32(), 3);
-```
-*/
-pub trait Unsigned {
-    fn to_u8() -> u8;
-    fn to_u16() -> u16;
-    fn to_u32() -> u32;
-    fn to_u64() -> u64;
-    fn to_usize() -> usize;
-
-    fn to_i8() -> i8;
-    fn to_i16() -> i16;
-    fn to_i32() -> i32;
-    fn to_i64() -> i64;
-    fn to_isize() -> isize;
-}
+pub use marker_traits::Unsigned;
 
 /**
 The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
@@ -135,8 +109,7 @@ forbidden.
 
 # Example
 ```rust
-use typenum::uint::{UInt, UTerm, Unsigned};
-use typenum::bit::{B1, B0};
+use typenum::{B0, B1, UInt, UTerm, Unsigned};
 
 type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 ```
