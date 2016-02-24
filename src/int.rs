@@ -240,7 +240,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
     }
 }
 
-/// `P(Ul) + P(Ur)`: We resolve this with our `PrivateAdd`
+/// `N(Ul) + P(Ur)`: We resolve this with our `PrivateAdd`
 // We just do the same thing as above, swapping Lhs and Rhs
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
     where Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>
