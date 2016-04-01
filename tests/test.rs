@@ -184,6 +184,12 @@ fn test_all() {
     let cargo = Path::new(&test_dir).join("Cargo.toml");
     let main = Path::new(&test_dir).join("src/main.rs");
 
+    // This'll fail if the dir isn't already there. We don't really care, just need to
+    // make sure it isn't so we can run cargo new.
+    match std::fs::remove_dir_all(&test_dir) {
+        _ => ()
+    };
+
     let cmd = Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
 
     if !cmd.status.success() {
