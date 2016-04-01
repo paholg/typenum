@@ -791,100 +791,85 @@ impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
     type Output = Less;
 }
 
-impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Cmp<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Equal>
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateCmp<Ur, Equal>
 {
-    type Output = PrivateCmpOut<UInt<Ul, Bl>, UInt<Ur, Br>, Equal>;
+    type Output = PrivateCmpOut<Ul, Ur, Equal>;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateCmp<Ur, Equal>
+{
+    type Output = PrivateCmpOut<Ul, Ur, Equal>;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateCmp<Ur, Less>
+{
+    type Output = PrivateCmpOut<Ul, Ur, Less>;
+}
+
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateCmp<Ur, Greater>
+{
+    type Output = PrivateCmpOut<Ul, Ur, Greater>;
 }
 
 /// Comparing non-terimal bits, with both having bit B0. These are the same, so we propogate `SoFar`.
-impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B0>, S> for UInt<UInt<Ul, Bl>, B0>
+impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B0>
     where Ul: Unsigned,
-          Bl: Bit,
           Ur: Unsigned,
-          Br: Bit,
-          S: Ord,
-          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, S>
+          SoFar: Ord,
+          Ul: PrivateCmp<Ur, SoFar>
 {
-    type Output = PrivateCmpOut<UInt<Ul, Bl>, UInt<Ur, Br>, S>;
+    type Output = PrivateCmpOut<Ul, Ur, SoFar>;
 }
 
 /// Comparing non-terimal bits, with both having bit B1. These are the same, so we propogate `SoFar`.
-impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B1>, S> for UInt<UInt<Ul, Bl>, B1>
+impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B1>
     where Ul: Unsigned,
-          Bl: Bit,
           Ur: Unsigned,
-          Br: Bit,
-          S: Ord,
-          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, S>
+          SoFar: Ord,
+          Ul: PrivateCmp<Ur, SoFar>
 {
-    type Output = PrivateCmpOut<UInt<Ul, Bl>, UInt<Ur, Br>, S>;
+    type Output = PrivateCmpOut<Ul, Ur, SoFar>;
 }
 
 /// Comparing non-terimal bits, with Lhs having bit B0 and Rhs having bit B1. `SoFar`, Lhs is `Less`.
-impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B1>, S> for UInt<UInt<Ul, Bl>, B0>
+impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B0>
     where Ul: Unsigned,
-          Bl: Bit,
           Ur: Unsigned,
-          Br: Bit,
-          S: Ord,
-          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Less>
+          SoFar: Ord,
+          Ul: PrivateCmp<Ur, Less>
 {
-    type Output = PrivateCmpOut<UInt<Ul, Bl>, UInt<Ur, Br>, Less>;
+    type Output = PrivateCmpOut<Ul, Ur, Less>;
 }
 
 /// Comparing non-terimal bits, with Lhs having bit B1 and Rhs having bit B0. `SoFar`, Lhs is `Greater`.
-impl<Ul, Bl, Ur, Br, S> PrivateCmp<UInt<UInt<Ur, Br>, B0>, S> for UInt<UInt<Ul, Bl>, B1>
+impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B1>
     where Ul: Unsigned,
-          Bl: Bit,
           Ur: Unsigned,
-          Br: Bit,
-          S: Ord,
-          UInt<Ul, Bl>: PrivateCmp<UInt<Ur, Br>, Greater>
+          SoFar: Ord,
+          Ul: PrivateCmp<Ur, Greater>
 {
-    type Output = PrivateCmpOut<UInt<Ul, Bl>, UInt<Ur, Br>, Greater>;
+    type Output = PrivateCmpOut<Ul, Ur, Greater>;
 }
 
-/// Comparing when Rhs has finished but Lhs has not; Lhs is `Greater`.
-impl<Ul, Bl1, Bl2, Br, S> PrivateCmp<UInt<UTerm, Br>, S> for UInt<UInt<Ul, Bl2>, Bl1>
-    where Ul: Unsigned,
-          Bl1: Bit,
-          Bl2: Bit,
-          Br: Bit,
-          S: Ord
-{
-    type Output = Greater;
-}
 
-/// Comparing when Lhs has finished but Rhs has not; Lhs is `Less`.
-impl<Bl, Ur, Br1, Br2, S> PrivateCmp<UInt<UInt<Ur, Br2>, Br1>, S> for UInt<UTerm, Bl>
-    where Bl: Bit,
-          Ur: Unsigned,
-          Br1: Bit,
-          Br2: Bit,
-          S: Ord
-{
+/// Got to the end of just the Lhs. It's `Less`.
+impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UInt<U, B>, SoFar> for UTerm {
     type Output = Less;
 }
 
-/// Comparing when both are at terminal bits and both have `B0`. Go by `SoFar`.
-impl<S: Ord> PrivateCmp<UInt<UTerm, B0>, S> for UInt<UTerm, B0> {
-    type Output = S;
-}
-
-/// Comparing when both are at terminal bits and both have `B1`. Go by `SoFar`.
-impl<S: Ord> PrivateCmp<UInt<UTerm, B1>, S> for UInt<UTerm, B1> {
-    type Output = S;
-}
-
-/// Comparing when both are at terminal bits and Lhs has `B0` while Rhs has `B1`. Lhs is `Less`.
-impl<S: Ord> PrivateCmp<UInt<UTerm, B1>, S> for UInt<UTerm, B0> {
-    type Output = Less;
-}
-
-/// Comparing when both are at terminal bits and Lhs has `B1` while Rhs has `B0`. Lhs is `Greater`.
-impl<S: Ord> PrivateCmp<UInt<UTerm, B0>, S> for UInt<UTerm, B1> {
+/// Got to the end of just the Rhs. Lhs is `Greater`.
+impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UTerm, SoFar> for UInt<U, B> {
     type Output = Greater;
+}
+
+
+/// Got to the end of both! Return `SoFar`
+impl<SoFar: Ord> PrivateCmp<UTerm, SoFar> for UTerm {
+    type Output = SoFar;
 }
 
 macro_rules! test_ord {

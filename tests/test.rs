@@ -180,12 +180,24 @@ fn test_all() {
 
 
     let out_dir = env::var("OUT_DIR").unwrap();
-    let test_dir = Path::new(&out_dir).join("test/");
-    let cargo = Path::new(&out_dir).join("test/Cargo.toml");
-    let main = Path::new(&out_dir).join("test/src/main.rs");
+    let test_dir = Path::new(&out_dir).join("testing/");
+    let cargo = Path::new(&test_dir).join("Cargo.toml");
+    let main = Path::new(&test_dir).join("src/main.rs");
 
-    Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
+    // This'll fail if the dir isn't already there. We don't really care, just need to
+    // make sure it isn't so we can run cargo new.
+    match std::fs::remove_dir_all(&test_dir) {
+        _ => ()
+    };
 
+    let cmd = Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
+
+    if !cmd.status.success() {
+        panic!("Couldn't run cargo new. Stdout: \n{}\nStderr: {}\n",
+               std::str::from_utf8(&cmd.stdout).unwrap(),
+               std::str::from_utf8(&cmd.stderr).unwrap()
+               );
+    }
     // Write cargo file
     let mut cargof = File::create(&cargo).unwrap();
     write!(cargof, "
