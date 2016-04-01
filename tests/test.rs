@@ -179,15 +179,15 @@ fn test_all() {
     let ints = (-high..high + 1).flat_map(|a| (a..a+1).cycle().zip((-high..high + 1)));
 
 
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = env::var("OUT_DIR").expect("1");
     let test_dir = Path::new(&out_dir).join("test/");
     let cargo = Path::new(&out_dir).join("test/Cargo.toml");
     let main = Path::new(&out_dir).join("test/src/main.rs");
 
-    Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
+    Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().expect("2");
 
     // Write cargo file
-    let mut cargof = File::create(&cargo).unwrap();
+    let mut cargof = File::create(&cargo).expect("3");
     write!(cargof, "
 [package]
   name = \"test\"
@@ -195,10 +195,10 @@ fn test_all() {
 
 [dependencies.typenum]
   path = \"{}\"
-", env::var("CARGO_MANIFEST_DIR").unwrap()).unwrap();
+", env::var("CARGO_MANIFEST_DIR").expect("4")).expect("5");
 
     // Write main.rs
-    let mainf = File::create(&main).unwrap();
+    let mainf = File::create(&main).expect("6");
     let mut writer = BufWriter::new(&mainf);
     writer.write(b"
 #![allow(unused_imports)]
@@ -213,35 +213,35 @@ use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
 
 fn main() {
-").unwrap();
+").expect("7");
     // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp
     for (a, b) in uints {
-        write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
-        write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
-        write!(writer, "{}", uint_binary_test(a, "BitXor", b, a ^ b)).unwrap();
-        write!(writer, "{}", uint_binary_test(a, "Shl", b, a << b)).unwrap();
-        write!(writer, "{}", uint_binary_test(a, "Shr", b, a >> b)).unwrap();
-        write!(writer, "{}", uint_binary_test(a, "Add", b, a + b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).expect("8");
+        write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).expect("9");
+        write!(writer, "{}", uint_binary_test(a, "BitXor", b, a ^ b)).expect("10");
+        write!(writer, "{}", uint_binary_test(a, "Shl", b, a << b)).expect("11");
+        write!(writer, "{}", uint_binary_test(a, "Shr", b, a >> b)).expect("12");
+        write!(writer, "{}", uint_binary_test(a, "Add", b, a + b)).expect("13");
         if a >= b {
-            write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b)).unwrap();
+            write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b)).expect("14");
         }
-        write!(writer, "{}", uint_binary_test(a, "Mul", b, a * b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Mul", b, a * b)).expect("15");
         if b != 0 {
-            write!(writer, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
-            write!(writer, "{}", uint_binary_test(a, "Rem", b, a % b)).unwrap();
+            write!(writer, "{}", uint_binary_test(a, "Div", b, a / b)).expect("16");
+            write!(writer, "{}", uint_binary_test(a, "Rem", b, a % b)).expect("17");
         }
-        write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
-        write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).expect("18");
+        write!(writer, "{}", uint_cmp_test(a, b)).expect("19");
     }
     // int operators: Neg, Add, Sub, Mul, Div, Rem, Cmp
     for (a, b) in ints {
-        write!(writer, "{}", int_unary_test("Neg", a, -a)).unwrap();
-        write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
-        write!(writer, "{}", int_binary_test(a, "Sub", b, a - b)).unwrap();
-        write!(writer, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
+        write!(writer, "{}", int_unary_test("Neg", a, -a)).expect("20");
+        write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).expect("21");
+        write!(writer, "{}", int_binary_test(a, "Sub", b, a - b)).expect("22");
+        write!(writer, "{}", int_binary_test(a, "Mul", b, a * b)).expect("23");
         if b != 0 {
-            write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
-            write!(writer, "{}", int_binary_test(a, "Rem", b, a % b)).unwrap();
+            write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).expect("24");
+            write!(writer, "{}", int_binary_test(a, "Rem", b, a % b)).expect("25");
         }
         if b >= 0 || a == 1 || a == -1 {
             let result = if b < 0 {
@@ -251,18 +251,18 @@ fn main() {
             } else {
                 a.pow(b as u32)
             };
-            write!(writer, "{}", int_binary_test(a, "Pow", b, result)).unwrap();
+            write!(writer, "{}", int_binary_test(a, "Pow", b, result)).expect("26");
         }
-        write!(writer, "{}", int_cmp_test(a, b)).unwrap();
+        write!(writer, "{}", int_cmp_test(a, b)).expect("27");
     }
-    writer.write(b"}").unwrap();
-    writer.flush().unwrap();
+    writer.write(b"}").expect("28");
+    writer.flush().expect("28");
 
-    Command::new("cargo").arg("update").current_dir(&test_dir).output().unwrap();
-    let test_out = Command::new("cargo").arg("run").current_dir(&test_dir).output().unwrap();
+    Command::new("cargo").arg("update").current_dir(&test_dir).output().expect("30");
+    let test_out = Command::new("cargo").arg("run").current_dir(&test_dir).output().expect("31");
     if !test_out.status.success() {
-        let stdout = ::std::str::from_utf8(&test_out.stdout).unwrap();
-        let stderr = ::std::str::from_utf8(&test_out.stderr).unwrap();
+        let stdout = ::std::str::from_utf8(&test_out.stdout).expect("32");
+        let stderr = ::std::str::from_utf8(&test_out.stderr).expect("33");
         panic!("\nExit status: {}\n\nStdout:\n{}\n\nStderr:\n{}\n", test_out.status, stdout, stderr);
     }
 }
