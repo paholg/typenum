@@ -1,33 +1,32 @@
-/*!
-
-Type-level unsigned integers.
-
-
-*Type operators** implemented:
-
-From core::ops: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
-From typenum: `Same`, `Cmp`, and `Pow`.
-
-Rather than directly using the structs defined in this module, it is recommended that
-you import and use the relevant aliases from the [consts](../consts/index.html) module.
-
-# Example
-```rust
-use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use typenum::{Unsigned, U1, U2, U3, U4};
-
-assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
-assert_eq!(<U3 as BitOr<U4>>::Output::to_u32(), 7);
-assert_eq!(<U3 as BitXor<U2>>::Output::to_u32(), 1);
-assert_eq!(<U3 as Shl<U1>>::Output::to_u32(), 6);
-assert_eq!(<U3 as Shr<U1>>::Output::to_u32(), 1);
-assert_eq!(<U3 as Add<U2>>::Output::to_u32(), 5);
-assert_eq!(<U3 as Sub<U2>>::Output::to_u32(), 1);
-assert_eq!(<U3 as Mul<U2>>::Output::to_u32(), 6);
-assert_eq!(<U3 as Div<U2>>::Output::to_u32(), 1);
-assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
-```
-*/
+//! Type-level unsigned integers.
+//!
+//!
+//! **Type operators** implemented:
+//!
+//! From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`,
+//!                 `Mul`, `Div`, and `Rem`.
+//! From `typenum`: `Same`, `Cmp`, and `Pow`.
+//!
+//! Rather than directly using the structs defined in this module, it is recommended that
+//! you import and use the relevant aliases from the [consts](../consts/index.html) module.
+//!
+//! # Example
+//! ```rust
+//! use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
+//! use typenum::{Unsigned, U1, U2, U3, U4};
+//!
+//! assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
+//! assert_eq!(<U3 as BitOr<U4>>::Output::to_u32(), 7);
+//! assert_eq!(<U3 as BitXor<U2>>::Output::to_u32(), 1);
+//! assert_eq!(<U3 as Shl<U1>>::Output::to_u32(), 6);
+//! assert_eq!(<U3 as Shr<U1>>::Output::to_u32(), 1);
+//! assert_eq!(<U3 as Add<U2>>::Output::to_u32(), 5);
+//! assert_eq!(<U3 as Sub<U2>>::Output::to_u32(), 1);
+//! assert_eq!(<U3 as Mul<U2>>::Output::to_u32(), 6);
+//! assert_eq!(<U3 as Div<U2>>::Output::to_u32(), 1);
+//! assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
+//! ```
+//!
 
 use core::marker::PhantomData;
 
@@ -35,24 +34,20 @@ use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp};
 use bit::{Bit, B0, B1};
 
-use private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp,
-              PrivateSizeOf, ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow,
-              BitDiff};
+use private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
+              ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 
-use private::{TrimOut, SizeOfOut, PrivateAndOut, PrivateXorOut, PrivateSubOut,
-              PrivateCmpOut, PrivateSizeOfOut, PrivatePowOut, BitDiffOut, ShiftDiffOut,
-              PrivateDivFirstStepQuot, PrivateDivFirstStepRem, PrivateDivQuot,
-              PrivateDivRem};
+use private::{TrimOut, SizeOfOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut,
+              PrivateSizeOfOut, PrivatePowOut, BitDiffOut, ShiftDiffOut, PrivateDivFirstStepQuot,
+              PrivateDivFirstStepRem, PrivateDivQuot, PrivateDivRem};
 
 use consts::{U0, U1};
 use {Or, Shleft, Shright, Sum, Prod, Diff, Add1, Sub1, Square, Compare};
 
 pub use marker_traits::Unsigned;
 
-/**
-The terminating type for `UInt`; it always comes after the most significant bit. `UTerm`
- by itself represents zero, which is aliased to `U0`.
- */
+/// The terminating type for `UInt`; it always comes after the most significant
+/// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
 pub enum UTerm {}
 impl_derivable!{UTerm}
 
@@ -100,23 +95,21 @@ impl Unsigned for UTerm {
     }
 }
 
-/**
-`UInt` is defined recursively, where `B` is the least significant bit and `U` is the rest
-of the number. Conceptually, `U` should be bound by the trait `Unsigned` and `B` should
-be bound by the trait `Bit`, but enforcing these bounds causes linear instead of
-logrithmic scaling in some places, so they are left off for now. They may be enforced in
-future.
-
-In order to keep numbers unique, leading zeros are not allowed, so `UInt<UTerm, B0>` is
-forbidden.
-
-# Example
-```rust
-use typenum::{B0, B1, UInt, UTerm, Unsigned};
-
-type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
-```
- */
+/// `UInt` is defined recursively, where `B` is the least significant bit and `U` is the rest
+/// of the number. Conceptually, `U` should be bound by the trait `Unsigned` and `B` should
+/// be bound by the trait `Bit`, but enforcing these bounds causes linear instead of
+/// logrithmic scaling in some places, so they are left off for now. They may be enforced in
+/// future.
+///
+/// In order to keep numbers unique, leading zeros are not allowed, so `UInt<UTerm, B0>` is
+/// forbidden.
+///
+/// # Example
+/// ```rust
+/// use typenum::{B0, B1, UInt, UTerm, Unsigned};
+///
+/// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
+/// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>,
@@ -610,7 +603,7 @@ impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
     }
 }
 
-/// Shifting UTerm by a 0 bit: `UTerm << B0 = UTerm`
+/// Shifting `UTerm` by a 0 bit: `UTerm << B0 = UTerm`
 impl Shl<B0> for UTerm {
     type Output = UTerm;
     fn shl(self, _: B0) -> Self::Output {
@@ -618,7 +611,7 @@ impl Shl<B0> for UTerm {
     }
 }
 
-/// Shifting UTerm by a 1 bit: `UTerm << B1 = UTerm`
+/// Shifting `UTerm` by a 1 bit: `UTerm << B1 = UTerm`
 impl Shl<B1> for UTerm {
     type Output = UTerm;
     fn shl(self, _: B1) -> Self::Output {
@@ -664,7 +657,7 @@ impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
     }
 }
 
-/// Shifting right UTerm by a 0 bit: `UTerm >> B0 = UTerm`
+/// Shifting right `UTerm` by a 0 bit: `UTerm >> B0 = UTerm`
 impl Shr<B0> for UTerm {
     type Output = UTerm;
     fn shr(self, _: B0) -> Self::Output {
@@ -672,7 +665,7 @@ impl Shr<B0> for UTerm {
     }
 }
 
-/// Shifting right UTerm by a 1 bit: `UTerm >> B1 = UTerm`
+/// Shifting right `UTerm` by a 1 bit: `UTerm >> B1 = UTerm`
 impl Shr<B1> for UTerm {
     type Output = UTerm;
     fn shr(self, _: B1) -> Self::Output {
@@ -797,35 +790,33 @@ impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
     type Output = Less;
 }
 
-/// UInt<Ul, B0> cmp with UInt<Ur, B0>: SoFar is Equal
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0>
-    where Ul: PrivateCmp<Ur, Equal>
+/// `UInt<Ul, B0>` cmp with `UInt<Ur, B0>`: `SoFar` is `Equal`
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: PrivateCmp<Ur, Equal>
 {
     type Output = PrivateCmpOut<Ul, Ur, Equal>;
 }
 
-/// UInt<Ul, B1> cmp with UInt<Ur, B1>: SoFar is Equal
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1>
-    where Ul: PrivateCmp<Ur, Equal>
+/// `UInt<Ul, B1>` cmp with `UInt<Ur, B1>`: `SoFar` is `Equal`
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: PrivateCmp<Ur, Equal>
 {
     type Output = PrivateCmpOut<Ul, Ur, Equal>;
 }
 
-/// UInt<Ul, B0> cmp with UInt<Ur, B1>: SoFar is Less
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0>
-    where Ul: PrivateCmp<Ur, Less>
+/// `UInt<Ul, B0>` cmp with `UInt<Ur, B1>`: `SoFar` is `Less`
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: PrivateCmp<Ur, Less>
 {
     type Output = PrivateCmpOut<Ul, Ur, Less>;
 }
 
-/// UInt<Ul, B1> cmp with UInt<Ur, B0>: SoFar is Greater
+/// `UInt<Ul, B1>` cmp with `UInt<Ur, B0>`: `SoFar` is `Greater`
 impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B1>
     where Ul: PrivateCmp<Ur, Greater>
 {
     type Output = PrivateCmpOut<Ul, Ur, Greater>;
 }
 
-/// Comparing non-terimal bits, with both having bit B0. These are the same, so we propogate `SoFar`.
+/// Comparing non-terimal bits, with both having bit `B0`.
+/// These are `Equal`, so we propogate `SoFar`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B0>
     where Ul: Unsigned,
           Ur: Unsigned,
@@ -835,7 +826,8 @@ impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B0>
     type Output = PrivateCmpOut<Ul, Ur, SoFar>;
 }
 
-/// Comparing non-terimal bits, with both having bit B1. These are the same, so we propogate `SoFar`.
+/// Comparing non-terimal bits, with both having bit `B1`.
+/// These are `Equal`, so we propogate `SoFar`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B1>
     where Ul: Unsigned,
           Ur: Unsigned,
@@ -845,7 +837,8 @@ impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B1>
     type Output = PrivateCmpOut<Ul, Ur, SoFar>;
 }
 
-/// Comparing non-terimal bits, with Lhs having bit B0 and Rhs having bit B1. `SoFar`, Lhs is `Less`.
+/// Comparing non-terimal bits, with `Lhs` having bit `B0` and `Rhs` having bit `B1`.
+/// `SoFar`, Lhs is `Less`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B0>
     where Ul: Unsigned,
           Ur: Unsigned,
@@ -855,7 +848,8 @@ impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B0>
     type Output = PrivateCmpOut<Ul, Ur, Less>;
 }
 
-/// Comparing non-terimal bits, with Lhs having bit B1 and Rhs having bit B0. `SoFar`, Lhs is `Greater`.
+/// Comparing non-terimal bits, with `Lhs` having bit `B1` and `Rhs` having bit `B0`.
+/// `SoFar`, Lhs is `Greater`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B1>
     where Ul: Unsigned,
           Ur: Unsigned,
@@ -865,12 +859,12 @@ impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B1>
     type Output = PrivateCmpOut<Ul, Ur, Greater>;
 }
 
-/// Got to the end of just the Lhs. It's `Less`.
+/// Got to the end of just the `Lhs`. It's `Less`.
 impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UInt<U, B>, SoFar> for UTerm {
     type Output = Less;
 }
 
-/// Got to the end of just the Rhs. Lhs is `Greater`.
+/// Got to the end of just the `Rhs`. `Lhs` is `Greater`.
 impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UTerm, SoFar> for UInt<U, B> {
     type Output = Greater;
 }
@@ -1009,15 +1003,16 @@ impl<Ur: Unsigned> Div<Ur> for UTerm {
 
 impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Div<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
-          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>,
-              Ur>
+          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
     type Output = PrivateDivFirstStepQuot<
             UInt<Ul, Bl>,
             Compare<UInt<Ul, Bl>, Ur>,
             Ur
         >;
-    fn div(self, _: Ur) -> Self::Output { unreachable!() }
+    fn div(self, _: Ur) -> Self::Output {
+        unreachable!()
+    }
 }
 
 //  -----------------------------------------
@@ -1035,17 +1030,16 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor>
     type Remainder = U0;
 }
 /// Numerator > Denominator:
-/// I = SizeOf(Numerator) - SizeOf(Denominator), Q = 0, Divisor <<= I, C = Numerator.Cmp(Divisor), Remainder = Numerator
-/// Call PrivateDiv
+/// I = `SizeOf`(Numerator) - `SizeOf`(Denominator), Q = 0, Divisor <<= I,
+/// C = Numerator.Cmp(Divisor), Remainder = Numerator
+/// Call `PrivateDiv`
 impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Divisor> for Numerator
     where Numerator: BitDiff<Divisor> + Cmp<Shleft<Divisor, BitDiffOut<Numerator, Divisor>>>,
           Divisor: Shl<BitDiffOut<Numerator, Divisor>>,
-          Numerator: PrivateDiv<
-              Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
-              BitDiffOut<Numerator, Divisor>,
-              U0,
-              ShiftDiffOut<Divisor, Numerator>
-          >,
+          Numerator: PrivateDiv<Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
+                                BitDiffOut<Numerator, Divisor>,
+                                U0,
+                                ShiftDiffOut<Divisor, Numerator>>
 {
     type Quotient = PrivateDivQuot<
             Numerator,
@@ -1117,18 +1111,20 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> 
 }
 
 /// Remainder < Divisor: Divisor >>= 1, I -= 1, C = Remainder.cmp(Divisor)
-/// Call PrivateDiv
+/// Call `PrivateDiv`
 impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> for Remainder
-    where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+    where Ui: Unsigned,
+          Bi: Bit,
+          Q: Unsigned,
+          Divisor: Unsigned,
+          Remainder: Unsigned,
           Divisor: Shr<B1>,
           Remainder: Cmp<Shright<Divisor, B1>>,
           UInt<Ui, Bi>: Sub<B1>,
-          Remainder: PrivateDiv<
-              Compare<Remainder, Shright<Divisor, B1>>,
-              Sub1<UInt<Ui, Bi>>,
-              Q,
-              Shright<Divisor, B1>
-          >
+          Remainder: PrivateDiv<Compare<Remainder, Shright<Divisor, B1>>,
+                                Sub1<UInt<Ui, Bi>>,
+                                Q,
+                                Shright<Divisor, B1>>
 {
     type Quotient = PrivateDivQuot<
             Remainder,
@@ -1149,21 +1145,24 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
 
 /// Remainder > Divisor:
 /// Q += 2^I, I -= 1, R -= D, D >>= 1, C = (new R).cmp(new D)
-/// Call PrivateDiv
+/// Call `PrivateDiv`
 impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor> for Remainder
-    where Ui: Unsigned, Bi: Bit, Q: Unsigned, Divisor: Unsigned, Remainder: Unsigned,
+    where Ui: Unsigned,
+          Bi: Bit,
+          Q: Unsigned,
+          Divisor: Unsigned,
+          Remainder: Unsigned,
           Divisor: Shr<B1>,
           Remainder: Sub<Divisor>,
           Diff<Remainder, Divisor>: Cmp<Shright<Divisor, B1>>,
           UInt<Ui, Bi>: Sub<B1>,
           U1: Shl<UInt<Ui, Bi>>,
           Q: Add<Shleft<U1, UInt<Ui, Bi>>>,
-          Diff<Remainder, Divisor>: PrivateDiv<
-                  Compare<Diff<Remainder,Divisor>, Shright<Divisor, B1>>,
-                  Sub1<UInt<Ui, Bi>>,
-                  Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
-                  Shright<Divisor, B1>
-              >
+          Diff<Remainder, Divisor>: PrivateDiv<Compare<Diff<Remainder, Divisor>,
+                                                       Shright<Divisor, B1>>,
+                                               Sub1<UInt<Ui, Bi>>,
+                                               Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
+                                               Shright<Divisor, B1>>
 {
     type Quotient = PrivateDivQuot<
             Diff<Remainder, Divisor>,
@@ -1194,13 +1193,14 @@ impl<Ur: Unsigned> Rem<Ur> for UTerm {
 
 impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Rem<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
-          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>,
-              Ur>
+          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
     type Output = PrivateDivFirstStepRem<
             UInt<Ul, Bl>,
             Compare<UInt<Ul, Bl>, Ur>,
             Ur
        >;
-    fn rem(self, _: Ur) -> Self::Output { unreachable!() }
+    fn rem(self, _: Ur) -> Self::Output {
+        unreachable!()
+    }
 }

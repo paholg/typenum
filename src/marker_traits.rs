@@ -1,45 +1,33 @@
-/*!
+//! These are all of the **marker traits** used in typenum. Note that the definition here
+//! for marker traits is slightly different than the conventional one --- we include traits
+//! with functions that convert a type to the corresponding value.
+//!
+//! For example, the `Integer` trait includes the function (among others) `fn to_i32() ->
+//! i32` so that one can do this:
+//!
+//! ```
+//! use typenum::{N42, Integer};
+//!
+//! assert_eq!(-42, N42::to_i32());
+//! ```
+//!
+//!
 
-These are all of the **marker traits** used in typenum. Note that the definition here
-for marker traits is slightly different than the conventional one --- we include traits
-with functions that convert a type to the corresponding value.
-
-For example, the `Integer` trait includes the function (among others) `fn to_i32() ->
-i32` so that one can do this:
-
-```
-use typenum::{N42, Integer};
-
-assert_eq!(-42, N42::to_i32());
-```
-
- */
-
-/**
-
-A **marker trait** to designate that a type is not zero. All number types in this crate
-implement `NonZero` except `B0`, `U0`, and `Z0`.
-
-*/
+/// A **marker trait** to designate that a type is not zero. All number types in this
+/// crate implement `NonZero` except `B0`, `U0`, and `Z0`.
 pub trait NonZero {}
 
-/**
-
-A **Marker trait** for the types `Greater`, `Equal`, and `Less`.
-
-This trait should not be implemented for anything outside this crate.
-
-*/
+/// A **Marker trait** for the types `Greater`, `Equal`, and `Less`.
+///
+/// This trait should not be implemented for anything outside this crate.
 pub trait Ord {
     #[allow(missing_docs)]
     fn to_ordering() -> ::core::cmp::Ordering;
 }
 
-/**
-The **marker trait** for compile time bits.
-
-This trait should not be implemented for anything outside this crate.
-*/
+/// The **marker trait** for compile time bits.
+///
+/// This trait should not be implemented for anything outside this crate.
 pub trait Bit {
     #[allow(missing_docs)]
     fn to_u8() -> u8;
@@ -47,18 +35,16 @@ pub trait Bit {
     fn to_bool() -> bool;
 }
 
-/**
-The **marker trait** for compile time unsigned integers.
-
-This trait should not be implemented for anything outside this crate.
-
-# Example
-```rust
-use typenum::{U3, Unsigned};
-
-assert_eq!(U3::to_u32(), 3);
-```
-*/
+/// The **marker trait** for compile time unsigned integers.
+///
+/// This trait should not be implemented for anything outside this crate.
+///
+/// # Example
+/// ```rust
+/// use typenum::{U3, Unsigned};
+///
+/// assert_eq!(U3::to_u32(), 3);
+/// ```
 pub trait Unsigned {
     #[allow(missing_docs)]
     fn to_u8() -> u8;
@@ -83,18 +69,16 @@ pub trait Unsigned {
     fn to_isize() -> isize;
 }
 
-/**
-The **marker trait** for compile time signed integers.
-
-This trait should not be implemented for anything outside this crate.
-
-# Example
-```rust
-use typenum::{P3, Integer};
-
-assert_eq!(P3::to_i32(), 3);
-```
-*/
+/// The **marker trait** for compile time signed integers.
+///
+/// This trait should not be implemented for anything outside this crate.
+///
+/// # Example
+/// ```rust
+/// use typenum::{P3, Integer};
+///
+/// assert_eq!(P3::to_i32(), 3);
+/// ```
 pub trait Integer {
     #[allow(missing_docs)]
     fn to_i8() -> i8;

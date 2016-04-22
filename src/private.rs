@@ -1,24 +1,23 @@
-// !
-// *Ignore me!** This module is for things that are conceptually private but that must be made public for
-// typenum to work correctly.
-//
-// Unless you are working on typenum itself, **there is no need to view anything here**.
-//
-// Certainly don't implement any of the traits here for anything.
-//
-//
-// Just look away.
-//
-//
-// Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-//
-//
-// If you do manage to find something of use in here, please let me know. If you can make a
-// compelling case, it may be moved out of __private.
-//
-// Note: Aliases for private type operators will all be named simply that operator followed
-// by an abbreviated name of its associated type.
-//
+//! **Ignore me!** This module is for things that are conceptually private but that must
+//! be made public for typenum to work correctly.
+//!
+//! Unless you are working on typenum itself, **there is no need to view anything here**.
+//!
+//! Certainly don't implement any of the traits here for anything.
+//!
+//!
+//! Just look away.
+//!
+//!
+//! Loooooooooooooooooooooooooooooooooook awaaaaaaaaaaaayyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
+//!
+//!
+//! If you do manage to find something of use in here, please let me know. If you can make a
+//! compelling case, it may be moved out of __private.
+//!
+//! Note: Aliases for private type operators will all be named simply that operator followed
+//! by an abbreviated name of its associated type.
+//!
 
 #![doc(hidden)]
 
@@ -34,7 +33,7 @@ pub trait SizeOf {
 }
 pub type SizeOfOut<A> = <A as SizeOf>::Output;
 
-/// Convenience trait. Calls Invert -> TrimTrailingZeros -> Invert
+/// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`
 pub trait Trim {
     type Output;
 }
@@ -70,7 +69,7 @@ pub type PrivateSizeOfOut<A> = <A as PrivateSizeOf>::Output;
 /// Terminating character for `InvertedUInt`s
 pub enum InvertedUTerm {}
 
-/// Inverted UInt (has most significant digit on the outside)
+/// Inverted `UInt` (has most significant digit on the outside)
 pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
     _marker: PhantomData<(IU, B)>,
 }
@@ -93,9 +92,9 @@ pub trait PrivateSub<Rhs = Self> {
 }
 pub type PrivateSubOut<A, Rhs> = <A as PrivateSub<Rhs>>::Output;
 
-/// Used for addition of signed integers; C = P.cmp(N)
-/// Assumes P = Self is positive and N is negative
-/// where P and N are both passed as unsigned integers
+/// Used for addition of signed integers; `C = P.cmp(N)`
+/// Assumes `P = Self` is positive and `N` is negative
+/// where `P` and `N` are both passed as unsigned integers
 pub trait PrivateIntegerAdd<C, N> {
     type Output;
 }
@@ -137,14 +136,14 @@ pub trait PrivateRem<URem, Divisor> {
 pub type PrivateRemOut<A, URem, Divisor> =
     <A as PrivateRem<URem, Divisor>>::Output;
 
-/// Performs Shl on Lhs so that SizeOf(Lhs) = SizeOf(Rhs)
-/// Fails if SizeOf(Lhs) > SizeOf(Rhs)
+/// Performs `Shl` on `Lhs` so that `SizeOf(Lhs) = SizeOf(Rhs)`
+/// Fails if `SizeOf(Lhs) > SizeOf(Rhs)`
 pub trait ShiftDiff<Rhs> {
     type Output;
 }
 pub type ShiftDiffOut<A, Rhs> = <A as ShiftDiff<Rhs>>::Output;
 
-/// Gives SizeOf(Lhs) - SizeOf(Rhs)
+/// Gives `SizeOf(Lhs) - SizeOf(Rhs)`
 pub trait BitDiff<Rhs> {
     type Output;
 }
@@ -260,4 +259,5 @@ impl<U: Unsigned> Trim for U
 pub trait PrivateCmp<Rhs, SoFar> {
     type Output;
 }
-pub type PrivateCmpOut<A, Rhs, SoFar> = <A as PrivateCmp<Rhs, SoFar>>::Output;
+pub type PrivateCmpOut<A, Rhs, SoFar> =
+    <A as PrivateCmp<Rhs, SoFar>>::Output;

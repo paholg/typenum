@@ -84,10 +84,10 @@ fn main() {
 
     // Header stuff here!
     f.write(b"
-use bit::{B0, B1};
 use uint::{UInt, UTerm};
 use int::{PInt, NInt};
 
+pub use bit::{B0, B1};
 pub use int::Z0; // re-export for convenience.
 ")
      .unwrap();

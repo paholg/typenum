@@ -1,14 +1,12 @@
-/*!
-
-Type-level bits. These are rather simple and are used as the building blocks of the
-other number types in this crate.
-
-
-**Type operators** implemented:
-
-- From core::ops: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
-- From typenum: `Same` and `Cmp`.
-*/
+//! Type-level bits. These are rather simple and are used as the building blocks of the
+//! other number types in this crate.
+//!
+//!
+//! **Type operators** implemented:
+//!
+//! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
+//! - From `typenum`: `Same` and `Cmp`.
+//!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 use {NonZero, Cmp, Greater, Less, Equal};

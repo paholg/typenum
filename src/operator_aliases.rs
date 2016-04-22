@@ -1,20 +1,18 @@
-/*!
-
-This module provides aliases for the type operators used in this crate. Their purpose is
-to increase the ergonomics of performing operations on the types defined here.
-
-For example, type `X` and type `Y` are the same here:
-
-```rust
-use std::ops::Mul;
-use typenum::{Prod, P5, P7};
-
-type X = <P7 as Mul<P5>>::Output;
-type Y = Prod<P7, P5>;
-```
-
-*/
-// Aliases!!!
+//! This module provides aliases for the type operators used in this crate. Their purpose is
+//! to increase the ergonomics of performing operations on the types defined here.
+//!
+//! For example, type `X` and type `Y` are the same here:
+//!
+//! ```rust
+//! use std::ops::Mul;
+//! use typenum::{Prod, P5, P7};
+//!
+//! type X = <P7 as Mul<P5>>::Output;
+//! type Y = Prod<P7, P5>;
+//! ```
+//!
+//!
+//! Aliases!!!
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
 use type_operators::{Pow, Cmp};
 

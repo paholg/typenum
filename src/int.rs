@@ -1,33 +1,31 @@
-/*!
-
-Type-level signed integers.
-
-
-**Type operators** implemented:
-
-From core::ops: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
-From typenum: `Same`, `Cmp`, and `Pow`.
-
-Rather than directly using the structs defined in this module, it is recommended that
-you import and use the relevant aliases from the [consts](../consts/index.html) module.
-
-Note that operators that work on the underlying structure of the number are
-intentionally not implemented. This is because this implementation of signed integers
-does *not* use twos-complement, and implementing them would require making arbitrary
-choices, causing the results of such operators to be difficult to reason about.
-
-# Example
-```rust
-use std::ops::{Add, Sub, Mul, Div, Rem};
-use typenum::{Integer, N3, P2};
-
-assert_eq!(<N3 as Add<P2>>::Output::to_i32(), -1);
-assert_eq!(<N3 as Sub<P2>>::Output::to_i32(), -5);
-assert_eq!(<N3 as Mul<P2>>::Output::to_i32(), -6);
-assert_eq!(<N3 as Div<P2>>::Output::to_i32(), -1);
-assert_eq!(<N3 as Rem<P2>>::Output::to_i32(), -1);
-```
-*/
+//! Type-level signed integers.
+//!
+//!
+//! Type **operators** implemented:
+//!
+//! From `core::ops`: `Add`, `Sub`, `Mul`, `Div`, and `Rem`.
+//! From `typenum`: `Same`, `Cmp`, and `Pow`.
+//!
+//! Rather than directly using the structs defined in this module, it is recommended that
+//! you import and use the relevant aliases from the [consts](../consts/index.html) module.
+//!
+//! Note that operators that work on the underlying structure of the number are
+//! intentionally not implemented. This is because this implementation of signed integers
+//! does *not* use twos-complement, and implementing them would require making arbitrary
+//! choices, causing the results of such operators to be difficult to reason about.
+//!
+//! # Example
+//! ```rust
+//! use std::ops::{Add, Sub, Mul, Div, Rem};
+//! use typenum::{Integer, N3, P2};
+//!
+//! assert_eq!(<N3 as Add<P2>>::Output::to_i32(), -1);
+//! assert_eq!(<N3 as Sub<P2>>::Output::to_i32(), -5);
+//! assert_eq!(<N3 as Mul<P2>>::Output::to_i32(), -6);
+//! assert_eq!(<N3 as Div<P2>>::Output::to_i32(), -1);
+//! assert_eq!(<N3 as Rem<P2>>::Output::to_i32(), -1);
+//! ```
+//!
 
 use core::marker::PhantomData;
 
@@ -41,25 +39,19 @@ use consts::{U0, U1, P1, N1};
 
 pub use marker_traits::Integer;
 
-/**
-Type-level signed integers with positive sign.
- */
+/// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct PInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
 
-/**
-Type-level signed integers with negative sign.
-*/
+/// Type-level signed integers with negative sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
 
-/**
-The type-level signed integer 0.
-*/
+/// The type-level signed integer 0.
 pub enum Z0 {}
 impl_derivable!{Z0}
 
@@ -458,14 +450,19 @@ macro_rules! impl_int_div {
                 $B<Ur>>>::Output;
             fn div(self, _: $B<Ur>) -> Self::Output { unreachable!() }
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Less, $B<Ur>> for $A<Ul> {
+        impl<Ul, Ur> PrivateDivInt<Less, $B<Ur>> for $A<Ul>
+            where Ul: Unsigned + NonZero, Ur: Unsigned + NonZero,
+        {
             type Output = Z0;
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Equal, $B<Ur>> for $A<Ul> {
+        impl<Ul, Ur> PrivateDivInt<Equal, $B<Ur>> for $A<Ul>
+            where Ul: Unsigned + NonZero, Ur: Unsigned + NonZero,
+        {
             type Output = $R<U1>;
         }
-        impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateDivInt<Greater, $B<Ur>> for $A<Ul>
-            where Ul: Div<Ur>,
+        impl<Ul, Ur> PrivateDivInt<Greater, $B<Ur>> for $A<Ul>
+            where Ul: Unsigned + NonZero + Div<Ur>,
+                  Ur: Unsigned + NonZero,
                   <Ul as Div<Ur>>::Output: Unsigned + NonZero,
         {
             type Output = $R<<Ul as Div<Ur>>::Output>;
