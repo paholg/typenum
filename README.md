@@ -1,5 +1,6 @@
 [![crates.io](https://img.shields.io/crates/v/typenum.svg)](https://crates.io/crates/typenum)
 [![Build Status](https://travis-ci.org/paholg/typenum.svg?branch=master)](https://travis-ci.org/paholg/typenum)
+[![Clippy Linting Result](https://clippy.bashy.io/github/paholg/typenum/master/badge.svg)](https://clippy.bashy.io/github/paholg/typenum/master/log)
 
 Typenum
 =====
