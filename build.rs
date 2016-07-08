@@ -63,6 +63,11 @@ pub fn gen_int(i: i64) -> IntCode {
     }
 }
 
+#[cfg_attr(feature="no_std", deprecated(
+    since="1.3.0",
+    note="the `no_std` flag is no longer necessary and will be removed in the future"))]
+pub fn no_std() {}
+
 // fixme: get a warning when testing without this
 #[allow(dead_code)]
 fn main() {
@@ -81,6 +86,8 @@ fn main() {
     let dest = Path::new(&out_dir).join("consts.rs");
 
     let mut f = File::create(&dest).unwrap();
+
+    no_std();
 
     // Header stuff here!
     f.write(b"

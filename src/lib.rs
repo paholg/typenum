@@ -42,6 +42,7 @@
 //!
 //! Documented in each module is the full list of type operators implemented.
 //!
+
 #![no_std]
 #![warn(missing_docs)]
 
