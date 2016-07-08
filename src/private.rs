@@ -241,7 +241,8 @@ impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
     type Output = Self;
 }
 
-impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0> where IU: TrimTrailingZeros
+impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0>
+    where IU: TrimTrailingZeros
 {
     type Output = <IU as TrimTrailingZeros>::Output;
 }

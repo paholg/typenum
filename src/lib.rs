@@ -1,11 +1,11 @@
 //! This crate provides type-level numbers evaluated at compile time. It depends only on libcore.
 //!
-//! The traits defined or used in this crate are used in a typical manner. They can
-//! be divided into two categories: **marker traits** and **type operators**.
+//! The traits defined or used in this crate are used in a typical manner. They can be divided into
+//! two categories: **marker traits** and **type operators**.
 //!
-//! Many of the marker traits have functions defined, but they all do essentially the same
-//! thing: convert a type into its runtime counterpart, and are really just there for
-//! debugging. For example,
+//! Many of the marker traits have functions defined, but they all do essentially the same thing:
+//! convert a type into its runtime counterpart, and are really just there for debugging. For
+//! example,
 //!
 //! ```rust
 //! use typenum::{N4, Integer};
@@ -13,14 +13,14 @@
 //! assert_eq!(N4::to_i32(), -4);
 //! ```
 //!
-//! **Type operators** are traits that behave as functions at the type level. These are the
-//! meat of this library. Where possible, traits defined in libcore have been used, but
-//! their attached functions have not been implemented.
+//! **Type operators** are traits that behave as functions at the type level. These are the meat of
+//! this library. Where possible, traits defined in libcore have been used, but their attached
+//! functions have not been implemented.
 //!
-//! For example, the `Add` trait is implemented for both unsigned and signed integers, but
-//! the `add` function is not. As there are never any objects of the types defined here, it
-//! wouldn't make sense to implement it. What is important is its associated type `Output`,
-//! which is where the addition happens.
+//! For example, the `Add` trait is implemented for both unsigned and signed integers, but the
+//! `add` function is not. As there are never any objects of the types defined here, it wouldn't
+//! make sense to implement it. What is important is its associated type `Output`, which is where
+//! the addition happens.
 //!
 //! ```rust
 //! use std::ops::Add;
@@ -30,8 +30,8 @@
 //! assert_eq!(<X as Integer>::to_i32(), 7);
 //! ```
 //!
-//! In addition, helper aliases are defined for type operators. For example, the above
-//! snippet could be replaced with
+//! In addition, helper aliases are defined for type operators. For example, the above snippet
+//! could be replaced with
 //!
 //! ```rust
 //! use typenum::{Sum, Integer, P3, P4};

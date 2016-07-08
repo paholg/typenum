@@ -187,7 +187,8 @@ impl SizeOf for UTerm {
 }
 
 /// Size of a `UInt`
-impl<U: Unsigned, B: Bit> SizeOf for UInt<U, B> where UInt<U, B>: PrivateSizeOf
+impl<U: Unsigned, B: Bit> SizeOf for UInt<U, B>
+    where UInt<U, B>: PrivateSizeOf
 {
     type Output = PrivateSizeOfOut<UInt<U, B>>;
 }
@@ -271,7 +272,8 @@ impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Add<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: Add<Ur>
 {
     type Output = UInt<Sum<Ul, Ur>, B0>;
     fn add(self, _: UInt<Ur, B0>) -> Self::Output {
@@ -280,7 +282,8 @@ impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: Ad
 }
 
 /// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Add<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: Add<Ur>
 {
     type Output = UInt<Sum<Ul, Ur>, B1>;
     fn add(self, _: UInt<Ur, B1>) -> Self::Output {
@@ -289,7 +292,8 @@ impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: Ad
 }
 
 /// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: Add<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: Add<Ur>
 {
     type Output = UInt<Sum<Ul, Ur>, B1>;
     fn add(self, _: UInt<Ur, B0>) -> Self::Output {
@@ -382,7 +386,8 @@ impl<U: Unsigned> PrivateSub<UTerm> for U {
 }
 
 /// `UInt<Ul, B0> - UInt<Ur, B0> = UInt<Ul - Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: PrivateSub<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateSub<Ur>
 {
     type Output = UInt<PrivateSubOut<Ul, Ur>, B0>;
 }
@@ -396,13 +401,15 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B0>
 }
 
 /// `UInt<Ul, B1> - UInt<Ur, B0> = UInt<Ul - Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: PrivateSub<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
 {
     type Output = UInt<PrivateSubOut<Ul, Ur>, B1>;
 }
 
 /// `UInt<Ul, B1> - UInt<Ur, B1> = UInt<Ul - Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: PrivateSub<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateSub<Ur>
 {
     type Output = UInt<PrivateSubOut<Ul, Ur>, B0>;
 }
@@ -441,25 +448,29 @@ impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
 }
 
 /// `UInt<Ul, B0> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: PrivateAnd<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
 {
     type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
 }
 
 /// `UInt<Ul, B0> & UInt<Ur, B1> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: PrivateAnd<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateAnd<Ur>
 {
     type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
 }
 
 /// `UInt<Ul, B1> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: PrivateAnd<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
 {
     type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
 }
 
 /// `UInt<Ul, B1> & UInt<Ur, B1> = UInt<Ul & Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: PrivateAnd<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateAnd<Ur>
 {
     type Output = UInt<PrivateAndOut<Ul, Ur>, B1>;
 }
@@ -484,7 +495,8 @@ impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: BitOr<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: BitOr<Ur>
 {
     type Output = UInt<<Ul as BitOr<Ur>>::Output, B0>;
     fn bitor(self, _: UInt<Ur, B0>) -> Self::Output {
@@ -493,7 +505,8 @@ impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: 
 }
 
 /// `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: BitOr<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: BitOr<Ur>
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B1>) -> Self::Output {
@@ -502,7 +515,8 @@ impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: 
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: BitOr<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: BitOr<Ur>
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B0>) -> Self::Output {
@@ -511,7 +525,8 @@ impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: 
 }
 
 /// `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: BitOr<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: BitOr<Ur>
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B1>) -> Self::Output {
@@ -553,25 +568,29 @@ impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
 }
 
 /// `UInt<Ul, B0> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: PrivateXor<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
 {
     type Output = UInt<PrivateXorOut<Ul, Ur>, B0>;
 }
 
 /// `UInt<Ul, B0> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: PrivateXor<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateXor<Ur>
 {
     type Output = UInt<PrivateXorOut<Ul, Ur>, B1>;
 }
 
 /// `UInt<Ul, B1> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B1> where Ul: PrivateXor<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
 {
     type Output = UInt<PrivateXorOut<Ul, Ur>, B1>;
 }
 
 /// `UInt<Ul, B1> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: PrivateXor<Ur>
+impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateXor<Ur>
 {
     type Output = UInt<PrivateXorOut<Ul, Ur>, B0>;
 }
@@ -791,19 +810,22 @@ impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
 }
 
 /// `UInt<Ul, B0>` cmp with `UInt<Ur, B0>`: `SoFar` is `Equal`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0> where Ul: PrivateCmp<Ur, Equal>
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0>
+    where Ul: PrivateCmp<Ur, Equal>
 {
     type Output = PrivateCmpOut<Ul, Ur, Equal>;
 }
 
 /// `UInt<Ul, B1>` cmp with `UInt<Ur, B1>`: `SoFar` is `Equal`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1> where Ul: PrivateCmp<Ur, Equal>
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1>
+    where Ul: PrivateCmp<Ur, Equal>
 {
     type Output = PrivateCmpOut<Ul, Ur, Equal>;
 }
 
 /// `UInt<Ul, B0>` cmp with `UInt<Ur, B1>`: `SoFar` is `Less`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0> where Ul: PrivateCmp<Ur, Less>
+impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0>
+    where Ul: PrivateCmp<Ur, Less>
 {
     type Output = PrivateCmpOut<Ul, Ur, Less>;
 }
@@ -908,7 +930,8 @@ impl<Ul, Bl, Ur, Br> BitDiff<UInt<Ur, Br>> for UInt<Ul, Bl>
     type Output = BitDiffOut<Ul, Ur>;
 }
 
-impl<Ul> BitDiff<UTerm> for Ul where Ul: Unsigned + SizeOf
+impl<Ul> BitDiff<UTerm> for Ul
+    where Ul: Unsigned + SizeOf
 {
     type Output = SizeOfOut<Ul>;
 }
@@ -927,7 +950,8 @@ impl<Ul: Unsigned, Ur: Unsigned> ShiftDiff<Ur> for Ul
 // Powers of unsigned integers
 
 /// X^N
-impl<X: Unsigned, N: Unsigned> Pow<N> for X where X: PrivatePow<U1, N>
+impl<X: Unsigned, N: Unsigned> Pow<N> for X
+    where X: PrivatePow<U1, N>
 {
     type Output = PrivatePowOut<X, U1, N>;
 }
@@ -936,7 +960,8 @@ impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U0> for X {
     type Output = Y;
 }
 
-impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U1> for X where X: Mul<Y>
+impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U1> for X
+    where X: Mul<Y>
 {
     type Output = Prod<X, Y>;
 }
@@ -1005,11 +1030,7 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Div<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
           UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
-    type Output = PrivateDivFirstStepQuot<
-            UInt<Ul, Bl>,
-            Compare<UInt<Ul, Bl>, Ur>,
-            Ur
-        >;
+    type Output = PrivateDivFirstStepQuot<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>;
     fn div(self, _: Ur) -> Self::Output {
         unreachable!()
     }
@@ -1041,20 +1062,16 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Diviso
                                 U0,
                                 ShiftDiffOut<Divisor, Numerator>>
 {
-    type Quotient = PrivateDivQuot<
-            Numerator,
-            Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
-            BitDiffOut<Numerator, Divisor>, // I
-            U0, // Q
-            ShiftDiffOut<Divisor, Numerator> // Divisor
-        >;
-    type Remainder = PrivateDivRem<
-            Numerator,
-            Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
-            BitDiffOut<Numerator, Divisor>, // I
-            U0, // Q
-            ShiftDiffOut<Divisor, Numerator> // Divisor
-        >;
+    type Quotient = PrivateDivQuot<Numerator,
+                   Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
+                   BitDiffOut<Numerator, Divisor>, // I
+                   U0, // Q
+                   ShiftDiffOut<Divisor, Numerator> /* Divisor */>;
+    type Remainder = PrivateDivRem<Numerator,
+                  Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
+                  BitDiffOut<Numerator, Divisor>, // I
+                  U0, // Q
+                  ShiftDiffOut<Divisor, Numerator> /* Divisor */>;
 }
 
 //  -----------------------------------------
@@ -1126,21 +1143,17 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
                                 Q,
                                 Shright<Divisor, B1>>
 {
-    type Quotient = PrivateDivQuot<
-            Remainder,
-            Compare<Remainder, Shright<Divisor, B1>>, // Remainder.cmp(New Divisor)
-            Sub1<UInt<Ui, Bi>>,
-            Q,
-            Shright<Divisor, B1>
-        >;
+    type Quotient = PrivateDivQuot<Remainder,
+                   Compare<Remainder, Shright<Divisor, B1>>, /* Remainder.cmp(New Divisor) */
+                   Sub1<UInt<Ui, Bi>>,
+                   Q,
+                   Shright<Divisor, B1>>;
 
-    type Remainder = PrivateDivRem<
-            Remainder,
-            Compare<Remainder, Shright<Divisor, B1>>, // Remainder.cmp(New Divisor)
-            Sub1<UInt<Ui, Bi>>,
-            Q,
-            Shright<Divisor, B1>
-        >;
+    type Remainder = PrivateDivRem<Remainder,
+                  Compare<Remainder, Shright<Divisor, B1>>, /* Remainder.cmp(New Divisor) */
+                  Sub1<UInt<Ui, Bi>>,
+                  Q,
+                  Shright<Divisor, B1>>;
 }
 
 /// Remainder > Divisor:
@@ -1164,21 +1177,17 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor
                                                Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
                                                Shright<Divisor, B1>>
 {
-    type Quotient = PrivateDivQuot<
-            Diff<Remainder, Divisor>,
-            Compare<Diff<Remainder,Divisor>, Shright<Divisor, B1>>,
-            Sub1<UInt<Ui, Bi>>,
-            Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
-            Shright<Divisor, B1>
-        >;
+    type Quotient = PrivateDivQuot<Diff<Remainder, Divisor>,
+                   Compare<Diff<Remainder, Divisor>, Shright<Divisor, B1>>,
+                   Sub1<UInt<Ui, Bi>>,
+                   Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
+                   Shright<Divisor, B1>>;
 
-    type Remainder = PrivateDivRem<
-            Diff<Remainder, Divisor>,
-            Compare<Diff<Remainder,Divisor>, Shright<Divisor, B1>>,
-            Sub1<UInt<Ui, Bi>>,
-            Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
-            Shright<Divisor, B1>
-        >;
+    type Remainder = PrivateDivRem<Diff<Remainder, Divisor>,
+                  Compare<Diff<Remainder, Divisor>, Shright<Divisor, B1>>,
+                  Sub1<UInt<Ui, Bi>>,
+                  Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
+                  Shright<Divisor, B1>>;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -1195,11 +1204,7 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Rem<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
           UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
-    type Output = PrivateDivFirstStepRem<
-            UInt<Ul, Bl>,
-            Compare<UInt<Ul, Bl>, Ur>,
-            Ur
-       >;
+    type Output = PrivateDivFirstStepRem<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>;
     fn rem(self, _: Ur) -> Self::Output {
         unreachable!()
     }
