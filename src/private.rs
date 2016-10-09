@@ -21,8 +21,6 @@
 
 #![doc(hidden)]
 
-use core::marker::PhantomData;
-
 // use ::{Sub};
 use bit::{Bit, B1, B0};
 use uint::{Unsigned, UInt, UTerm};
@@ -71,7 +69,7 @@ pub enum InvertedUTerm {}
 
 /// Inverted `UInt` (has most significant digit on the outside)
 pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
-    _marker: PhantomData<(IU, B)>,
+    _marker: (IU, B),
 }
 
 /// Does the real anding for `UInt`s; `And` just calls this and then `Trim`.
