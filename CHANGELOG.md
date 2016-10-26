@@ -3,6 +3,7 @@
 This project follows semantic versioning.
 
 ### Unpublished
+    - [added] Type-level arrays of type-level integers.
 
 ### 1.3.1 (2016-03-31)
 	- [fixed] Bug with recent nightlies.

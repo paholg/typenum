@@ -31,18 +31,18 @@
 use core::marker::PhantomData;
 
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
-use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp};
+use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp, Len};
 use bit::{Bit, B0, B1};
 
-use private::{Trim, SizeOf, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, PrivateSizeOf,
+use private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp,
               ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
 
-use private::{TrimOut, SizeOfOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut,
-              PrivateSizeOfOut, PrivatePowOut, BitDiffOut, ShiftDiffOut, PrivateDivFirstStepQuot,
-              PrivateDivFirstStepRem, PrivateDivQuot, PrivateDivRem};
+use private::{TrimOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut, PrivatePowOut,
+              BitDiffOut, ShiftDiffOut, PrivateDivFirstStepQuot, PrivateDivFirstStepRem,
+              PrivateDivQuot, PrivateDivRem};
 
 use consts::{U0, U1};
-use {Or, Shleft, Shright, Sum, Prod, Diff, Add1, Sub1, Square, Compare};
+use {Or, Shleft, Shright, Sum, Prod, Diff, Add1, Sub1, Square, Compare, Length};
 
 pub use marker_traits::Unsigned;
 
@@ -179,31 +179,20 @@ macro_rules! test_uint_op {
 }
 
 // ---------------------------------------------------------------------------------------
-// Getting size of unsigned integers
+// Getting length of unsigned integers, which is defined as the number of bits before `UTerm`
 
-/// Size of `UTerm` by itself is 0
-impl SizeOf for UTerm {
+/// Length of `UTerm` by itself is 0
+impl Len for UTerm {
     type Output = U0;
 }
 
-/// Size of a `UInt`
-impl<U: Unsigned, B: Bit> SizeOf for UInt<U, B>
-    where UInt<U, B>: PrivateSizeOf
+/// Length of a bit is 1
+impl<U: Unsigned, B: Bit> Len for UInt<U, B>
+    where U: Len,
+          Length<U>: Add<B1>,
+          Add1<Length<U>>: Unsigned,
 {
-    type Output = PrivateSizeOfOut<UInt<U, B>>;
-}
-
-/// Size of `UTerm` inside a number is 0
-impl PrivateSizeOf for UTerm {
-    type Output = U0;
-}
-
-/// Size of bit is 1
-impl<U: Unsigned, B: Bit> PrivateSizeOf for UInt<U, B>
-    where U: PrivateSizeOf,
-          PrivateSizeOfOut<U>: Add<B1>
-{
-    type Output = Add1<PrivateSizeOfOut<U>>;
+    type Output = Add1<Length<U>>;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -931,9 +920,9 @@ impl<Ul, Bl, Ur, Br> BitDiff<UInt<Ur, Br>> for UInt<Ul, Bl>
 }
 
 impl<Ul> BitDiff<UTerm> for Ul
-    where Ul: Unsigned + SizeOf
+    where Ul: Unsigned + Len
 {
-    type Output = SizeOfOut<Ul>;
+    type Output = Length<Ul>;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -993,7 +982,7 @@ impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B
 //     return 0
 //   if Numerator == Divisor:
 //     return 1
-//   I = SizeOf(Numerator) - SizeOf(Divisor)
+//   I = Len(Numerator) - Len(Divisor)
 //   Divisor = Divisor << I
 //   Call PrivateDiv with C = Numerator.cmp(Divisor), I = I, Q = 0, Remainder = Numerator
 // PrivateDiv:
@@ -1051,7 +1040,7 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor>
     type Remainder = U0;
 }
 /// Numerator > Denominator:
-/// I = `SizeOf`(Numerator) - `SizeOf`(Denominator), Q = 0, Divisor <<= I,
+/// I = `Len`(Numerator) - `Len`(Denominator), Q = 0, Divisor <<= I,
 /// C = Numerator.Cmp(Divisor), Remainder = Numerator
 /// Call `PrivateDiv`
 impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Divisor> for Numerator
