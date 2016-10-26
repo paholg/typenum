@@ -28,8 +28,6 @@
 //! ```
 //!
 
-use core::marker::PhantomData;
-
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp, Len};
 use bit::{Bit, B0, B1};
@@ -112,7 +110,7 @@ impl Unsigned for UTerm {
 /// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
-    _marker: PhantomData<(U, B)>,
+    _marker: (U, B),
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {

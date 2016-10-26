@@ -4,9 +4,10 @@ This project follows semantic versioning.
 
 ### Unpublished
     - [added] Type-level arrays of type-level integers.
+    - [changed] Integers no longer use PhantomData
 
 ### 1.3.1 (2016-03-31)
-	- [fixed] Bug with recent nightlies.
+    - [fixed] Bug with recent nightlies.
 
 ### 1.3.0 (2016-02-07)
     - [changed] Removed dependency on libstd. (Issue #53, PR #55)

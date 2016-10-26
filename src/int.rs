@@ -27,8 +27,6 @@
 //! ```
 //!
 
-use core::marker::PhantomData;
-
 use core::ops::{Neg, Add, Sub, Mul, Div, Rem};
 
 use {NonZero, Pow, Cmp, Greater, Equal, Less};
@@ -42,13 +40,13 @@ pub use marker_traits::Integer;
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct PInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
+    _marker: U,
 }
 
 /// Type-level signed integers with negative sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct NInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
+    _marker: U,
 }
 
 /// The type-level signed integer 0.
