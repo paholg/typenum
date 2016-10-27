@@ -51,7 +51,7 @@ pub struct NInt<U: Unsigned + NonZero> {
 }
 
 impl<U: Unsigned + NonZero> PInt<U> {
-    /// Instanciates a singleton representing this strictly positive integer.
+    /// Instantiates a singleton representing this strictly positive integer.
     #[inline]
     pub fn new() -> PInt<U> {
         PInt {
@@ -61,7 +61,7 @@ impl<U: Unsigned + NonZero> PInt<U> {
 }
 
 impl<U: Unsigned + NonZero> NInt<U> {
-    /// Instanciates a singleton representing this strictly negative integer.
+    /// Instantiates a singleton representing this strictly negative integer.
     #[inline]
     pub fn new() -> NInt<U> {
         NInt {

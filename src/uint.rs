@@ -115,7 +115,7 @@ pub struct UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> UInt<U, B> {
-    /// Instanciates a singleton representing this unsigned integer.
+    /// Instantiates a singleton representing this unsigned integer.
     #[inline]
     pub fn new() -> UInt<U, B> {
         UInt {
