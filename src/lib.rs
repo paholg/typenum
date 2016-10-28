@@ -46,6 +46,7 @@
 #![no_std]
 #![warn(missing_docs)]
 
+
 // For clippy:
 #![allow(unknown_lints)]
 #![allow(type_complexity, expl_impl_clone_on_copy)]
@@ -101,7 +102,7 @@ pub use operator_aliases::*;
 
 pub use uint::{UInt, UTerm};
 pub use int::{NInt, PInt};
-pub use array::{Array, ATerm};
+pub use array::*; // fixme
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
