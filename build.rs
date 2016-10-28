@@ -40,7 +40,7 @@ pub fn gen_uint(u: u64) -> UIntCode {
     let mut result = UIntCode::Term;
     let mut x = 1u64 << 63;
     while x > u {
-        x = x >> 1
+        x >>= 1
     }
     while x > 0 {
         result = if x & u > 0 {
@@ -48,7 +48,7 @@ pub fn gen_uint(u: u64) -> UIntCode {
         } else {
             UIntCode::Zero(Box::new(result))
         };
-        x = x >> 1;
+        x >>= 1;
     }
     result
 }

@@ -102,7 +102,7 @@ pub use operator_aliases::*;
 
 pub use uint::{UInt, UTerm};
 pub use int::{NInt, PInt};
-pub use array::*; // fixme
+pub use array::{TArr, ATerm};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.

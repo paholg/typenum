@@ -32,8 +32,8 @@ use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
 use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp, Len};
 use bit::{Bit, B0, B1};
 
-use private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp,
-              ShiftDiff, PrivateDiv, PrivateDivFirstStep, PrivatePow, BitDiff};
+use private::{Trim, PrivateAnd, PrivateXor, PrivateSub, PrivateCmp, ShiftDiff, PrivateDiv,
+              PrivateDivFirstStep, PrivatePow, BitDiff};
 
 use private::{TrimOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOut, PrivatePowOut,
               BitDiffOut, ShiftDiffOut, PrivateDivFirstStepQuot, PrivateDivFirstStepRem,
@@ -188,7 +188,7 @@ impl Len for UTerm {
 impl<U: Unsigned, B: Bit> Len for UInt<U, B>
     where U: Len,
           Length<U>: Add<B1>,
-          Add1<Length<U>>: Unsigned,
+          Add1<Length<U>>: Unsigned
 {
     type Output = Add1<Length<U>>;
 }
