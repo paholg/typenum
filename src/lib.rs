@@ -52,37 +52,6 @@
 
 use core::cmp::Ordering;
 
-macro_rules! impl_derivable {
-    ($Type: ty) => (
-        impl ::core::cmp::PartialEq for $Type {
-            fn eq(&self, _: &Self) -> bool { match *self {} }
-        }
-        impl ::core::cmp::Eq for $Type { }
-        impl ::core::cmp::PartialOrd for $Type {
-            fn partial_cmp(&self, _: &Self) -> Option<::core::cmp::Ordering> { match *self {} }
-        }
-        impl ::core::cmp::Ord for $Type {
-            fn cmp(&self, _: &Self) -> ::core::cmp::Ordering { match *self {} }
-        }
-        impl ::core::clone::Clone for $Type {
-            fn clone(&self) -> Self { match *self {} }
-        }
-        impl ::core::marker::Copy for $Type {}
-        impl ::core::hash::Hash for $Type {
-            fn hash<H>(&self, _: &mut H) where H: ::core::hash::Hasher { match *self {} }
-        }
-        impl ::core::default::Default for $Type {
-            fn default() -> Self { unreachable!() }
-        }
-        impl ::core::fmt::Debug for $Type {
-            fn fmt(&self, _: &mut ::core::fmt::Formatter) ->
-                ::core::result::Result<(), ::core::fmt::Error> {
-                match *self {}
-            }
-        }
-        );
-}
-
 pub mod consts;
 pub mod bit;
 pub mod uint;
@@ -102,35 +71,52 @@ pub use int::{NInt, PInt};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
-pub enum Greater {}
-impl_derivable!{Greater}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct Greater;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Less`.
-pub enum Less {}
-impl_derivable!{Less}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct Less;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Equal`.
-pub enum Equal {}
-impl_derivable!{Equal}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct Equal;
 
 /// Returns `core::cmp::Ordering::Greater`
 impl Ord for Greater {
+    #[inline]
+    fn new() -> Self {
+        Greater
+    }
+
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Greater
     }
 }
+
 /// Returns `core::cmp::Ordering::Less`
 impl Ord for Less {
+    #[inline]
+    fn new() -> Self {
+        Less
+    }
+
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Less
     }
 }
+
 /// Returns `core::cmp::Ordering::Equal`
 impl Ord for Equal {
+    #[inline]
+    fn new() -> Self {
+        Equal
+    }
+
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Equal

@@ -48,7 +48,7 @@ pub use marker_traits::Unsigned;
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
-pub struct UTerm {}
+pub struct UTerm;
 
 impl Unsigned for UTerm {
     #[inline]
@@ -92,6 +92,11 @@ impl Unsigned for UTerm {
     fn to_isize() -> isize {
         0
     }
+
+    #[inline]
+    fn new() -> Self {
+        UTerm
+    }
 }
 
 /// `UInt` is defined recursively, where `B` is the least significant bit and `U` is the rest
@@ -112,16 +117,6 @@ impl Unsigned for UTerm {
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>,
-}
-
-impl<U: Unsigned, B: Bit> UInt<U, B> {
-    /// Instantiates a singleton representing this unsigned integer.
-    #[inline]
-    pub fn new() -> UInt<U, B> {
-        UInt {
-            _marker: PhantomData
-        }
-    }
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
@@ -165,6 +160,11 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     #[inline]
     fn to_isize() -> isize {
         B::to_u8() as isize | U::to_isize() << 1
+    }
+
+    #[inline]
+    fn new() -> Self {
+        UInt { _marker: PhantomData }
     }
 }
 

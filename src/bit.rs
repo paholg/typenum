@@ -14,12 +14,12 @@ use {NonZero, Cmp, Greater, Less, Equal};
 pub use marker_traits::Bit;
 
 /// The type-level bit 0.
-pub enum B0 {}
-impl_derivable!{B0}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct B0;
 
 /// The type-level bit 1.
-pub enum B1 {}
-impl_derivable!{B1}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct B1;
 
 impl Bit for B0 {
     #[inline]
@@ -30,7 +30,13 @@ impl Bit for B0 {
     fn to_bool() -> bool {
         false
     }
+
+    #[inline]
+    fn new() -> Self {
+        B0
+    }
 }
+
 impl Bit for B1 {
     #[inline]
     fn to_u8() -> u8 {
@@ -39,6 +45,11 @@ impl Bit for B1 {
     #[inline]
     fn to_bool() -> bool {
         true
+    }
+
+    #[inline]
+    fn new() -> Self {
+        B1
     }
 }
 

@@ -50,29 +50,9 @@ pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
 
-impl<U: Unsigned + NonZero> PInt<U> {
-    /// Instantiates a singleton representing this strictly positive integer.
-    #[inline]
-    pub fn new() -> PInt<U> {
-        PInt {
-            _marker: PhantomData
-        }
-    }
-}
-
-impl<U: Unsigned + NonZero> NInt<U> {
-    /// Instantiates a singleton representing this strictly negative integer.
-    #[inline]
-    pub fn new() -> NInt<U> {
-        NInt {
-            _marker: PhantomData
-        }
-    }
-}
-
 /// The type-level signed integer 0.
-pub enum Z0 {}
-impl_derivable!{Z0}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct Z0;
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
@@ -98,6 +78,11 @@ impl Integer for Z0 {
     fn to_isize() -> isize {
         0
     }
+
+    #[inline]
+    fn new() -> Self {
+        Z0
+    }
 }
 
 impl<U: Unsigned + NonZero> Integer for PInt<U> {
@@ -121,6 +106,11 @@ impl<U: Unsigned + NonZero> Integer for PInt<U> {
     fn to_isize() -> isize {
         <U as Unsigned>::to_isize()
     }
+
+    #[inline]
+    fn new() -> Self {
+        PInt { _marker: PhantomData }
+    }
 }
 
 impl<U: Unsigned + NonZero> Integer for NInt<U> {
@@ -143,6 +133,11 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
     #[inline]
     fn to_isize() -> isize {
         -<U as Unsigned>::to_isize()
+    }
+
+    #[inline]
+    fn new() -> Self {
+        NInt { _marker: PhantomData }
     }
 }
 
