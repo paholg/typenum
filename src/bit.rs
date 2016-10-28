@@ -76,14 +76,14 @@ macro_rules! test_bit_op {
 impl Not for B0 {
     type Output = B1;
     fn not(self) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
     fn not(self) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 
@@ -91,14 +91,14 @@ impl Not for B1 {
 impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
     fn bitand(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// And with 1 ( 1 & B = B)
 impl<Rhs: Bit> BitAnd<Rhs> for B1 {
     type Output = Rhs;
     fn bitand(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 
@@ -106,14 +106,14 @@ impl<Rhs: Bit> BitAnd<Rhs> for B1 {
 impl<Rhs: Bit> BitOr<Rhs> for B0 {
     type Output = Rhs;
     fn bitor(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// Or with 1 ( 1 | B = 1)
 impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
     fn bitor(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 
@@ -121,28 +121,28 @@ impl<Rhs: Bit> BitOr<Rhs> for B1 {
 impl BitXor<B0> for B0 {
     type Output = B0;
     fn bitxor(self, _: B0) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
 impl BitXor<B0> for B1 {
     type Output = B1;
     fn bitxor(self, _: B0) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
 impl BitXor<B1> for B0 {
     type Output = B1;
     fn bitxor(self, _: B1) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
 impl BitXor<B1> for B1 {
     type Output = B0;
     fn bitxor(self, _: B1) -> Self::Output {
-        unreachable!()
+        Bit::new()
     }
 }
 
