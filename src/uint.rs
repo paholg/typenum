@@ -231,7 +231,7 @@ impl<U: Unsigned, B: Bit> PrivateSizeOf for UInt<U, B>
 impl Add<B0> for UTerm {
     type Output = UTerm;
     fn add(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -239,7 +239,7 @@ impl Add<B0> for UTerm {
 impl<U: Unsigned, B: Bit> Add<B0> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn add(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -247,7 +247,7 @@ impl<U: Unsigned, B: Bit> Add<B0> for UInt<U, B> {
 impl Add<B1> for UTerm {
     type Output = UInt<UTerm, B1>;
     fn add(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -255,7 +255,7 @@ impl Add<B1> for UTerm {
 impl<U: Unsigned> Add<B1> for UInt<U, B0> {
     type Output = UInt<U, B1>;
     fn add(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -266,7 +266,7 @@ impl<U: Unsigned> Add<B1> for UInt<U, B1>
 {
     type Output = UInt<Add1<U>, B0>;
     fn add(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -277,7 +277,7 @@ impl<U: Unsigned> Add<B1> for UInt<U, B1>
 impl<U: Unsigned> Add<U> for UTerm {
     type Output = U;
     fn add(self, _: U) -> Self::Output {
-        Unsigned::new()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -285,7 +285,7 @@ impl<U: Unsigned> Add<U> for UTerm {
 impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn add(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -337,7 +337,7 @@ impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
 impl Sub<B0> for UTerm {
     type Output = UTerm;
     fn sub(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -345,7 +345,7 @@ impl Sub<B0> for UTerm {
 impl<U: Unsigned, B: Bit> Sub<B0> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn sub(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -353,7 +353,7 @@ impl<U: Unsigned, B: Bit> Sub<B0> for UInt<U, B> {
 impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
     type Output = UInt<UInt<U, B>, B0>;
     fn sub(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -361,7 +361,7 @@ impl<U: Unsigned, B: Bit> Sub<B1> for UInt<UInt<U, B>, B1> {
 impl Sub<B1> for UInt<UTerm, B1> {
     type Output = UTerm;
     fn sub(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -372,7 +372,7 @@ impl<U: Unsigned> Sub<B1> for UInt<U, B0>
 {
     type Output = UInt<Sub1<U>, B1>;
     fn sub(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -383,7 +383,7 @@ impl<U: Unsigned> Sub<B1> for UInt<U, B0>
 impl Sub<UTerm> for UTerm {
     type Output = UTerm;
     fn sub(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -439,7 +439,7 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateSub<UInt<Ur, B1>> for UInt<Ul, B1>
 impl<Ur: Unsigned> BitAnd<Ur> for UTerm {
     type Output = UTerm;
     fn bitand(self, _: Ur) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -500,7 +500,7 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
 impl<U: Unsigned> BitOr<U> for UTerm {
     type Output = U;
     fn bitor(self, _: U) -> Self::Output {
-        Unsigned::new()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -508,7 +508,7 @@ impl<U: Unsigned> BitOr<U> for UTerm {
 impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
     type Output = Self;
     fn bitor(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -559,7 +559,7 @@ impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1>
 impl<Ur: Unsigned> BitXor<Ur> for UTerm {
     type Output = Ur;
     fn bitxor(self, _: Ur) -> Self::Output {
-        Unsigned::new()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -620,7 +620,7 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
 impl<U: Unsigned> Shl<U> for UTerm {
     type Output = UTerm;
     fn shl(self, _: U) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -628,7 +628,7 @@ impl<U: Unsigned> Shl<U> for UTerm {
 impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn shl(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -636,7 +636,7 @@ impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
 impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn shl(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -644,7 +644,7 @@ impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
 impl Shl<B0> for UTerm {
     type Output = UTerm;
     fn shl(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -652,7 +652,7 @@ impl Shl<B0> for UTerm {
 impl Shl<B1> for UTerm {
     type Output = UTerm;
     fn shl(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -660,7 +660,7 @@ impl Shl<B1> for UTerm {
 impl<U: Unsigned, B: Bit> Shl<B1> for UInt<U, B> {
     type Output = UInt<UInt<U, B>, B0>;
     fn shl(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -682,7 +682,7 @@ impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shl<UInt<Ur, Br>> for UInt<U, B
 impl<U: Unsigned> Shr<U> for UTerm {
     type Output = UTerm;
     fn shr(self, _: U) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -690,7 +690,7 @@ impl<U: Unsigned> Shr<U> for UTerm {
 impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn shr(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -698,7 +698,7 @@ impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
 impl Shr<B0> for UTerm {
     type Output = UTerm;
     fn shr(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -706,7 +706,7 @@ impl Shr<B0> for UTerm {
 impl Shr<B1> for UTerm {
     type Output = UTerm;
     fn shr(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -714,7 +714,7 @@ impl Shr<B1> for UTerm {
 impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn shr(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -722,7 +722,7 @@ impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
 impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
     type Output = U;
     fn shr(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -744,7 +744,7 @@ impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shr<UInt<Ur, Br>> for UInt<U, B
 impl<U: Unsigned, B: Bit> Mul<B0> for UInt<U, B> {
     type Output = UTerm;
     fn mul(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -752,7 +752,7 @@ impl<U: Unsigned, B: Bit> Mul<B0> for UInt<U, B> {
 impl Mul<B0> for UTerm {
     type Output = UTerm;
     fn mul(self, _: B0) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -760,7 +760,7 @@ impl Mul<B0> for UTerm {
 impl Mul<B1> for UTerm {
     type Output = UTerm;
     fn mul(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -768,7 +768,7 @@ impl Mul<B1> for UTerm {
 impl<U: Unsigned, B: Bit> Mul<B1> for UInt<U, B> {
     type Output = UInt<U, B>;
     fn mul(self, _: B1) -> Self::Output {
-        Unsigned::new()
+        UInt::new()
     }
 }
 
@@ -776,7 +776,7 @@ impl<U: Unsigned, B: Bit> Mul<B1> for UInt<U, B> {
 impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
     type Output = UTerm;
     fn mul(self, _: UTerm) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -784,7 +784,7 @@ impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
 impl<U: Unsigned> Mul<U> for UTerm {
     type Output = UTerm;
     fn mul(self, _: U) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -1040,7 +1040,7 @@ impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B
 impl<Ur: Unsigned> Div<Ur> for UTerm {
     type Output = UTerm;
     fn div(self, _: Ur) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 
@@ -1214,7 +1214,7 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor
 impl<Ur: Unsigned> Rem<Ur> for UTerm {
     type Output = UTerm;
     fn rem(self, _: Ur) -> Self::Output {
-        Unsigned::new()
+        UTerm
     }
 }
 

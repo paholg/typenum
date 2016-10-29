@@ -20,7 +20,7 @@ pub struct B0;
 impl B0 {
     /// Instantiates a singleton representing this bit.
     #[inline]
-    fn new() -> B0 {
+    pub fn new() -> B0 {
         B0
     }
 }
@@ -32,7 +32,7 @@ pub struct B1;
 impl B1 {
     /// Instantiates a singleton representing this bit.
     #[inline]
-    fn new() -> B1 {
+    pub fn new() -> B1 {
         B1
     }
 }
@@ -100,21 +100,39 @@ impl<Rhs: Bit> BitAnd<Rhs> for B0 {
         B0
     }
 }
-/// And with 1 ( 1 & B = B)
-impl<Rhs: Bit> BitAnd<Rhs> for B1 {
-    type Output = Rhs;
-    fn bitand(self, _: Rhs) -> Self::Output {
+
+/// And with 1 ( 1 & 0 = 0)
+impl BitAnd<B0> for B1 {
+    type Output = B0;
+    fn bitand(self, _: B0) -> Self::Output {
+        B0
+    }
+}
+
+/// And with 1 ( 1 & 1 = 1)
+impl BitAnd<B1> for B1 {
+    type Output = B1;
+    fn bitand(self, _: B1) -> Self::Output {
         B1
     }
 }
 
-/// Or with 0 ( 0 | B = B)
-impl<Rhs: Bit> BitOr<Rhs> for B0 {
-    type Output = Rhs;
-    fn bitor(self, _: Rhs) -> Self::Output {
+/// Or with 0 ( 0 | 0 = 0)
+impl BitOr<B0> for B0 {
+    type Output = B0;
+    fn bitor(self, _: B0) -> Self::Output {
         B0
     }
 }
+
+/// Or with 0 ( 0 | 1 = 1)
+impl BitOr<B1> for B0 {
+    type Output = B1;
+    fn bitor(self, _: B1) -> Self::Output {
+        B1
+    }
+}
+
 /// Or with 1 ( 1 | B = 1)
 impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
@@ -134,14 +152,14 @@ impl BitXor<B0> for B0 {
 impl BitXor<B0> for B1 {
     type Output = B1;
     fn bitxor(self, _: B0) -> Self::Output {
-        B0
+        B1
     }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
 impl BitXor<B1> for B0 {
     type Output = B1;
     fn bitxor(self, _: B1) -> Self::Output {
-        B0
+        B1
     }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
