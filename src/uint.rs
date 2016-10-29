@@ -29,6 +29,7 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
+use core::marker::PhantomData;
 use {NonZero, Ord, Greater, Equal, Less, Pow, Cmp};
 use bit::{Bit, B0, B1};
 
@@ -46,8 +47,8 @@ pub use marker_traits::Unsigned;
 
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
-pub enum UTerm {}
-impl_derivable!{UTerm}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct UTerm {}
 
 impl Unsigned for UTerm {
     #[inline]
@@ -110,7 +111,17 @@ impl Unsigned for UTerm {
 /// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct UInt<U, B> {
-    _marker: (U, B),
+    _marker: PhantomData<(U, B)>,
+}
+
+impl<U: Unsigned, B: Bit> UInt<U, B> {
+    /// Instantiates a singleton representing this unsigned integer.
+    #[inline]
+    pub fn new() -> UInt<U, B> {
+        UInt {
+            _marker: PhantomData
+        }
+    }
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
