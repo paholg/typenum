@@ -23,9 +23,6 @@ pub trait NonZero {}
 pub trait Ord {
     #[allow(missing_docs)]
     fn to_ordering() -> ::core::cmp::Ordering;
-
-    /// Instantiate a singleton representing this comparison.
-    fn new() -> Self;
 }
 
 /// The **marker trait** for compile time bits.
@@ -36,9 +33,6 @@ pub trait Bit {
     fn to_u8() -> u8;
     #[allow(missing_docs)]
     fn to_bool() -> bool;
-
-    /// Instantiate a singleton representing this bit.
-    fn new() -> Self;
 }
 
 /// The **marker trait** for compile time unsigned integers.
@@ -73,9 +67,6 @@ pub trait Unsigned {
     fn to_i64() -> i64;
     #[allow(missing_docs)]
     fn to_isize() -> isize;
-
-    /// Instantiate a singleton representing this unsigned integer.
-    fn new() -> Self;
 }
 
 /// The **marker trait** for compile time signed integers.
@@ -99,7 +90,4 @@ pub trait Integer {
     fn to_i64() -> i64;
     #[allow(missing_docs)]
     fn to_isize() -> isize;
-
-    /// Instantiate a singleton representing this signed integer.
-    fn new() -> Self;
 }

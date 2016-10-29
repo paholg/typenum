@@ -17,9 +17,25 @@ pub use marker_traits::Bit;
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct B0;
 
+impl B0 {
+    /// Instantiates a singleton representing this bit.
+    #[inline]
+    fn new() -> B0 {
+        B0
+    }
+}
+
 /// The type-level bit 1.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct B1;
+
+impl B1 {
+    /// Instantiates a singleton representing this bit.
+    #[inline]
+    fn new() -> B1 {
+        B1
+    }
+}
 
 impl Bit for B0 {
     #[inline]
@@ -29,11 +45,6 @@ impl Bit for B0 {
     #[inline]
     fn to_bool() -> bool {
         false
-    }
-
-    #[inline]
-    fn new() -> Self {
-        B0
     }
 }
 
@@ -45,11 +56,6 @@ impl Bit for B1 {
     #[inline]
     fn to_bool() -> bool {
         true
-    }
-
-    #[inline]
-    fn new() -> Self {
-        B1
     }
 }
 
@@ -76,14 +82,14 @@ macro_rules! test_bit_op {
 impl Not for B0 {
     type Output = B1;
     fn not(self) -> Self::Output {
-        Bit::new()
+        B1
     }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
     fn not(self) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 
@@ -91,14 +97,14 @@ impl Not for B1 {
 impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
     fn bitand(self, _: Rhs) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 /// And with 1 ( 1 & B = B)
 impl<Rhs: Bit> BitAnd<Rhs> for B1 {
     type Output = Rhs;
     fn bitand(self, _: Rhs) -> Self::Output {
-        Bit::new()
+        B1
     }
 }
 
@@ -106,14 +112,14 @@ impl<Rhs: Bit> BitAnd<Rhs> for B1 {
 impl<Rhs: Bit> BitOr<Rhs> for B0 {
     type Output = Rhs;
     fn bitor(self, _: Rhs) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 /// Or with 1 ( 1 | B = 1)
 impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
     fn bitor(self, _: Rhs) -> Self::Output {
-        Bit::new()
+        B1
     }
 }
 
@@ -121,28 +127,28 @@ impl<Rhs: Bit> BitOr<Rhs> for B1 {
 impl BitXor<B0> for B0 {
     type Output = B0;
     fn bitxor(self, _: B0) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
 impl BitXor<B0> for B1 {
     type Output = B1;
     fn bitxor(self, _: B0) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
 impl BitXor<B1> for B0 {
     type Output = B1;
     fn bitxor(self, _: B1) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
 impl BitXor<B1> for B1 {
     type Output = B0;
     fn bitxor(self, _: B1) -> Self::Output {
-        Bit::new()
+        B0
     }
 }
 
