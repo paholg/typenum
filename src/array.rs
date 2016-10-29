@@ -1,4 +1,6 @@
-//! Docs go here
+//! This module provides a type-level array of type-level numbers.
+//!
+//! It is not very featureful right now, and should be considered a work in progress.
 
 use core::marker::PhantomData;
 use core::ops::{Add, Sub, Mul, Div};
@@ -7,7 +9,7 @@ use super::*;
 
 /// The terminating type for type arrays.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
-pub struct ATerm {}
+pub struct ATerm;
 
 impl TypeArray for ATerm {}
 
@@ -24,6 +26,18 @@ pub struct TArr<V, A> {
 
 impl<V, A> TypeArray for TArr<V, A> {}
 
+/// Create a new type-level arrray. Only usable on Rust 1.13.0 or newer.
+///
+/// There's not a whole lot you can do with it right now.
+///
+/// # Example
+/// ```ignore
+/// #[macro_use]
+/// extern crate typenum;
+/// use typenum::consts::*;
+///
+/// type Array = tarr![P3, N4, Z0, P38];
+/// # fn main() {}
 #[macro_export]
 macro_rules! tarr {
     () => ( $crate::ATerm );
