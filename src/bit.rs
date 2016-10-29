@@ -14,12 +14,28 @@ use {NonZero, Cmp, Greater, Less, Equal};
 pub use marker_traits::Bit;
 
 /// The type-level bit 0.
-pub enum B0 {}
-impl_derivable!{B0}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct B0;
+
+impl B0 {
+    /// Instantiates a singleton representing this bit.
+    #[inline]
+    pub fn new() -> B0 {
+        B0
+    }
+}
 
 /// The type-level bit 1.
-pub enum B1 {}
-impl_derivable!{B1}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct B1;
+
+impl B1 {
+    /// Instantiates a singleton representing this bit.
+    #[inline]
+    pub fn new() -> B1 {
+        B1
+    }
+}
 
 impl Bit for B0 {
     #[inline]
@@ -31,6 +47,7 @@ impl Bit for B0 {
         false
     }
 }
+
 impl Bit for B1 {
     #[inline]
     fn to_u8() -> u8 {
@@ -65,14 +82,14 @@ macro_rules! test_bit_op {
 impl Not for B0 {
     type Output = B1;
     fn not(self) -> Self::Output {
-        unreachable!()
+        B1
     }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
     fn not(self) -> Self::Output {
-        unreachable!()
+        B0
     }
 }
 
@@ -80,29 +97,47 @@ impl Not for B1 {
 impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
     fn bitand(self, _: Rhs) -> Self::Output {
-        unreachable!()
-    }
-}
-/// And with 1 ( 1 & B = B)
-impl<Rhs: Bit> BitAnd<Rhs> for B1 {
-    type Output = Rhs;
-    fn bitand(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        B0
     }
 }
 
-/// Or with 0 ( 0 | B = B)
-impl<Rhs: Bit> BitOr<Rhs> for B0 {
-    type Output = Rhs;
-    fn bitor(self, _: Rhs) -> Self::Output {
-        unreachable!()
+/// And with 1 ( 1 & 0 = 0)
+impl BitAnd<B0> for B1 {
+    type Output = B0;
+    fn bitand(self, _: B0) -> Self::Output {
+        B0
     }
 }
+
+/// And with 1 ( 1 & 1 = 1)
+impl BitAnd<B1> for B1 {
+    type Output = B1;
+    fn bitand(self, _: B1) -> Self::Output {
+        B1
+    }
+}
+
+/// Or with 0 ( 0 | 0 = 0)
+impl BitOr<B0> for B0 {
+    type Output = B0;
+    fn bitor(self, _: B0) -> Self::Output {
+        B0
+    }
+}
+
+/// Or with 0 ( 0 | 1 = 1)
+impl BitOr<B1> for B0 {
+    type Output = B1;
+    fn bitor(self, _: B1) -> Self::Output {
+        B1
+    }
+}
+
 /// Or with 1 ( 1 | B = 1)
 impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
     fn bitor(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        B1
     }
 }
 
@@ -110,28 +145,28 @@ impl<Rhs: Bit> BitOr<Rhs> for B1 {
 impl BitXor<B0> for B0 {
     type Output = B0;
     fn bitxor(self, _: B0) -> Self::Output {
-        unreachable!()
+        B0
     }
 }
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
 impl BitXor<B0> for B1 {
     type Output = B1;
     fn bitxor(self, _: B0) -> Self::Output {
-        unreachable!()
+        B1
     }
 }
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
 impl BitXor<B1> for B0 {
     type Output = B1;
     fn bitxor(self, _: B1) -> Self::Output {
-        unreachable!()
+        B1
     }
 }
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
 impl BitXor<B1> for B1 {
     type Output = B0;
     fn bitxor(self, _: B1) -> Self::Output {
-        unreachable!()
+        B0
     }
 }
 

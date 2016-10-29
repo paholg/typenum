@@ -3,8 +3,8 @@
 This project follows semantic versioning.
 
 ### Unpublished
-    - [added] Type-level arrays of type-level integers.
-    - [changed] Integers no longer use PhantomData
+    - [added] Type-level arrays of type-level integers. (PR #66)
+    - [added] The types in this crate are now instantiable. (Issue #67, PR #68)
 
 ### 1.3.1 (2016-03-31)
     - [fixed] Bug with recent nightlies.
