@@ -2,7 +2,7 @@
 
 This project follows semantic versioning.
 
-### Unpublished
+### 1.4.0 (2016-10-29)
     - [added] Type-level arrays of type-level integers. (PR #66)
     - [added] The types in this crate are now instantiable. (Issue #67, PR #68)
 
