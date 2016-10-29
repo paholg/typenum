@@ -25,12 +25,6 @@
 use bit::{Bit, B1, B0};
 use uint::{Unsigned, UInt, UTerm};
 
-/// Gives the size of a type number in bits as a `UInt`
-pub trait SizeOf {
-    type Output;
-}
-pub type SizeOfOut<A> = <A as SizeOf>::Output;
-
 /// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`
 pub trait Trim {
     type Output;
@@ -58,11 +52,6 @@ pub trait PrivateInvert<Rhs> {
     type Output;
 }
 pub type PrivateInvertOut<A, Rhs> = <A as PrivateInvert<Rhs>>::Output;
-
-pub trait PrivateSizeOf {
-    type Output;
-}
-pub type PrivateSizeOfOut<A> = <A as PrivateSizeOf>::Output;
 
 /// Terminating character for `InvertedUInt`s
 pub enum InvertedUTerm {}

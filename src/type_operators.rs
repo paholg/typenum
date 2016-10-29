@@ -61,3 +61,9 @@ pub trait Cmp<Rhs = Self> {
     /// The result of the comparison. It should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;
 }
+
+/// A **type operator** that gives the length of an `Array` or the number of bits in a `UInt`.
+pub trait Len {
+    /// The length as a type-level unsigned integer.
+    type Output: ::Unsigned;
+}

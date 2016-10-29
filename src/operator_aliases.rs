@@ -14,7 +14,7 @@
 //!
 //! Aliases!!!
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
-use type_operators::{Pow, Cmp};
+use type_operators::{Pow, Cmp, Len};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -59,3 +59,6 @@ pub type Cube<A> = <Square<A> as Mul<A>>::Output;
 
 /// Alias for the associated type of `Cmp`: `Compare<A, B> = <A as Cmp<B>>::Output`
 pub type Compare<A, B> = <A as Cmp<B>>::Output;
+
+/// Alias for the associated type of `Len`: `Length<A> = <A as Len>::Output`
+pub type Length<T> = <T as Len>::Output;

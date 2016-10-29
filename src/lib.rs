@@ -46,6 +46,7 @@
 #![no_std]
 #![warn(missing_docs)]
 
+
 // For clippy:
 #![allow(unknown_lints)]
 #![allow(type_complexity, expl_impl_clone_on_copy)]
@@ -61,13 +62,16 @@ pub mod marker_traits;
 pub mod type_operators;
 pub mod operator_aliases;
 
+pub mod array;
+
 pub use consts::*;
-pub use marker_traits::{NonZero, Ord, Bit, Unsigned, Integer};
-pub use type_operators::{Cmp, Pow, Same};
-pub use operator_aliases::{And, Or, Xor, Shleft, Shright, Sum, Diff, Prod, Quot, Mod, Negate, Exp,
-                           Add1, Sub1, Square, Cube, Compare};
+pub use marker_traits::*;
+pub use type_operators::*;
+pub use operator_aliases::*;
+
 pub use uint::{UInt, UTerm};
 pub use int::{NInt, PInt};
+pub use array::{TArr, ATerm};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.

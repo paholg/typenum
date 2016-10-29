@@ -91,3 +91,12 @@ pub trait Integer {
     #[allow(missing_docs)]
     fn to_isize() -> isize;
 }
+
+/// The **marker trait** for type-level arrays of type-level numbers.
+///
+/// This trait should not be implemented for anything outside this crate.
+///
+/// Someday, it will contain a function or associated constant to produce a runtime array, like the
+/// other marker traits here. However, that requires stabilization of associated consts or of
+/// const functions.
+pub trait TypeArray {}
