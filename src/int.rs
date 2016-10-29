@@ -70,9 +70,18 @@ impl<U: Unsigned + NonZero> NInt<U> {
     }
 }
 
+
 /// The type-level signed integer 0.
-pub enum Z0 {}
-impl_derivable!{Z0}
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+pub struct Z0;
+
+impl Z0 {
+    /// Instantiates a singleton representing the integer 0.
+    #[inline]
+    pub fn new() -> Z0 {
+        Z0
+    }
+}
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
@@ -170,7 +179,7 @@ macro_rules! test_int_op {
 impl Neg for Z0 {
     type Output = Z0;
     fn neg(self) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -178,7 +187,7 @@ impl Neg for Z0 {
 impl<U: Unsigned + NonZero> Neg for PInt<U> {
     type Output = NInt<U>;
     fn neg(self) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -186,7 +195,7 @@ impl<U: Unsigned + NonZero> Neg for PInt<U> {
 impl<U: Unsigned + NonZero> Neg for NInt<U> {
     type Output = PInt<U>;
     fn neg(self) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -197,7 +206,7 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 impl<I: Integer> Add<I> for Z0 {
     type Output = I;
     fn add(self, _: I) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -205,7 +214,7 @@ impl<I: Integer> Add<I> for Z0 {
 impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
     type Output = PInt<U>;
     fn add(self, _: Z0) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -213,7 +222,7 @@ impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
 impl<U: Unsigned + NonZero> Add<Z0> for NInt<U> {
     type Output = NInt<U>;
     fn add(self, _: Z0) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -224,7 +233,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for PInt<Ul>
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
     fn add(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -235,7 +244,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for NInt<Ul>
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
     fn add(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -247,7 +256,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
         <Ul as Cmp<Ur>>::Output, Ur
         >>::Output;
     fn add(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -260,7 +269,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
         <Ur as Cmp<Ul>>::Output, Ul
         >>::Output;
     fn add(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -292,7 +301,7 @@ impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Less, N> for P
 impl Sub<Z0> for Z0 {
     type Output = Z0;
     fn sub(self, _: Z0) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -300,7 +309,7 @@ impl Sub<Z0> for Z0 {
 impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
     type Output = NInt<U>;
     fn sub(self, _: PInt<U>) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -308,7 +317,7 @@ impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
 impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
     type Output = PInt<U>;
     fn sub(self, _: NInt<U>) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -316,7 +325,7 @@ impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
 impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
     type Output = PInt<U>;
     fn sub(self, _: Z0) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -324,7 +333,7 @@ impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
 impl<U: Unsigned + NonZero> Sub<Z0> for NInt<U> {
     type Output = NInt<U>;
     fn sub(self, _: Z0) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -335,7 +344,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for PInt<Ul>
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
     fn sub(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -346,7 +355,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for NInt<Ul>
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
     fn sub(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -358,7 +367,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
         <Ul as Cmp<Ur>>::Output, Ur
         >>::Output;
     fn sub(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -371,7 +380,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
         <Ur as Cmp<Ul>>::Output, Ul
         >>::Output;
     fn sub(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -382,7 +391,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
 impl<I: Integer> Mul<I> for Z0 {
     type Output = Z0;
     fn mul(self, _: I) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -390,7 +399,7 @@ impl<I: Integer> Mul<I> for Z0 {
 impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
     type Output = Z0;
     fn mul(self, _: Z0) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -398,7 +407,7 @@ impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
 impl<U: Unsigned + NonZero> Mul<Z0> for NInt<U> {
     type Output = Z0;
     fn mul(self, _: Z0) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -409,7 +418,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for PInt<Ul>
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
     fn mul(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -420,7 +429,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for NInt<Ul>
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
     fn mul(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        PInt::new()
     }
 }
 
@@ -431,7 +440,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<NInt<Ur>> for PInt<Ul>
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
     fn mul(self, _: NInt<Ur>) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -442,7 +451,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
     fn mul(self, _: PInt<Ur>) -> Self::Output {
-        unreachable!()
+        NInt::new()
     }
 }
 
@@ -453,7 +462,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Mul<PInt<Ur>> for NInt<Ul>
 impl<I: Integer + NonZero> Div<I> for Z0 {
     type Output = Z0;
     fn div(self, _: I) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -467,7 +476,9 @@ macro_rules! impl_int_div {
             type Output = <$A<Ul> as PrivateDivInt<
                 <Ul as Cmp<Ur>>::Output,
                 $B<Ur>>>::Output;
-            fn div(self, _: $B<Ur>) -> Self::Output { unreachable!() }
+            fn div(self, _: $B<Ur>) -> Self::Output {
+                unsafe { ::core::mem::uninitialized() }
+            }
         }
         impl<Ul, Ur> PrivateDivInt<Less, $B<Ur>> for $A<Ul>
             where Ul: Unsigned + NonZero, Ur: Unsigned + NonZero,
@@ -570,7 +581,7 @@ macro_rules! test_ord {
 impl<I: Integer + NonZero> Rem<I> for Z0 {
     type Output = Z0;
     fn rem(self, _: I) -> Self::Output {
-        unreachable!()
+        Z0
     }
 }
 
@@ -584,7 +595,9 @@ macro_rules! impl_int_rem {
             type Output = <$A<Ul> as PrivateRem<
                 <Ul as Rem<Ur>>::Output,
                 $B<Ur>>>::Output;
-            fn rem(self, _: $B<Ur>) -> Self::Output { unreachable!() }
+            fn rem(self, _: $B<Ur>) -> Self::Output {
+                unsafe { ::core::mem::uninitialized() }
+            }
         }
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateRem<U0, $B<Ur>> for $A<Ul> {
             type Output = Z0;
