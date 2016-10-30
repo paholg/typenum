@@ -261,3 +261,21 @@ impl<V, A, U> Div<TArr<V, A>> for NInt<U>
 }
 
 // ---------------------------------------------------------------------------------------
+// Negate an array
+use core::ops::Neg;
+impl Neg for ATerm {
+    type Output = ATerm;
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
+}
+
+impl<V, A> Neg for TArr<V, A>
+    where V: Neg,
+          A: Neg
+{
+    type Output = TArr<Negate<V>, Negate<A>>;
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
+}
