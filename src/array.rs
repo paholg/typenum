@@ -53,6 +53,9 @@ macro_rules! tarr {
 /// Length of `ATerm` by itself is 0
 impl Len for ATerm {
     type Output = U0;
+    fn len(&self) -> Self::Output {
+        UTerm
+    }
 }
 
 /// Size of a `TypeArray`
@@ -62,6 +65,9 @@ impl<V, A> Len for TArr<V, A>
           Sum<Length<A>, B1>: Unsigned
 {
     type Output = Add1<Length<A>>;
+    fn len(&self) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
 }
 
 // ---------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@ rust:
   - stable
   - nightly
   - beta
+cache: cargo
 
 notifications:
   email:
@@ -12,12 +13,16 @@ notifications:
 before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
   - export TRAVIS_CARGO_NIGHTLY_FEATURE=""
+  - (cargo install rustfmt || true) # the || true keeps cargo from throwing an error if it's already installed
+
 script:
   - |
+    PATH=$PATH:~/.cargo/bin cargo fmt -- --write-mode=diff &&
     travis-cargo build &&
     travis-cargo test &&
     # Note: The "no_std" flag is deprecated and this test remains to make sure we don't break compatibility.
     travis-cargo --only stable test -- --features "no_std" &&
+    travis-cargo --only nightly test -- --features "clippy" &&
     travis-cargo --only stable doc
 
 after_success:

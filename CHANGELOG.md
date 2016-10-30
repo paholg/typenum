@@ -2,6 +2,12 @@
 
 This project follows semantic versioning.
 
+### Unpublished
+    - [added] Functions to the `Pow` and `Len` traits. This is *technically* a breaking change, but
+      it would only break someone's code if they have a custom impl for `Pow`. I would be very
+      surprised if that is anyone other than me.
+    - [added]
+
 ### 1.4.0 (2016-10-29)
     - [added] Type-level arrays of type-level integers. (PR #66)
     - [added] The types in this crate are now instantiable. (Issue #67, PR #68)
