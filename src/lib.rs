@@ -48,8 +48,12 @@
 
 
 // For clippy:
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
+
 #![allow(unknown_lints)]
-#![allow(type_complexity, expl_impl_clone_on_copy)]
+#![deny(clippy)]
+#![allow(type_complexity, len_without_is_empty)]
 
 use core::cmp::Ordering;
 
@@ -75,17 +79,17 @@ pub use array::{TArr, ATerm};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct Greater;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Less`.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct Less;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Equal`.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct Equal;
 
 /// Returns `core::cmp::Ordering::Greater`

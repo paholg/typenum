@@ -48,7 +48,7 @@ pub use marker_traits::Unsigned;
 
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct UTerm;
 
 impl UTerm {
@@ -118,7 +118,7 @@ impl Unsigned for UTerm {
 ///
 /// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 /// ```
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct UInt<U, B> {
     _marker: PhantomData<(U, B)>,
 }
@@ -127,9 +127,7 @@ impl<U: Unsigned, B: Bit> UInt<U, B> {
     /// Instantiates a singleton representing this unsigned integer.
     #[inline]
     pub fn new() -> UInt<U, B> {
-        UInt {
-            _marker: PhantomData
-        }
+        UInt { _marker: PhantomData }
     }
 }
 
@@ -203,6 +201,9 @@ macro_rules! test_uint_op {
 /// Length of `UTerm` by itself is 0
 impl Len for UTerm {
     type Output = U0;
+    fn len(&self) -> Self::Output {
+        UTerm
+    }
 }
 
 /// Length of a bit is 1
@@ -212,6 +213,9 @@ impl<U: Unsigned, B: Bit> Len for UInt<U, B>
           Add1<Length<U>>: Unsigned
 {
     type Output = Add1<Length<U>>;
+    fn len(&self) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -962,6 +966,9 @@ impl<X: Unsigned, N: Unsigned> Pow<N> for X
     where X: PrivatePow<U1, N>
 {
     type Output = PrivatePowOut<X, U1, N>;
+    fn powi(self, _: N) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
 }
 
 impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U0> for X {

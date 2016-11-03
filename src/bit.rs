@@ -14,7 +14,7 @@ use {NonZero, Cmp, Greater, Less, Equal};
 pub use marker_traits::Bit;
 
 /// The type-level bit 0.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct B0;
 
 impl B0 {
@@ -26,7 +26,7 @@ impl B0 {
 }
 
 /// The type-level bit 1.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct B1;
 
 impl B1 {

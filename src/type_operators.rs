@@ -39,10 +39,81 @@ impl<T> Same<T> for T {
 ///
 /// assert_eq!(<N3 as Pow<P3>>::Output::to_i32(), -27);
 /// ```
-pub trait Pow<Rhs = Self> {
+pub trait Pow<Exp> {
     /// The result of the exponentiation.
     type Output;
+    /// This function isn't used in this crate, but may be useful for others.
+    /// It is implemented for primitives.
+    ///
+    /// # Example
+    /// ```rust
+    /// use typenum::{Pow, U3};
+    ///
+    /// let a = 7u32.powi(U3::new());
+    /// let b = 7u32.pow(3);
+    /// assert_eq!(a, b);
+    ///
+    /// let x = 3.0.powi(U3::new());
+    /// let y = 27.0;
+    /// assert_eq!(x, y);
+    /// ```
+    fn powi(self, exp: Exp) -> Self::Output;
 }
+
+use Unsigned;
+macro_rules! impl_pow_f {
+    ($t: ty) => (
+        impl<Exp: Unsigned> Pow<Exp> for $t {
+            type Output = $t;
+            // powi is unstable in core, so we have to write this function ourselves.
+            // copied from num::pow::pow
+            #[inline]
+            fn powi(self, _: Exp) -> Self::Output {
+                let mut exp = Exp::to_u32();
+                let mut base = self;
+
+                if exp == 0 { return 1.0 }
+
+                while exp & 1 == 0 {
+                    base *= base;
+                    exp >>= 1;
+                }
+                if exp == 1 { return base }
+
+                let mut acc = base.clone();
+                while exp > 1 {
+                    exp >>= 1;
+                    base *= base;
+                    if exp & 1 == 1 {
+                        acc *= base.clone();
+                    }
+                }
+                acc
+            }
+        }
+    );
+}
+
+impl_pow_f!(f32);
+impl_pow_f!(f64);
+
+
+macro_rules! impl_pow_i {
+    () => ();
+    ($t: ty $(, $tail:tt)*) => (
+        impl<Exp: Unsigned> Pow<Exp> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: Exp) -> Self::Output {
+                self.pow(Exp::to_u32())
+            }
+        }
+        impl_pow_i!($($tail),*);
+    );
+}
+
+impl_pow_i!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
+
 
 /// A **type operator** for comparing `Self` and `Rhs`. It provides a similar functionality to
 /// the function
@@ -66,4 +137,6 @@ pub trait Cmp<Rhs = Self> {
 pub trait Len {
     /// The length as a type-level unsigned integer.
     type Output: ::Unsigned;
+    /// This function isn't used in this crate, but may be useful for others.
+    fn len(&self) -> Self::Output;
 }

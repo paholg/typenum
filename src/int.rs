@@ -39,13 +39,13 @@ use consts::{U0, U1, P1, N1};
 pub use marker_traits::Integer;
 
 /// Type-level signed integers with positive sign.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct PInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
 
 /// Type-level signed integers with negative sign.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct NInt<U: Unsigned + NonZero> {
     _marker: PhantomData<U>,
 }
@@ -54,9 +54,7 @@ impl<U: Unsigned + NonZero> PInt<U> {
     /// Instantiates a singleton representing this strictly positive integer.
     #[inline]
     pub fn new() -> PInt<U> {
-        PInt {
-            _marker: PhantomData
-        }
+        PInt { _marker: PhantomData }
     }
 }
 
@@ -64,15 +62,13 @@ impl<U: Unsigned + NonZero> NInt<U> {
     /// Instantiates a singleton representing this strictly negative integer.
     #[inline]
     pub fn new() -> NInt<U> {
-        NInt {
-            _marker: PhantomData
-        }
+        NInt { _marker: PhantomData }
     }
 }
 
 
 /// The type-level signed integer 0.
-#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct Z0;
 
 impl Z0 {
@@ -621,41 +617,65 @@ impl_int_rem!(NInt, NInt, NInt);
 /// 0^0 = 1
 impl Pow<Z0> for Z0 {
     type Output = P1;
+    fn powi(self, _: Z0) -> Self::Output {
+        P1::new()
+    }
 }
 
 /// 0^P = 0
 impl<U: Unsigned + NonZero> Pow<PInt<U>> for Z0 {
     type Output = Z0;
+    fn powi(self, _: PInt<U>) -> Self::Output {
+        Z0
+    }
 }
 
 /// 0^N = 0
 impl<U: Unsigned + NonZero> Pow<NInt<U>> for Z0 {
     type Output = Z0;
+    fn powi(self, _: NInt<U>) -> Self::Output {
+        Z0
+    }
 }
 
 /// 1^N = 1
 impl<U: Unsigned + NonZero> Pow<NInt<U>> for P1 {
     type Output = P1;
+    fn powi(self, _: NInt<U>) -> Self::Output {
+        P1::new()
+    }
 }
 
 /// (-1)^N = 1 if N is even
 impl<U: Unsigned> Pow<NInt<UInt<U, B0>>> for N1 {
     type Output = P1;
+    fn powi(self, _: NInt<UInt<U, B0>>) -> Self::Output {
+        P1::new()
+    }
 }
 
 /// (-1)^N = -1 if N is odd
 impl<U: Unsigned> Pow<NInt<UInt<U, B1>>> for N1 {
     type Output = N1;
+    fn powi(self, _: NInt<UInt<U, B1>>) -> Self::Output {
+        N1::new()
+    }
 }
 
 /// P^0 = 1
 impl<U: Unsigned + NonZero> Pow<Z0> for PInt<U> {
     type Output = P1;
+    fn powi(self, _: Z0) -> Self::Output {
+        P1::new()
+    }
 }
 
 /// N^0 = 1
 impl<U: Unsigned + NonZero> Pow<Z0> for NInt<U> {
     type Output = P1;
+    fn powi(self, _: Z0) -> Self::Output {
+        P1::new()
+    }
 }
 
 /// P(Ul)^P(Ur) = P(Ul^Ur)
@@ -664,6 +684,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Pow<PInt<Ur>> for PInt<Ul>
           <Ul as Pow<Ur>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Pow<Ur>>::Output>;
+    fn powi(self, _: PInt<Ur>) -> Self::Output {
+        PInt::new()
+    }
 }
 
 /// N(Ul)^P(Ur) = P(Ul^Ur) if Ur is even
@@ -672,6 +695,9 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned> Pow<PInt<UInt<Ur, B0>>> for NInt<Ul>
           <Ul as Pow<UInt<Ur, B0>>>::Output: Unsigned + NonZero
 {
     type Output = PInt<<Ul as Pow<UInt<Ur, B0>>>::Output>;
+    fn powi(self, _: PInt<UInt<Ur, B0>>) -> Self::Output {
+        PInt::new()
+    }
 }
 
 /// N(Ul)^P(Ur) = N(Ul^Ur) if Ur is odd
@@ -680,4 +706,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned> Pow<PInt<UInt<Ur, B1>>> for NInt<Ul>
           <Ul as Pow<UInt<Ur, B1>>>::Output: Unsigned + NonZero
 {
     type Output = NInt<<Ul as Pow<UInt<Ur, B1>>>::Output>;
+    fn powi(self, _: PInt<UInt<Ur, B1>>) -> Self::Output {
+        NInt::new()
+    }
 }

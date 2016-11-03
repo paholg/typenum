@@ -53,6 +53,9 @@ macro_rules! tarr {
 /// Length of `ATerm` by itself is 0
 impl Len for ATerm {
     type Output = U0;
+    fn len(&self) -> Self::Output {
+        UTerm
+    }
 }
 
 /// Size of a `TypeArray`
@@ -62,6 +65,9 @@ impl<V, A> Len for TArr<V, A>
           Sum<Length<A>, B1>: Unsigned
 {
     type Output = Add1<Length<A>>;
+    fn len(&self) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -255,3 +261,21 @@ impl<V, A, U> Div<TArr<V, A>> for NInt<U>
 }
 
 // ---------------------------------------------------------------------------------------
+// Negate an array
+use core::ops::Neg;
+impl Neg for ATerm {
+    type Output = ATerm;
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
+}
+
+impl<V, A> Neg for TArr<V, A>
+    where V: Neg,
+          A: Neg
+{
+    type Output = TArr<Negate<V>, Negate<A>>;
+    fn neg(self) -> Self::Output {
+        unreachable!()
+    }
+}
