@@ -11,7 +11,17 @@ Typenum depends only on libcore, and so is suitable for use on any platform!
 
 For the full documentation, go [here](http://paholg.com/typenum).
 
-Here is a trivial example of its use:
+### Importing
+
+While `typenum` is divided into several modules, they are all re-exported through the crate root,
+so you can import anything contained herein with `use typenum::whatever;`, ignoring the
+crate structure.
+
+You may also find it useful to treat the `consts` module as a prelude, perfoming a glob import.
+
+### Example
+
+Here is a trivial example of `typenum`'s use:
 
 ```rust
 use typenum::{Sum, Exp, Integer, N2, P3, P4};
@@ -29,3 +39,4 @@ list is [here](https://crates.io/crates/typenum/reverse_dependencies). Of note a
 checking for arbitrary unit systems and
 [generic-array](https://crates.io/crates/generic-array/) which provides arrays whose
 length you can generically refer to.
+
