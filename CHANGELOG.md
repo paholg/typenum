@@ -3,6 +3,9 @@
 This project follows semantic versioning.
 
 ### Unpublished
+    - [fixed] Expanded implementation of `Pow` for primitives.
+
+### 1.5.0 (2016-11-03)
     - [added] Functions to the `Pow` and `Len` traits. This is *technically* a breaking change, but
       it would only break someone's code if they have a custom impl for `Pow`. I would be very
       surprised if that is anyone other than me.
