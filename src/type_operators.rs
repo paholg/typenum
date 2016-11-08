@@ -60,16 +60,61 @@ pub trait Pow<Exp> {
     fn powi(self, exp: Exp) -> Self::Output;
 }
 
-use Unsigned;
+use {Unsigned, Bit, UInt, PInt, NonZero, UTerm, Z0};
 macro_rules! impl_pow_f {
     ($t: ty) => (
-        impl<Exp: Unsigned> Pow<Exp> for $t {
+        impl Pow<UTerm> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: UTerm) -> Self::Output {
+                1.0
+            }
+        }
+
+        impl<U: Unsigned, B: Bit> Pow<UInt<U, B>> for $t {
             type Output = $t;
             // powi is unstable in core, so we have to write this function ourselves.
             // copied from num::pow::pow
             #[inline]
-            fn powi(self, _: Exp) -> Self::Output {
-                let mut exp = Exp::to_u32();
+            fn powi(self, _: UInt<U, B>) -> Self::Output {
+                let mut exp = <UInt<U, B> as Unsigned>::to_u32();
+                let mut base = self;
+
+                if exp == 0 { return 1.0 }
+
+                while exp & 1 == 0 {
+                    base *= base;
+                    exp >>= 1;
+                }
+                if exp == 1 { return base }
+
+                let mut acc = base.clone();
+                while exp > 1 {
+                    exp >>= 1;
+                    base *= base;
+                    if exp & 1 == 1 {
+                        acc *= base.clone();
+                    }
+                }
+                acc
+            }
+        }
+
+        impl Pow<Z0> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: Z0) -> Self::Output {
+                1.0
+            }
+        }
+
+        impl<U: Unsigned + NonZero> Pow<PInt<U>> for $t {
+            type Output = $t;
+            // powi is unstable in core, so we have to write this function ourselves.
+            // copied from num::pow::pow
+            #[inline]
+            fn powi(self, _: PInt<U>) -> Self::Output {
+                let mut exp = U::to_u32();
                 let mut base = self;
 
                 if exp == 0 { return 1.0 }
@@ -101,18 +146,89 @@ impl_pow_f!(f64);
 macro_rules! impl_pow_i {
     () => ();
     ($t: ty $(, $tail:tt)*) => (
-        impl<Exp: Unsigned> Pow<Exp> for $t {
+        impl Pow<UTerm> for $t {
             type Output = $t;
             #[inline]
-            fn powi(self, _: Exp) -> Self::Output {
-                self.pow(Exp::to_u32())
+            fn powi(self, _: UTerm) -> Self::Output {
+                1
             }
         }
+
+        impl<U: Unsigned, B: Bit> Pow<UInt<U, B>> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: UInt<U, B>) -> Self::Output {
+                self.pow(<UInt<U, B> as Unsigned>::to_u32())
+            }
+        }
+
+        impl Pow<Z0> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: Z0) -> Self::Output {
+                1
+            }
+        }
+
+        impl<U: Unsigned + NonZero> Pow<PInt<U>> for $t {
+            type Output = $t;
+            #[inline]
+            fn powi(self, _: PInt<U>) -> Self::Output {
+                self.pow(U::to_u32())
+            }
+        }
+
         impl_pow_i!($($tail),*);
     );
 }
 
 impl_pow_i!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
+
+#[test]
+fn pow_test() {
+    use consts::*;
+    let z0 = Z0::new();
+    let p3 = P3::new();
+
+    let u0 = U0::new();
+    let u3 = U3::new();
+
+    macro_rules! check {
+        ($x:ident) => (
+            assert_eq!($x.powi(z0), 1);
+            assert_eq!($x.powi(u0), 1);
+
+            assert_eq!($x.powi(p3), $x*$x*$x);
+            assert_eq!($x.powi(u3), $x*$x*$x);
+        );
+        ($x:ident, $f:ident) => (
+            assert_eq!(<$f as Pow<Z0>>::powi(*$x, z0), 1.0);
+            assert_eq!(<$f as Pow<U0>>::powi(*$x, u0), 1.0);
+
+            assert_eq!(<$f as Pow<P3>>::powi(*$x, p3), $x*$x*$x);
+            assert_eq!(<$f as Pow<U3>>::powi(*$x, u3), $x*$x*$x);
+        );
+    }
+
+    for x in &[0i8, -3, 2]  {
+        check!(x);
+    }
+    for x in &[0u8, 1, 5]  {
+        check!(x);
+    }
+    for x in &[0usize, 1, 5, 40]  {
+        check!(x);
+    }
+    for x in &[0isize, 1, 2, -30, -22, 48]  {
+        check!(x);
+    }
+    for x in &[0.0f32, 2.2, -3.5, 378.223]  {
+        check!(x, f32);
+    }
+    for x in &[0.0f64, 2.2, -3.5, -2387.2, 234.22]  {
+        check!(x, f64);
+    }
+}
 
 
 /// A **type operator** for comparing `Self` and `Rhs`. It provides a similar functionality to
