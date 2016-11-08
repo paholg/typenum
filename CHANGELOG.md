@@ -2,7 +2,7 @@
 
 This project follows semantic versioning.
 
-### Unpublished
+### 1.5.1 (2016-11-08)
     - [fixed] Expanded implementation of `Pow` for primitives.
 
 ### 1.5.0 (2016-11-03)
