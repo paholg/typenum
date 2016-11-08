@@ -202,30 +202,30 @@ fn pow_test() {
             assert_eq!($x.powi(u3), $x*$x*$x);
         );
         ($x:ident, $f:ident) => (
-            assert_eq!(<$f as Pow<Z0>>::powi(*$x, z0), 1.0);
-            assert_eq!(<$f as Pow<U0>>::powi(*$x, u0), 1.0);
+            assert!((<$f as Pow<Z0>>::powi(*$x, z0) - 1.0).abs() < ::core::$f::EPSILON);
+            assert!((<$f as Pow<U0>>::powi(*$x, u0) - 1.0).abs() < ::core::$f::EPSILON);
 
-            assert_eq!(<$f as Pow<P3>>::powi(*$x, p3), $x*$x*$x);
-            assert_eq!(<$f as Pow<U3>>::powi(*$x, u3), $x*$x*$x);
+            assert!((<$f as Pow<P3>>::powi(*$x, p3) - $x*$x*$x).abs() < ::core::$f::EPSILON);
+            assert!((<$f as Pow<U3>>::powi(*$x, u3) - $x*$x*$x).abs() < ::core::$f::EPSILON);
         );
     }
 
-    for x in &[0i8, -3, 2]  {
+    for x in &[0i8, -3, 2] {
         check!(x);
     }
-    for x in &[0u8, 1, 5]  {
+    for x in &[0u8, 1, 5] {
         check!(x);
     }
-    for x in &[0usize, 1, 5, 40]  {
+    for x in &[0usize, 1, 5, 40] {
         check!(x);
     }
-    for x in &[0isize, 1, 2, -30, -22, 48]  {
+    for x in &[0isize, 1, 2, -30, -22, 48] {
         check!(x);
     }
-    for x in &[0.0f32, 2.2, -3.5, 378.223]  {
+    for x in &[0.0f32, 2.2, -3.5, 378.223] {
         check!(x, f32);
     }
-    for x in &[0.0f64, 2.2, -3.5, -2387.2, 234.22]  {
+    for x in &[0.0f64, 2.2, -3.5, -2387.2, 234.22] {
         check!(x, f64);
     }
 }
