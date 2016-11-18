@@ -93,14 +93,14 @@ pub trait PrivatePow<Y, N> {
 }
 pub type PrivatePowOut<A, Y, N> = <A as PrivatePow<Y, N>>::Output;
 
-pub trait PrivateDiv<C, I, Q, Divisor> {
+pub trait PrivateDiv<R, C, I, Q, Divisor> {
     type Quotient;
     type Remainder;
 }
 pub type PrivateDivQuot<R, C, I, Q, Divisor> =
-    <R as PrivateDiv<C, I, Q, Divisor>>::Quotient;
+    <() as PrivateDiv<R, C, I, Q, Divisor>>::Quotient;
 pub type PrivateDivRem<R, C, I, Q, Divisor> =
-    <R as PrivateDiv<C, I, Q, Divisor>>::Remainder;
+    <() as PrivateDiv<R, C, I, Q, Divisor>>::Remainder;
 
 pub trait PrivateDivFirstStep<C, Divisor> {
     type Quotient;

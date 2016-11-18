@@ -1072,7 +1072,7 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor>
 impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Divisor> for Numerator
     where Numerator: BitDiff<Divisor> + Cmp<Shleft<Divisor, BitDiffOut<Numerator, Divisor>>>,
           Divisor: Shl<BitDiffOut<Numerator, Divisor>>,
-          Numerator: PrivateDiv<Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
+          (): PrivateDiv<Numerator, Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
                                 BitDiffOut<Numerator, Divisor>,
                                 U0,
                                 ShiftDiffOut<Divisor, Numerator>>
@@ -1093,7 +1093,7 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Diviso
 // PrivateDiv with I == 0
 
 /// Remainder < Divisor: return Q
-impl<Q, Divisor, Remainder> PrivateDiv<Less, U0, Q, Divisor> for Remainder
+impl<Q, Divisor, Remainder> PrivateDiv<Remainder, Less, U0, Q, Divisor> for ()
     where Q: Unsigned,
           Divisor: Unsigned,
           Remainder: Unsigned
@@ -1103,7 +1103,7 @@ impl<Q, Divisor, Remainder> PrivateDiv<Less, U0, Q, Divisor> for Remainder
 }
 
 /// Remainder == Divisor: return Q + 1
-impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
+impl<Q, Divisor, Remainder> PrivateDiv<Remainder, Equal, U0, Q, Divisor> for ()
     where Q: Unsigned,
           Divisor: Unsigned,
           Remainder: Unsigned,
@@ -1114,7 +1114,7 @@ impl<Q, Divisor, Remainder> PrivateDiv<Equal, U0, Q, Divisor> for Remainder
 }
 
 /// Remainder > Divisor: return Q + 1
-impl<Q, Divisor, Remainder> PrivateDiv<Greater, U0, Q, Divisor> for Remainder
+impl<Q, Divisor, Remainder> PrivateDiv<Remainder, Greater, U0, Q, Divisor> for ()
     where Q: Unsigned,
           Divisor: Unsigned,
           Remainder: Unsigned,
@@ -1129,7 +1129,7 @@ impl<Q, Divisor, Remainder> PrivateDiv<Greater, U0, Q, Divisor> for Remainder
 // PrivateDiv with I > 0
 
 /// Remainder == Divisor: return Q + 2^I = Q + 1 << I
-impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> for Remainder
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Remainder, Equal, UInt<Ui, Bi>, Q, Divisor> for ()
     where Ui: Unsigned,
           Bi: Bit,
           Q: Unsigned,
@@ -1144,7 +1144,7 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Equal, UInt<Ui, Bi>, Q, Divisor> 
 
 /// Remainder < Divisor: Divisor >>= 1, I -= 1, C = Remainder.cmp(Divisor)
 /// Call `PrivateDiv`
-impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> for Remainder
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Remainder, Less, UInt<Ui, Bi>, Q, Divisor> for ()
     where Ui: Unsigned,
           Bi: Bit,
           Q: Unsigned,
@@ -1153,7 +1153,8 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
           Divisor: Shr<B1>,
           Remainder: Cmp<Shright<Divisor, B1>>,
           UInt<Ui, Bi>: Sub<B1>,
-          Remainder: PrivateDiv<Compare<Remainder, Shright<Divisor, B1>>,
+          (): PrivateDiv<Remainder,
+                                Compare<Remainder, Shright<Divisor, B1>>,
                                 Sub1<UInt<Ui, Bi>>,
                                 Q,
                                 Shright<Divisor, B1>>
@@ -1174,7 +1175,7 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Less, UInt<Ui, Bi>, Q, Divisor> f
 /// Remainder > Divisor:
 /// Q += 2^I, I -= 1, R -= D, D >>= 1, C = (new R).cmp(new D)
 /// Call `PrivateDiv`
-impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor> for Remainder
+impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Remainder, Greater, UInt<Ui, Bi>, Q, Divisor> for ()
     where Ui: Unsigned,
           Bi: Bit,
           Q: Unsigned,
@@ -1186,11 +1187,12 @@ impl<Ui, Bi, Q, Divisor, Remainder> PrivateDiv<Greater, UInt<Ui, Bi>, Q, Divisor
           UInt<Ui, Bi>: Sub<B1>,
           U1: Shl<UInt<Ui, Bi>>,
           Q: Add<Shleft<U1, UInt<Ui, Bi>>>,
-          Diff<Remainder, Divisor>: PrivateDiv<Compare<Diff<Remainder, Divisor>,
-                                                       Shright<Divisor, B1>>,
-                                               Sub1<UInt<Ui, Bi>>,
-                                               Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
-                                               Shright<Divisor, B1>>
+          (): PrivateDiv<Diff<Remainder, Divisor>,
+                         Compare<Diff<Remainder, Divisor>,
+                                 Shright<Divisor, B1>>,
+                         Sub1<UInt<Ui, Bi>>,
+                         Sum<Q, Shleft<U1, UInt<Ui, Bi>>>,
+                         Shright<Divisor, B1>>
 {
     type Quotient = PrivateDivQuot<Diff<Remainder, Divisor>,
                    Compare<Diff<Remainder, Divisor>, Shright<Divisor, B1>>,
