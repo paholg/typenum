@@ -1109,14 +1109,12 @@ impl<Un, Bn, Ui, Bi, B> PrivateSetBit<UInt<Ui, Bi>, B> for UInt<Un, Bn>
 }
 
 // Ran out of bits, setting B0
-impl<I> PrivateSetBit<I, B0> for UTerm
-{
+impl<I> PrivateSetBit<I, B0> for UTerm {
     type Output = UTerm;
 }
 
 // Ran out of bits, setting B1
-impl<I> PrivateSetBit<I, B1> for UTerm where U1: Shl<I>
-{
+impl<I> PrivateSetBit<I, B1> for UTerm where U1: Shl<I> {
     type Output = Shleft<U1, I>;
 }
 
@@ -1187,17 +1185,8 @@ fn test_div() {
     test_div!(U2 / U2 = U1);
     test_div!(U3 / U2 = U1);
     test_div!(U4 / U2 = U2);
-    // test_div!(U5 / U2 = U2); 3
     test_div!(U6 / U2 = U3);
     test_div!(U7 / U2 = U3);
-    //test_div!(U8 / U2 = U4); 7
-    //test_div!(U9 / U2 = U4); 7
-    // test_div!(U11 / U2 = U7);
-    // test_div!(U12 / U2 = U7);
-    // test_div!(U13 / U2 = U7);
-    // test_div!(U14 / U2 = U7);
-    // test_div!(U15 / U2 = U7);
-    // test_div!(U16 / U2 = U15);
 
     type T = <SetBitOut<U0, U1, B1> as Same<U2>>::Output;
     <T as Unsigned>::to_u32();
@@ -1264,26 +1253,48 @@ pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quot
 pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
 
 use Compare;
-// We perform R <<= 1 and R[0] = N[i], then call out to PrivateDivIf for the if statement
-impl<N, D, Q, R, I> PrivateDiv<N, D, Q, R, I> for ()
+// R == 0: We set R = UInt<UTerm, N[i]>, then call out to PrivateDivIf for the if statement
+impl<N, D, Q, I> PrivateDiv<N, D, Q, U0, I> for ()
     where N: GetBit<I>,
-          UInt<R, GetBitOut<N, I>>: Trim,
-          TrimOut<UInt<R, GetBitOut<N, I>>>: Cmp<D>,
-          (): PrivateDivIf<N, D, Q, TrimOut<UInt<R, GetBitOut<N, I>>>, I, Compare<TrimOut<UInt<R, GetBitOut<N, I>>>, D>>,
+          UInt<UTerm, GetBitOut<N, I>>: Trim,
+          TrimOut<UInt<UTerm, GetBitOut<N, I>>>: Cmp<D>,
+          (): PrivateDivIf<N, D, Q, TrimOut<UInt<UTerm, GetBitOut<N, I>>>, I, Compare<TrimOut<UInt<UTerm, GetBitOut<N, I>>>, D>>,
 {
     type Quotient = PrivateDivIfQuot<N,
         D,
         Q,
-        TrimOut<UInt<R, GetBitOut<N, I>>>,
+        TrimOut<UInt<UTerm, GetBitOut<N, I>>>,
         I,
-        Compare<TrimOut<UInt<R, GetBitOut<N, I>>>, D>
+        Compare<TrimOut<UInt<UTerm, GetBitOut<N, I>>>, D>
             >;
     type Remainder = PrivateDivIfRem<N,
         D,
         Q,
-        TrimOut<UInt<R, GetBitOut<N, I>>>,
+        TrimOut<UInt<UTerm, GetBitOut<N, I>>>,
         I,
-        Compare<TrimOut<UInt<R, GetBitOut<N, I>>>, D>
+        Compare<TrimOut<UInt<UTerm, GetBitOut<N, I>>>, D>
+            >;
+}
+
+// R > 0: We perform R <<= 1 and R[0] = N[i], then call out to PrivateDivIf for the if statement
+impl<N, D, Q, Ur, Br, I> PrivateDiv<N, D, Q, UInt<Ur, Br>, I> for ()
+    where N: GetBit<I>,
+UInt<UInt<Ur, Br>, GetBitOut<N, I>>: Cmp<D>,
+          (): PrivateDivIf<N, D, Q, UInt<UInt<Ur, Br>, GetBitOut<N, I>>, I, Compare<UInt<UInt<Ur, Br>, GetBitOut<N, I>>, D>>,
+{
+    type Quotient = PrivateDivIfQuot<N,
+        D,
+        Q,
+        UInt<UInt<Ur, Br>, GetBitOut<N, I>>,
+        I,
+        Compare<UInt<UInt<Ur, Br>, GetBitOut<N, I>>, D>
+            >;
+    type Remainder = PrivateDivIfRem<N,
+        D,
+        Q,
+        UInt<UInt<Ur, Br>, GetBitOut<N, I>>,
+        I,
+        Compare<UInt<UInt<Ur, Br>, GetBitOut<N, I>>, D>
             >;
 }
 
@@ -1307,18 +1318,18 @@ impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Less> for ()
     type Remainder = PrivateDivRem<N, D, Q, R, Sub1<UInt<Ui, Bi>>>;
 }
 
-// R == D, I > 0, we set R = 0, Q[i] = 1 and recurse
+// R == D, I > 0, we set R = 0, Q[I] = 1 and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Equal> for ()
     where UInt<Ui, Bi>: Sub<B1>,
           Q: SetBit<UInt<Ui, Bi>, B1>,
           (): PrivateDiv<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>,
 {
     type Quotient = PrivateDivQuot<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>;
-    type Remainder = PrivateDivRem<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>;
+    type Remainder = U0;
 }
 
 use Diff;
-// R > D, I > 0, we set R -= D, Q[i] = 1 and recurse
+// R > D, I > 0, we set R -= D, Q[I] = 1 and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Greater> for ()
     where UInt<Ui, Bi>: Sub<B1>,
           R: Sub<D>,
@@ -1335,7 +1346,7 @@ impl<N, D, Q, R> PrivateDivIf<N, D, Q, R, U0, Less> for () {
     type Remainder = R;
 }
 
-// R == D, I == 0: we set R = 0, Q[i] = 1, and return
+// R == D, I == 0: we set R = 0, Q[I] = 1, and return
 impl<N, D, Q, R> PrivateDivIf<N, D, Q, R, U0, Equal> for ()
     where Q: SetBit<U0, B1>,
 {
@@ -1343,7 +1354,7 @@ impl<N, D, Q, R> PrivateDivIf<N, D, Q, R, U0, Equal> for ()
     type Remainder = U0;
 }
 
-// R > D, I == 0: We set R -= D, Q[i] = 1, and return
+// R > D, I == 0: We set R -= D, Q[I] = 1, and return
 impl<N, D, Q, R> PrivateDivIf<N, D, Q, R, U0, Greater> for ()
     where R: Sub<D>,
           Q: SetBit<U0, B1>,

@@ -20,4 +20,4 @@
   no_std = []
 
 [dependencies]
-  clippy = { version = "0.0.97", optional = true }
+  clippy = { version = "0.0.99", optional = true }

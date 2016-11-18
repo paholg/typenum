@@ -173,7 +173,7 @@ fn int_cmp_test(a: i64, b: i64) -> String {
 #[test]
 fn test_all() {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
-    let high: i64 = 3;
+    let high: i64 = 4;
 
     let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a+1).cycle().zip((0..high as u64 + 1)));
     let ints = (-high..high + 1).flat_map(|a| (a..a+1).cycle().zip((-high..high + 1)));
