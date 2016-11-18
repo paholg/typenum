@@ -102,14 +102,14 @@ pub type PrivateDivQuot<R, C, I, Q, Divisor> =
 pub type PrivateDivRem<R, C, I, Q, Divisor> =
     <() as PrivateDiv<R, C, I, Q, Divisor>>::Remainder;
 
-pub trait PrivateDivFirstStep<C, Divisor> {
+pub trait PrivateDivFirstStep<R, C, Divisor> {
     type Quotient;
     type Remainder;
 }
 pub type PrivateDivFirstStepQuot<R, C, Divisor> =
-    <R as PrivateDivFirstStep<C, Divisor>>::Quotient;
+    <() as PrivateDivFirstStep<R, C, Divisor>>::Quotient;
 pub type PrivateDivFirstStepRem<R, C, Divisor> =
-    <R as PrivateDivFirstStep<C, Divisor>>::Remainder;
+    <() as PrivateDivFirstStep<R, C, Divisor>>::Remainder;
 
 pub trait PrivateDivInt<C, Divisor> {
     type Output;

@@ -1043,7 +1043,7 @@ impl<Ur: Unsigned> Div<Ur> for UTerm {
 
 impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Div<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
-          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
+          (): PrivateDivFirstStep<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
     type Output = PrivateDivFirstStepQuot<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>;
     fn div(self, _: Ur) -> Self::Output {
@@ -1055,13 +1055,13 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Div<Ur> for UInt<Ul, Bl>
 // PrivateDivFirstStep
 
 /// Numerator < Denominator: return 0
-impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Less, Divisor> for Numerator {
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Numerator, Less, Divisor> for () {
     type Quotient = U0;
     type Remainder = Numerator;
 }
 
 /// Numerator == Denominator: return 1
-impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor> for Numerator {
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Numerator, Equal, Divisor> for () {
     type Quotient = U1;
     type Remainder = U0;
 }
@@ -1069,7 +1069,7 @@ impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Equal, Divisor>
 /// I = `Len`(Numerator) - `Len`(Denominator), Q = 0, Divisor <<= I,
 /// C = Numerator.Cmp(Divisor), Remainder = Numerator
 /// Call `PrivateDiv`
-impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Greater, Divisor> for Numerator
+impl<Divisor: Unsigned, Numerator: Unsigned> PrivateDivFirstStep<Numerator, Greater, Divisor> for ()
     where Numerator: BitDiff<Divisor> + Cmp<Shleft<Divisor, BitDiffOut<Numerator, Divisor>>>,
           Divisor: Shl<BitDiffOut<Numerator, Divisor>>,
           (): PrivateDiv<Numerator, Compare<Numerator, ShiftDiffOut<Divisor, Numerator>>,
@@ -1219,7 +1219,7 @@ impl<Ur: Unsigned> Rem<Ur> for UTerm {
 
 impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> Rem<Ur> for UInt<Ul, Bl>
     where UInt<Ul, Bl>: Cmp<Ur>,
-          UInt<Ul, Bl>: PrivateDivFirstStep<Compare<UInt<Ul, Bl>, Ur>, Ur>
+          (): PrivateDivFirstStep<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>
 {
     type Output = PrivateDivFirstStepRem<UInt<Ul, Bl>, Compare<UInt<Ul, Bl>, Ur>, Ur>;
     fn rem(self, _: Ur) -> Self::Output {
