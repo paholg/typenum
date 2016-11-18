@@ -31,7 +31,7 @@ impl<V, A> TypeArray for TArr<V, A> {}
 /// There's not a whole lot you can do with it right now.
 ///
 /// # Example
-/// ```ignore
+/// ```rust
 /// #[macro_use]
 /// extern crate typenum;
 /// use typenum::consts::*;
