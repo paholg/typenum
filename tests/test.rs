@@ -11,7 +11,13 @@ use builder::{gen_int, gen_uint};
 mod builder;
 
 fn sign(i: i64) -> char {
-    if i > 0 { 'P' } else if i < 0 { 'N' } else { '_' }
+    if i > 0 {
+        'P'
+    } else if i < 0 {
+        'N'
+    } else {
+        '_'
+    }
 }
 
 struct UIntTest {
@@ -24,43 +30,59 @@ struct UIntTest {
 impl fmt::Display for UIntTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.b {
-            Some(b) => write!(f, "
+            Some(b) => {
+                write!(f,
+                       "
 {{
     type A = {gen_a};
     type B = {gen_b};
     type U{r} = {result};
 
-    type U{a}{op}U{b} = <<A as {op}<B>>::Output as Same<U{r}>>::Output;
-    assert_eq!(<U{a}{op}U{b} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
+    \
+                        type U{a}{op}U{b} = <<A as {op}<B>>::Output as Same<U{r}>>::Output;
+    \
+                        assert_eq!(<U{a}{op}U{b} as Unsigned>::to_u64(), <U{r} as \
+                        Unsigned>::to_u64());
 }}
 ",
-                              gen_a = gen_uint(self.a),
-                              gen_b = gen_uint(b),
-                              r = self.r,
-                              result = gen_uint(self.r),
-                              a = self.a,
-                              b = b,
-                              op = self.op),
-            None => write!(f, "
+                       gen_a = gen_uint(self.a),
+                       gen_b = gen_uint(b),
+                       r = self.r,
+                       result = gen_uint(self.r),
+                       a = self.a,
+                       b = b,
+                       op = self.op)
+            }
+            None => {
+                write!(f,
+                       "
 {{
     type A = {gen_a};
     type U{r} = {result};
 
-    type {op}U{a} = <<A as {op}>::Output as Same<U{r}>>::Output;
-    assert_eq!(<{op}U{a} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
+    type {op}U{a} = \
+                        <<A as {op}>::Output as Same<U{r}>>::Output;
+    assert_eq!(<{op}U{a} as \
+                        Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
 }}
 ",
-                           gen_a = gen_uint(self.a),
-                           r = self.r,
-                           result = gen_uint(self.r),
-                           a = self.a,
-                           op = self.op)
+                       gen_a = gen_uint(self.a),
+                       r = self.r,
+                       result = gen_uint(self.r),
+                       a = self.a,
+                       op = self.op)
+            }
         }
     }
 }
 
 fn uint_binary_test(a: u64, op: &'static str, b: u64, result: u64) -> UIntTest {
-    UIntTest { a: a, op: op, b: Option::Some(b), r: result }
+    UIntTest {
+        a: a,
+        op: op,
+        b: Option::Some(b),
+        r: result,
+    }
 }
 
 // fn uint_unary_test(op: &'static str, a: u64, result: u64) -> UIntTest {
@@ -76,14 +98,18 @@ struct IntBinaryTest {
 
 impl fmt::Display for IntBinaryTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "
+        write!(f,
+               "
 {{
     type A = {gen_a};
     type B = {gen_b};
     type {sr}{r} = {result};
 
-    type {sa}{a}{op}{sb}{b} = <<A as {op}<B>>::Output as Same<{sr}{r}>>::Output;
-    assert_eq!(<{sa}{a}{op}{sb}{b} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
+    \
+                type {sa}{a}{op}{sb}{b} = <<A as {op}<B>>::Output as Same<{sr}{r}>>::Output;
+    \
+                assert_eq!(<{sa}{a}{op}{sb}{b} as Integer>::to_i64(), <{sr}{r} as \
+                Integer>::to_i64());
 }}
 ",
                gen_a = gen_int(self.a),
@@ -100,7 +126,12 @@ impl fmt::Display for IntBinaryTest {
 }
 
 fn int_binary_test(a: i64, op: &'static str, b: i64, result: i64) -> IntBinaryTest {
-    IntBinaryTest { a: a, op: op, b: b, r: result }
+    IntBinaryTest {
+        a: a,
+        op: op,
+        b: b,
+        r: result,
+    }
 }
 
 struct IntUnaryTest {
@@ -111,13 +142,16 @@ struct IntUnaryTest {
 
 impl fmt::Display for IntUnaryTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "
+        write!(f,
+               "
 {{
     type A = {gen_a};
     type {sr}{r} = {result};
 
-    type {op}{sa}{a} = <<A as {op}>::Output as Same<{sr}{r}>>::Output;
-    assert_eq!(<{op}{sa}{a} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
+    type {op}{sa}{a} = \
+                <<A as {op}>::Output as Same<{sr}{r}>>::Output;
+    assert_eq!(<{op}{sa}{a} as \
+                Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
 }}
 ",
                gen_a = gen_int(self.a),
@@ -131,7 +165,11 @@ impl fmt::Display for IntUnaryTest {
 }
 
 fn int_unary_test(op: &'static str, a: i64, result: i64) -> IntUnaryTest {
-    IntUnaryTest { op: op, a: a, r: result }
+    IntUnaryTest {
+        op: op,
+        a: a,
+        r: result,
+    }
 }
 
 fn uint_cmp_test(a: u64, b: u64) -> String {
@@ -173,10 +211,10 @@ fn int_cmp_test(a: i64, b: i64) -> String {
 #[test]
 fn test_all() {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
-    let high: i64 = 3;
+    let high: i64 = 4;
 
-    let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a+1).cycle().zip((0..high as u64 + 1)));
-    let ints = (-high..high + 1).flat_map(|a| (a..a+1).cycle().zip((-high..high + 1)));
+    let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a + 1).cycle().zip((0..high as u64 + 1)));
+    let ints = (-high..high + 1).flat_map(|a| (a..a + 1).cycle().zip((-high..high + 1)));
 
 
     let out_dir = env::var("OUT_DIR").unwrap();
@@ -187,7 +225,7 @@ fn test_all() {
     // This'll fail if the dir isn't already there. We don't really care, just need to
     // make sure it isn't so we can run cargo new.
     match std::fs::remove_dir_all(&test_dir) {
-        _ => ()
+        _ => (),
     };
 
     let cmd = Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
@@ -195,19 +233,22 @@ fn test_all() {
     if !cmd.status.success() {
         panic!("Couldn't run cargo new. Stdout: \n{}\nStderr: {}\n",
                std::str::from_utf8(&cmd.stdout).unwrap(),
-               std::str::from_utf8(&cmd.stderr).unwrap()
-               );
+               std::str::from_utf8(&cmd.stderr).unwrap());
     }
     // Write cargo file
     let mut cargof = File::create(&cargo).unwrap();
-    write!(cargof, "
+    write!(cargof,
+           "
 [package]
   name = \"test\"
   version = \"0.0.1\"
 
 [dependencies.typenum]
-  path = \"{}\"
-", env::var("CARGO_MANIFEST_DIR").unwrap()).unwrap();
+  path = \
+            \"{}\"
+",
+           env::var("CARGO_MANIFEST_DIR").unwrap())
+        .unwrap();
 
     // Write main.rs
     let mainf = File::create(&main).unwrap();
@@ -225,7 +266,8 @@ use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
 
 fn main() {
-").unwrap();
+")
+        .unwrap();
     // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp
     for (a, b) in uints {
         write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
@@ -257,9 +299,13 @@ fn main() {
         }
         if b >= 0 || a == 1 || a == -1 {
             let result = if b < 0 {
-                if a == 1 { a }
-                else if a == -1 { a.pow((-b) as u32) }
-                else { panic!("THIS CAN'T HAPPEN"); }
+                if a == 1 {
+                    a
+                } else if a == -1 {
+                    a.pow((-b) as u32)
+                } else {
+                    panic!("THIS CAN'T HAPPEN");
+                }
             } else {
                 a.pow(b as u32)
             };
@@ -275,6 +321,9 @@ fn main() {
     if !test_out.status.success() {
         let stdout = ::std::str::from_utf8(&test_out.stdout).unwrap();
         let stderr = ::std::str::from_utf8(&test_out.stderr).unwrap();
-        panic!("\nExit status: {}\n\nStdout:\n{}\n\nStderr:\n{}\n", test_out.status, stdout, stderr);
+        panic!("\nExit status: {}\n\nStdout:\n{}\n\nStderr:\n{}\n",
+               test_out.status,
+               stdout,
+               stderr);
     }
 }

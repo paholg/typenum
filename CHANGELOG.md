@@ -2,6 +2,9 @@
 
 This project follows semantic versioning.
 
+### 1.5.2 (2017-02-04)
+    - [fixed] Bug between `Div` implementation and type system.
+
 ### 1.5.1 (2016-11-08)
     - [fixed] Expanded implementation of `Pow` for primitives.
 
@@ -20,7 +23,6 @@ This project follows semantic versioning.
 ### 1.3.0 (2016-02-07)
     - [changed] Removed dependency on libstd. (Issue #53, PR #55)
     - [changed] Reorganized module structure. (PR #57)
-
 
 ### 1.2.0 (2016-01-03)
     - [added] This change log!

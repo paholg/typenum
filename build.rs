@@ -78,8 +78,8 @@ fn main() {
     let first2: u32 = (highest as f64).log(2.0) as u32 + 1;
     let first10: u32 = (highest as f64).log(10.0) as u32 + 1;
     let uints = (0..(highest + 1))
-                    .chain((first2..64).map(|i| 2u64.pow(i)))
-                    .chain((first10..20).map(|i| 10u64.pow(i)));
+        .chain((first2..64).map(|i| 2u64.pow(i)))
+        .chain((first10..20).map(|i| 10u64.pow(i)));
 
 
     let out_dir = env::var("OUT_DIR").unwrap();
@@ -97,7 +97,7 @@ use int::{PInt, NInt};
 pub use bit::{B0, B1};
 pub use int::Z0; // re-export for convenience.
 ")
-     .unwrap();
+        .unwrap();
 
     for u in uints {
         write!(f, "pub type U{} = {};\n", u, gen_uint(u)).unwrap();
