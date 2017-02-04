@@ -93,36 +93,6 @@ pub trait PrivatePow<Y, N> {
 }
 pub type PrivatePowOut<A, Y, N> = <A as PrivatePow<Y, N>>::Output;
 
-pub trait PrivateDiv<C, I, Q, Divisor> {
-    type Quotient;
-    type Remainder;
-}
-pub type PrivateDivQuot<R, C, I, Q, Divisor> =
-    <R as PrivateDiv<C, I, Q, Divisor>>::Quotient;
-pub type PrivateDivRem<R, C, I, Q, Divisor> =
-    <R as PrivateDiv<C, I, Q, Divisor>>::Remainder;
-
-pub trait PrivateDivFirstStep<C, Divisor> {
-    type Quotient;
-    type Remainder;
-}
-pub type PrivateDivFirstStepQuot<R, C, Divisor> =
-    <R as PrivateDivFirstStep<C, Divisor>>::Quotient;
-pub type PrivateDivFirstStepRem<R, C, Divisor> =
-    <R as PrivateDivFirstStep<C, Divisor>>::Remainder;
-
-pub trait PrivateDivInt<C, Divisor> {
-    type Output;
-}
-pub type PrivateDivIntOut<A, C, Divisor> =
-    <A as PrivateDivInt<C, Divisor>>::Output;
-
-pub trait PrivateRem<URem, Divisor> {
-    type Output;
-}
-pub type PrivateRemOut<A, URem, Divisor> =
-    <A as PrivateRem<URem, Divisor>>::Output;
-
 /// Performs `Shl` on `Lhs` so that `SizeOf(Lhs) = SizeOf(Rhs)`
 /// Fails if `SizeOf(Lhs) > SizeOf(Rhs)`
 pub trait ShiftDiff<Rhs> {
@@ -249,3 +219,40 @@ pub trait PrivateCmp<Rhs, SoFar> {
 }
 pub type PrivateCmpOut<A, Rhs, SoFar> =
     <A as PrivateCmp<Rhs, SoFar>>::Output;
+
+
+// Set Bit
+pub trait PrivateSetBit<I, B> {
+    type Output;
+}
+pub type PrivateSetBitOut<N, I, B> = <N as PrivateSetBit<I, B>>::Output;
+
+// Div
+pub trait PrivateDiv<N, D, Q, R, I> {
+    type Quotient;
+    type Remainder;
+}
+
+pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
+pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
+
+pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
+    type Quotient;
+    type Remainder;
+}
+
+pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Quotient;
+pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Remainder;
+
+// Div for signed ints
+pub trait PrivateDivInt<C, Divisor> {
+    type Output;
+}
+pub type PrivateDivIntOut<A, C, Divisor> =
+    <A as PrivateDivInt<C, Divisor>>::Output;
+
+pub trait PrivateRem<URem, Divisor> {
+    type Output;
+}
+pub type PrivateRemOut<A, URem, Divisor> =
+    <A as PrivateRem<URem, Divisor>>::Output;

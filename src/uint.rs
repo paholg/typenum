@@ -40,7 +40,7 @@ use private::{TrimOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOu
               BitDiffOut};
 
 use consts::{U0, U1};
-use {Same, Or, Shleft, Shright, Sum, Prod, Add1, Sub1, Square, Length};
+use {Or, Shleft, Shright, Sum, Prod, Add1, Sub1, Square, Length};
 
 pub use marker_traits::Unsigned;
 
@@ -608,30 +608,6 @@ impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
 // ---------------------------------------------------------------------------------------
 // Shl unsigned integers
 
-/// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
-impl<U: Unsigned> Shl<U> for UTerm {
-    type Output = UTerm;
-    fn shl(self, _: U) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting left `UInt` by `UTerm`: `UInt<U, B> << UTerm = UInt<U, B>`
-impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    fn shl(self, _: UTerm) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting left any unsigned by a zero bit: `U << B0 = U`
-impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    fn shl(self, _: B0) -> Self::Output {
-        UInt::new()
-    }
-}
-
 /// Shifting `UTerm` by a 0 bit: `UTerm << B0 = UTerm`
 impl Shl<B0> for UTerm {
     type Output = UTerm;
@@ -648,11 +624,35 @@ impl Shl<B1> for UTerm {
     }
 }
 
+/// Shifting left any unsigned by a zero bit: `U << B0 = U`
+impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn shl(self, _: B0) -> Self::Output {
+        UInt::new()
+    }
+}
+
 /// Shifting left a `UInt` by a one bit: `UInt<U, B> << B1 = UInt<UInt<U, B>, B0>`
 impl<U: Unsigned, B: Bit> Shl<B1> for UInt<U, B> {
     type Output = UInt<UInt<U, B>, B0>;
     fn shl(self, _: B1) -> Self::Output {
         UInt::new()
+    }
+}
+
+/// Shifting left `UInt` by `UTerm`: `UInt<U, B> << UTerm = UInt<U, B>`
+impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
+    type Output = UInt<U, B>;
+    fn shl(self, _: UTerm) -> Self::Output {
+        UInt::new()
+    }
+}
+
+/// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
+impl<U: Unsigned> Shl<U> for UTerm {
+    type Output = UTerm;
+    fn shl(self, _: U) -> Self::Output {
+        UTerm
     }
 }
 
@@ -1064,6 +1064,7 @@ impl<I> GetBit<I> for UTerm
 #[test]
 fn test_get_bit() {
     use consts::*;
+    use Same;
     type T1 = <GetBitOut<U2, U0> as Same<B0>>::Output;
     type T2 = <GetBitOut<U2, U1> as Same<B1>>::Output;
     type T3 = <GetBitOut<U2, U2> as Same<B0>>::Output;
@@ -1077,15 +1078,16 @@ fn test_get_bit() {
 // -----------------------------------------
 // SetBit
 
+/// A **type operator** that, when implemented for unsigned integer `N`, sets the bit at position
+/// `I` to `B`.
 pub trait SetBit<I, B> {
+    #[allow(missing_docs)]
     type Output;
 }
+/// Alias for the result of calling `SetBit`: `SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output`.
 pub type SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output;
 
-pub trait PrivateSetBit<I, B> {
-    type Output;
-}
-pub type PrivateSetBitOut<N, I, B> = <N as PrivateSetBit<I, B>>::Output;
+use private::{PrivateSetBit, PrivateSetBitOut};
 
 // Call private one then trim it
 impl<N, I, B> SetBit<I, B> for N
@@ -1121,6 +1123,7 @@ impl<I> PrivateSetBit<I, B1> for UTerm where U1: Shl<I> {
 #[test]
 fn test_set_bit() {
     use consts::*;
+    use Same;
     type T1 = <SetBitOut<U2, U0, B0> as Same<U2>>::Output;
     type T2 = <SetBitOut<U2, U0, B1> as Same<U3>>::Output;
     type T3 = <SetBitOut<U2, U1, B0> as Same<U0>>::Output;
@@ -1149,7 +1152,7 @@ fn test_set_bit() {
 
 // -----------------------------------------
 
-// Alternate algorithm:
+// Division algorithm:
 // We have N / D:
 // let Q = 0, R = 0
 // NBits = len(N)
@@ -1172,7 +1175,7 @@ macro_rules! test_div {
 #[test]
 fn test_div() {
     use consts::*;
-    use Quot;
+    use {Quot, Same};
 
     test_div!(U0 / U1 = U0);
     test_div!(U1 / U1 = U1);
@@ -1243,14 +1246,7 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> Rem<UInt<Ur, Br>> for UInt<Ul
 
 // -----------------------------------------
 // PrivateDiv
-
-pub trait PrivateDiv<N, D, Q, R, I> {
-    type Quotient;
-    type Remainder;
-}
-
-pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
-pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
+use private::{PrivateDiv, PrivateDivQuot, PrivateDivRem};
 
 use Compare;
 // R == 0: We set R = UInt<UTerm, N[i]>, then call out to PrivateDivIf for the if statement
@@ -1301,13 +1297,7 @@ UInt<UInt<Ur, Br>, GetBitOut<N, I>>: Cmp<D>,
 // -----------------------------------------
 // PrivateDivIf
 
-pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
-    type Quotient;
-    type Remainder;
-}
-
-pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Quotient;
-pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Remainder;
+use private::{PrivateDivIf, PrivateDivIfQuot, PrivateDivIfRem};
 
 // R < D, I > 0, we do nothing and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Less> for ()
