@@ -233,16 +233,28 @@ pub trait PrivateDiv<N, D, Q, R, I> {
     type Remainder;
 }
 
-pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
-pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
+pub type PrivateDivQuot<N, D, Q, R, I> =
+    <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
+pub type PrivateDivRem<N, D, Q, R, I> =
+    <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
 
 pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
     type Quotient;
     type Remainder;
 }
 
-pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Quotient;
-pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N, D, Q, R, I, RcmpD>>::Remainder;
+pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N,
+                                                                             D,
+                                                                             Q,
+                                                                             R,
+                                                                             I,
+                                                                             RcmpD>>::Quotient;
+pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N,
+                                                                            D,
+                                                                            Q,
+                                                                            R,
+                                                                            I,
+                                                                            RcmpD>>::Remainder;
 
 // Div for signed ints
 pub trait PrivateDivInt<C, Divisor> {
