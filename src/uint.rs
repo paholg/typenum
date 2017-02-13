@@ -924,7 +924,7 @@ macro_rules! test_ord {
             type Test = <$Lhs as Cmp<$Rhs>>::Output;
             assert_eq!(::core::cmp::Ordering::Less, <Test as Ord>::to_ordering());
         }
-        );
+    );
 }
 
 // ---------------------------------------------------------------------------------------
