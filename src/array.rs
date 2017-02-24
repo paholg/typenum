@@ -207,6 +207,26 @@ impl<V, A, Rhs> Div<Rhs> for TArr<V, A>
 }
 
 // ---------------------------------------------------------------------------------------
+// Partial Divide an array by a scalar
+
+impl<Rhs> PartialDiv<Rhs> for ATerm {
+    type Output = ATerm;
+    fn partial_div(self, _: Rhs) -> Self::Output {
+        ATerm
+    }
+}
+
+impl<V, A, Rhs> PartialDiv<Rhs> for TArr<V, A>
+    where V: PartialDiv<Rhs>,
+          A: PartialDiv<Rhs>
+{
+    type Output = TArr<PartialQuot<V, Rhs>, PartialQuot<A, Rhs>>;
+    fn partial_div(self, _: Rhs) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+// ---------------------------------------------------------------------------------------
 // Modulo an array by a scalar
 use core::ops::Rem;
 
