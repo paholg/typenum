@@ -256,3 +256,12 @@ pub trait Len {
     /// This function isn't used in this crate, but may be useful for others.
     fn len(&self) -> Self::Output;
 }
+
+/// Division as a partial function. This **type operator** performs division just as `Div`, but is
+/// only defined when the result is an integer (i.e. there is no remainder).
+pub trait PartialDiv<Rhs = Self> {
+    /// The type of the result of the division
+    type Output;
+    /// Method for performing the division
+    fn partial_div(self, _: Rhs) -> Self::Output;
+}
