@@ -211,7 +211,7 @@ fn int_cmp_test(a: i64, b: i64) -> String {
 #[test]
 fn test_all() {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
-    let high: i64 = 5;
+    let high: i64 = 4;
 
     let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a + 1).cycle().zip((0..high as u64 + 1)));
     let ints = (-high..high + 1).flat_map(|a| (a..a + 1).cycle().zip((-high..high + 1)));
@@ -260,7 +260,7 @@ extern crate typenum;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Neg, Add, Sub, Mul, Div, Rem};
 use std::cmp::Ordering;
-use typenum::{NonZero, Same, Pow, Ord, Cmp, Greater, Less, Equal, PartialDiv};
+use typenum::{NonZero, Same, Pow, Ord, Cmp, Greater, Less, Equal};
 use typenum::bit::{Bit, B0, B1};
 use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
@@ -283,9 +283,6 @@ fn main() {
         if b != 0 {
             write!(writer, "{}", uint_binary_test(a, "Div", b, a / b)).unwrap();
             write!(writer, "{}", uint_binary_test(a, "Rem", b, a % b)).unwrap();
-            if a % b == 0 {
-                write!(writer, "{}", uint_binary_test(a, "PartialDiv", b, a / b)).unwrap();
-            }
         }
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
