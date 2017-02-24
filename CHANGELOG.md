@@ -2,6 +2,9 @@
 
 This project follows semantic versioning.
 
+### Unpublished
+    - [fixed] Bug in `Array` division.
+
 ### 1.5.2 (2017-02-04)
     - [fixed] Bug between `Div` implementation and type system.
 

@@ -77,7 +77,7 @@ impl<V, A> Len for TArr<V, A>
 impl Add<ATerm> for ATerm {
     type Output = ATerm;
     fn add(self, _: ATerm) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -87,7 +87,7 @@ impl<Al, Vl, Ar, Vr> Add<TArr<Vr, Ar>> for TArr<Vl, Al>
 {
     type Output = TArr<Sum<Vl, Vr>, Sum<Al, Ar>>;
     fn add(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -98,7 +98,7 @@ impl<Al, Vl, Ar, Vr> Add<TArr<Vr, Ar>> for TArr<Vl, Al>
 impl Sub<ATerm> for ATerm {
     type Output = ATerm;
     fn sub(self, _: ATerm) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -108,7 +108,7 @@ impl<Vl, Al, Vr, Ar> Sub<TArr<Vr, Ar>> for TArr<Vl, Al>
 {
     type Output = TArr<Diff<Vl, Vr>, Diff<Al, Ar>>;
     fn sub(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -118,7 +118,7 @@ impl<Vl, Al, Vr, Ar> Sub<TArr<Vr, Ar>> for TArr<Vl, Al>
 impl<Rhs> Mul<Rhs> for ATerm {
     type Output = ATerm;
     fn mul(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -128,14 +128,14 @@ impl<V, A, Rhs> Mul<Rhs> for TArr<V, A>
 {
     type Output = TArr<Prod<V, Rhs>, Prod<A, Rhs>>;
     fn mul(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
 impl Mul<ATerm> for Z0 {
     type Output = ATerm;
     fn mul(self, _: ATerm) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -144,7 +144,7 @@ impl<U> Mul<ATerm> for PInt<U>
 {
     type Output = ATerm;
     fn mul(self, _: ATerm) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -153,7 +153,7 @@ impl<U> Mul<ATerm> for NInt<U>
 {
     type Output = ATerm;
     fn mul(self, _: ATerm) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -162,7 +162,7 @@ impl<V, A> Mul<TArr<V, A>> for Z0
 {
     type Output = TArr<Z0, Prod<Z0, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -172,7 +172,7 @@ impl<V, A, U> Mul<TArr<V, A>> for PInt<U>
 {
     type Output = TArr<Prod<PInt<U>, V>, Prod<PInt<U>, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -182,7 +182,7 @@ impl<V, A, U> Mul<TArr<V, A>> for NInt<U>
 {
     type Output = TArr<Prod<NInt<U>, V>, Prod<NInt<U>, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
@@ -192,7 +192,7 @@ impl<V, A, U> Mul<TArr<V, A>> for NInt<U>
 impl<Rhs> Div<Rhs> for ATerm {
     type Output = ATerm;
     fn div(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -202,71 +202,39 @@ impl<V, A, Rhs> Div<Rhs> for TArr<V, A>
 {
     type Output = TArr<Quot<V, Rhs>, Quot<A, Rhs>>;
     fn div(self, _: Rhs) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
-impl Div<ATerm> for Z0 {
+// ---------------------------------------------------------------------------------------
+// Modulo an array by a scalar
+use core::ops::Rem;
+
+impl<Rhs> Rem<Rhs> for ATerm {
     type Output = ATerm;
-    fn div(self, _: ATerm) -> Self::Output {
-        unreachable!()
+    fn rem(self, _: Rhs) -> Self::Output {
+        ATerm
     }
 }
 
-impl<U> Div<ATerm> for PInt<U>
-    where U: Unsigned + NonZero
+impl<V, A, Rhs> Rem<Rhs> for TArr<V, A>
+    where V: Rem<Rhs>,
+          A: Rem<Rhs>
 {
-    type Output = ATerm;
-    fn div(self, _: ATerm) -> Self::Output {
-        unreachable!()
-    }
-}
-
-impl<U> Div<ATerm> for NInt<U>
-    where U: Unsigned + NonZero
-{
-    type Output = ATerm;
-    fn div(self, _: ATerm) -> Self::Output {
-        unreachable!()
-    }
-}
-
-impl<V, A> Div<TArr<V, A>> for Z0
-    where Z0: Div<A>
-{
-    type Output = TArr<Z0, Quot<Z0, A>>;
-    fn div(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
-    }
-}
-
-impl<V, A, U> Div<TArr<V, A>> for PInt<U>
-    where U: Unsigned + NonZero,
-          PInt<U>: Div<A> + Div<V>
-{
-    type Output = TArr<Quot<PInt<U>, V>, Quot<PInt<U>, A>>;
-    fn div(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
-    }
-}
-
-impl<V, A, U> Div<TArr<V, A>> for NInt<U>
-    where U: Unsigned + NonZero,
-          NInt<U>: Div<A> + Div<V>
-{
-    type Output = TArr<Quot<NInt<U>, V>, Quot<NInt<U>, A>>;
-    fn div(self, _: TArr<V, A>) -> Self::Output {
-        unreachable!()
+    type Output = TArr<Mod<V, Rhs>, Mod<A, Rhs>>;
+    fn rem(self, _: Rhs) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
     }
 }
 
 // ---------------------------------------------------------------------------------------
 // Negate an array
 use core::ops::Neg;
+
 impl Neg for ATerm {
     type Output = ATerm;
     fn neg(self) -> Self::Output {
-        unreachable!()
+        ATerm
     }
 }
 
@@ -276,6 +244,6 @@ impl<V, A> Neg for TArr<V, A>
 {
     type Output = TArr<Negate<V>, Negate<A>>;
     fn neg(self) -> Self::Output {
-        unreachable!()
+        unsafe { ::core::mem::uninitialized() }
     }
 }
