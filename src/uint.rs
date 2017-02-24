@@ -995,41 +995,6 @@ impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B
     type Output = PrivatePowOut<Square<X>, Prod<X, Y>, UInt<U, B>>;
 }
 
-// ---------------------------------------------------------------------------------------
-// Dividing unsigned integers                 fixme: old algorithm
-
-// Here is the algorithm we use:
-// Div:
-//   Call PrivateDivFirstStep with C = Numerator.cmp(Divisor)
-// PrivateDivFirstStep:
-//   if Numerator < Divisor:
-//     return 0
-//   if Numerator == Divisor:
-//     return 1
-//   I = Len(Numerator) - Len(Divisor)
-//   Divisor = Divisor << I
-//   Call PrivateDiv with C = Numerator.cmp(Divisor), I = I, Q = 0, Remainder = Numerator
-// PrivateDiv:
-//   if I == 0:
-//     if C == Less: # Can't do any more
-//       return Q
-//     if C == Equal # We are done, no remainder
-//       return Q + 1
-//     if C == Greater # Same as Equal, but we have a remainder
-//       return Q + 1
-//   # I > 0
-//   if C == Less: # Divisor is too big
-//     Call PrivateDiv with Divisor >> 1, I - 1, C = Remainder.cmp(Divisor)
-//   if C == Equal: # Sweet, we're done early with no remainder
-//     return Q + 2^I
-//   if C == Greater: # Do a step and keep going
-//     Q += 2^I
-//     I -= 1
-//     Remainder -= Divisor
-//     Divisor = Divisor >> 1
-//     C = Remainder.cmp(Divisor)
-//     Call PrivateDiv
-
 // -----------------------------------------
 // GetBit
 
@@ -1322,7 +1287,7 @@ impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Equal> for ()
           (): PrivateDiv<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>
 {
     type Quotient = PrivateDivQuot<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>;
-    type Remainder = U0;
+    type Remainder = PrivateDivRem<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>;
 }
 
 use Diff;
@@ -1366,4 +1331,24 @@ impl<N, D, Q, R> PrivateDivIf<N, D, Q, R, U0, Greater> for ()
 {
     type Quotient = SetBitOut<Q, U0, B1>;
     type Remainder = Diff<R, D>;
+}
+
+// -----------------------------------------
+// PartialDiv
+use {PartialDiv, Quot};
+impl<Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UTerm {
+    type Output = UTerm;
+    fn partial_div(self, _: UInt<Ur, Br>) -> Self::Output {
+        UTerm
+    }
+}
+
+// M / N
+impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UInt<Ul, Bl>
+    where UInt<Ul, Bl>: Div<UInt<Ur, Br>> + Rem<UInt<Ur, Br>, Output = U0>
+{
+    type Output = Quot<UInt<Ul, Bl>, UInt<Ur, Br>>;
+    fn partial_div(self, _: UInt<Ur, Br>) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
 }

@@ -2,8 +2,11 @@
 
 This project follows semantic versioning.
 
-### Unpublished
+### 1.6.0 (2017-02-24)
     - [fixed] Bug in `Array` division.
+    - [fixed] Bug where `Rem` would sometimes exit early with the wrong answer.
+    - [added] `PartialDiv` operator that performs division as a partial function -- it's defined
+      only when there is no remainder.
 
 ### 1.5.2 (2017-02-04)
     - [fixed] Bug between `Div` implementation and type system.
