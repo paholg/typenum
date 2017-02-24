@@ -1345,7 +1345,7 @@ impl<Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UTerm {
 
 // M / N
 impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UInt<Ul, Bl>
-    where UInt<Ul, Bl>: Div<UInt<Ur, Br>> + Rem<UInt<Ur, Br>, Output = U0>,
+    where UInt<Ul, Bl>: Div<UInt<Ur, Br>> + Rem<UInt<Ur, Br>, Output = U0>
 {
     type Output = Quot<UInt<Ul, Bl>, UInt<Ur, Br>>;
     fn partial_div(self, _: UInt<Ur, Br>) -> Self::Output {

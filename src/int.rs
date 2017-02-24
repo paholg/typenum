@@ -506,7 +506,9 @@ impl_int_div!(NInt, NInt, PInt);
 
 use {PartialDiv, Quot};
 
-impl<M, N> PartialDiv<N> for M where M: Integer + Div<N> + Rem<N, Output = Z0> {
+impl<M, N> PartialDiv<N> for M
+    where M: Integer + Div<N> + Rem<N, Output = Z0>
+{
     type Output = Quot<M, N>;
     fn partial_div(self, _: N) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
