@@ -6,12 +6,12 @@
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"
   ]
-  description = "Typenum is a Rust library for type-level numbers evaluated at compile time. It currently supports bits, unsigned integers, and signed integers. It also provides a type-level array of type-level numbers, but its implementation is incomplete."
-  homepage = "http://paholg.com/project/typenum"
   documentation = "http://paholg.com/typenum"
   repository = "https://github.com/paholg/typenum"
   readme = "README.md"
   license = "MIT/Apache-2.0"
+  description = "Typenum is a Rust library for type-level numbers evaluated at compile time. It currently supports bits, unsigned integers, and signed integers. It also provides a type-level array of type-level numbers, but its implementation is incomplete."
+  categories = ["no-std"]
 
 [lib]
   name = "typenum"
@@ -20,4 +20,4 @@
   no_std = []
 
 [dependencies]
-  clippy = { version = "0.0.114", optional = true }
+  clippy = { version = "0.0.120", optional = true }
