@@ -268,3 +268,17 @@ pub trait PrivateRem<URem, Divisor> {
 }
 pub type PrivateRemOut<A, URem, Divisor> =
     <A as PrivateRem<URem, Divisor>>::Output;
+
+
+// min max
+pub trait PrivateMin<Rhs, CmpResult> {
+    type Output;
+    fn private_min(self, rhs: Rhs) -> Self::Output;
+}
+pub type PrivateMinOut<A, B, CmpResult> = <A as PrivateMin<B, CmpResult>>::Output;
+
+pub trait PrivateMax<Rhs, CmpResult> {
+    type Output;
+    fn private_max(self, rhs: Rhs) -> Self::Output;
+}
+pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Output;

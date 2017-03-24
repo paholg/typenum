@@ -260,7 +260,7 @@ extern crate typenum;
 
 use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Neg, Add, Sub, Mul, Div, Rem};
 use std::cmp::Ordering;
-use typenum::{NonZero, Same, Pow, Ord, Cmp, Greater, Less, Equal, PartialDiv};
+use typenum::{NonZero, Same, Pow, Ord, Cmp, Greater, Less, Equal, PartialDiv, Min, Max};
 use typenum::bit::{Bit, B0, B1};
 use typenum::uint::{Unsigned, UInt, UTerm};
 use typenum::int::{Integer, NInt, PInt, Z0};
@@ -268,7 +268,8 @@ use typenum::int::{Integer, NInt, PInt, Z0};
 fn main() {
 ")
         .unwrap();
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp
+    use std::cmp;
+    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp, Min, Max
     for (a, b) in uints {
         write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b)).unwrap();
         write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b)).unwrap();
@@ -276,6 +277,8 @@ fn main() {
         write!(writer, "{}", uint_binary_test(a, "Shl", b, a << b)).unwrap();
         write!(writer, "{}", uint_binary_test(a, "Shr", b, a >> b)).unwrap();
         write!(writer, "{}", uint_binary_test(a, "Add", b, a + b)).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Min", b, cmp::min(a, b))).unwrap();
+        write!(writer, "{}", uint_binary_test(a, "Max", b, cmp::max(a, b))).unwrap();
         if a >= b {
             write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b)).unwrap();
         }
@@ -290,12 +293,14 @@ fn main() {
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32))).unwrap();
         write!(writer, "{}", uint_cmp_test(a, b)).unwrap();
     }
-    // int operators: Neg, Add, Sub, Mul, Div, Rem, Cmp
+    // int operators: Neg, Add, Sub, Mul, Div, Rem, Cmp, Min, Max
     for (a, b) in ints {
         write!(writer, "{}", int_unary_test("Neg", a, -a)).unwrap();
         write!(writer, "{}", int_binary_test(a, "Add", b, a + b)).unwrap();
         write!(writer, "{}", int_binary_test(a, "Sub", b, a - b)).unwrap();
         write!(writer, "{}", int_binary_test(a, "Mul", b, a * b)).unwrap();
+        write!(writer, "{}", int_binary_test(a, "Min", b, cmp::min(a, b))).unwrap();
+        write!(writer, "{}", int_binary_test(a, "Max", b, cmp::max(a, b))).unwrap();
         if b != 0 {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b)).unwrap();
             write!(writer, "{}", int_binary_test(a, "Rem", b, a % b)).unwrap();

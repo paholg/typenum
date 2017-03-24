@@ -206,3 +206,56 @@ impl Cmp<B0> for B1 {
 impl Cmp<B1> for B1 {
     type Output = Equal;
 }
+
+
+use Min;
+impl Min<B0> for B0 {
+    type Output = B0;
+    fn min(self, _: B0) -> B0 {
+        self
+    }
+}
+impl Min<B1> for B0 {
+    type Output = B0;
+    fn min(self, _: B1) -> B0 {
+        self
+    }
+}
+impl Min<B0> for B1 {
+    type Output = B0;
+    fn min(self, rhs: B0) -> B0 {
+        rhs
+    }
+}
+impl Min<B1> for B1 {
+    type Output = B1;
+    fn min(self, _: B1) -> B1 {
+        self
+    }
+}
+
+use Max;
+impl Max<B0> for B0 {
+    type Output = B0;
+    fn max(self, _: B0) -> B0 {
+        self
+    }
+}
+impl Max<B1> for B0 {
+    type Output = B1;
+    fn max(self, rhs: B1) -> B1 {
+        rhs
+    }
+}
+impl Max<B0> for B1 {
+    type Output = B1;
+    fn max(self, _: B0) -> B1 {
+        self
+    }
+}
+impl Max<B1> for B1 {
+    type Output = B1;
+    fn max(self, _: B1) -> B1 {
+        self
+    }
+}
