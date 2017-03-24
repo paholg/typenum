@@ -85,8 +85,7 @@ pub type PrivateSubOut<A, Rhs> = <A as PrivateSub<Rhs>>::Output;
 pub trait PrivateIntegerAdd<C, N> {
     type Output;
 }
-pub type PrivateIntegerAddOut<P, C, N> =
-    <P as PrivateIntegerAdd<C, N>>::Output;
+pub type PrivateIntegerAddOut<P, C, N> = <P as PrivateIntegerAdd<C, N>>::Output;
 
 pub trait PrivatePow<Y, N> {
     type Output;
@@ -179,10 +178,14 @@ impl<U: Unsigned, IU: InvertedUnsigned, B: Bit> PrivateInvert<U> for InvertedUIn
 
 #[test]
 fn test_double_inversion() {
-    type Test4 = <<::consts::U4 as Invert>::Output as Invert>::Output;
-    type Test5 = <<::consts::U5 as Invert>::Output as Invert>::Output;
-    type Test12 = <<::consts::U12 as Invert>::Output as Invert>::Output;
-    type Test16 = <<::consts::U16 as Invert>::Output as Invert>::Output;
+    type Test4 =
+        <<::consts::U4 as Invert>::Output as Invert>::Output;
+    type Test5 =
+        <<::consts::U5 as Invert>::Output as Invert>::Output;
+    type Test12 =
+        <<::consts::U12 as Invert>::Output as Invert>::Output;
+    type Test16 =
+        <<::consts::U16 as Invert>::Output as Invert>::Output;
 
     assert_eq!(4, <Test4 as Unsigned>::to_u64());
     assert_eq!(5, <Test5 as Unsigned>::to_u64());
@@ -217,8 +220,7 @@ impl<U: Unsigned> Trim for U
 pub trait PrivateCmp<Rhs, SoFar> {
     type Output;
 }
-pub type PrivateCmpOut<A, Rhs, SoFar> =
-    <A as PrivateCmp<Rhs, SoFar>>::Output;
+pub type PrivateCmpOut<A, Rhs, SoFar> = <A as PrivateCmp<Rhs, SoFar>>::Output;
 
 
 // Set Bit
@@ -233,10 +235,8 @@ pub trait PrivateDiv<N, D, Q, R, I> {
     type Remainder;
 }
 
-pub type PrivateDivQuot<N, D, Q, R, I> =
-    <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
-pub type PrivateDivRem<N, D, Q, R, I> =
-    <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
+pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
+pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remainder;
 
 pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
     type Quotient;
@@ -260,14 +260,12 @@ pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N,
 pub trait PrivateDivInt<C, Divisor> {
     type Output;
 }
-pub type PrivateDivIntOut<A, C, Divisor> =
-    <A as PrivateDivInt<C, Divisor>>::Output;
+pub type PrivateDivIntOut<A, C, Divisor> = <A as PrivateDivInt<C, Divisor>>::Output;
 
 pub trait PrivateRem<URem, Divisor> {
     type Output;
 }
-pub type PrivateRemOut<A, URem, Divisor> =
-    <A as PrivateRem<URem, Divisor>>::Output;
+pub type PrivateRemOut<A, URem, Divisor> = <A as PrivateRem<URem, Divisor>>::Output;
 
 
 // min max

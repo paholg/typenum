@@ -228,7 +228,12 @@ fn test_all() {
         _ => (),
     };
 
-    let cmd = Command::new("cargo").arg("new").arg("--bin").arg(&test_dir).output().unwrap();
+    let cmd = Command::new("cargo")
+        .arg("new")
+        .arg("--bin")
+        .arg(&test_dir)
+        .output()
+        .unwrap();
 
     if !cmd.status.success() {
         panic!("Couldn't run cargo new. Stdout: \n{}\nStderr: {}\n",
@@ -248,7 +253,7 @@ fn test_all() {
             \"{}\"
 ",
            env::var("CARGO_MANIFEST_DIR").unwrap())
-        .unwrap();
+            .unwrap();
 
     // Write main.rs
     let mainf = File::create(&main).unwrap();
@@ -324,8 +329,16 @@ fn main() {
     writer.write(b"}").unwrap();
     writer.flush().unwrap();
 
-    Command::new("cargo").arg("update").current_dir(&test_dir).output().unwrap();
-    let test_out = Command::new("cargo").arg("run").current_dir(&test_dir).output().unwrap();
+    Command::new("cargo")
+        .arg("update")
+        .current_dir(&test_dir)
+        .output()
+        .unwrap();
+    let test_out = Command::new("cargo")
+        .arg("run")
+        .current_dir(&test_dir)
+        .output()
+        .unwrap();
     if !test_out.status.success() {
         let stdout = ::std::str::from_utf8(&test_out.stdout).unwrap();
         let stderr = ::std::str::from_utf8(&test_out.stderr).unwrap();

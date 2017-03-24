@@ -1357,21 +1357,33 @@ impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for 
 // PrivateMin
 use private::{PrivateMin, PrivateMinOut};
 
-impl<U, B, Ur> PrivateMin<Ur, Equal> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMin<Ur, Equal> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = UInt<U, B>;
     fn private_min(self, _: Ur) -> Self::Output {
         self
     }
 }
 
-impl<U, B, Ur> PrivateMin<Ur, Less> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMin<Ur, Less> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = UInt<U, B>;
     fn private_min(self, _: Ur) -> Self::Output {
         self
     }
 }
 
-impl<U, B, Ur> PrivateMin<Ur, Greater> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMin<Ur, Greater> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = Ur;
     fn private_min(self, rhs: Ur) -> Self::Output {
         rhs
@@ -1382,7 +1394,9 @@ impl<U, B, Ur> PrivateMin<Ur, Greater> for UInt<U, B> where Ur: Unsigned, U: Uns
 // Min
 use Min;
 
-impl<U> Min<U> for UTerm where U: Unsigned {
+impl<U> Min<U> for UTerm
+    where U: Unsigned
+{
     type Output = UTerm;
     fn min(self, _: U) -> Self::Output {
         self
@@ -1393,7 +1407,7 @@ impl<U, B, Ur> Min<Ur> for UInt<U, B>
     where U: Unsigned,
           B: Bit,
           Ur: Unsigned,
-          UInt<U, B>: Cmp<Ur> + PrivateMin<Ur, Compare<UInt<U, B>, Ur>>,
+          UInt<U, B>: Cmp<Ur> + PrivateMin<Ur, Compare<UInt<U, B>, Ur>>
 {
     type Output = PrivateMinOut<UInt<U, B>, Ur, Compare<UInt<U, B>, Ur>>;
     fn min(self, rhs: Ur) -> Self::Output {
@@ -1405,21 +1419,33 @@ impl<U, B, Ur> Min<Ur> for UInt<U, B>
 // PrivateMax
 use private::{PrivateMax, PrivateMaxOut};
 
-impl<U, B, Ur> PrivateMax<Ur, Equal> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMax<Ur, Equal> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = UInt<U, B>;
     fn private_max(self, _: Ur) -> Self::Output {
         self
     }
 }
 
-impl<U, B, Ur> PrivateMax<Ur, Less> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMax<Ur, Less> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = Ur;
     fn private_max(self, rhs: Ur) -> Self::Output {
         rhs
     }
 }
 
-impl<U, B, Ur> PrivateMax<Ur, Greater> for UInt<U, B> where Ur: Unsigned, U: Unsigned, B: Bit {
+impl<U, B, Ur> PrivateMax<Ur, Greater> for UInt<U, B>
+    where Ur: Unsigned,
+          U: Unsigned,
+          B: Bit
+{
     type Output = UInt<U, B>;
     fn private_max(self, _: Ur) -> Self::Output {
         self
@@ -1430,7 +1456,9 @@ impl<U, B, Ur> PrivateMax<Ur, Greater> for UInt<U, B> where Ur: Unsigned, U: Uns
 // Max
 use Max;
 
-impl<U> Max<U> for UTerm where U: Unsigned {
+impl<U> Max<U> for UTerm
+    where U: Unsigned
+{
     type Output = U;
     fn max(self, rhs: U) -> Self::Output {
         rhs
@@ -1441,7 +1469,7 @@ impl<U, B, Ur> Max<Ur> for UInt<U, B>
     where U: Unsigned,
           B: Bit,
           Ur: Unsigned,
-          UInt<U, B>: Cmp<Ur> + PrivateMax<Ur, Compare<UInt<U, B>, Ur>>,
+          UInt<U, B>: Cmp<Ur> + PrivateMax<Ur, Compare<UInt<U, B>, Ur>>
 {
     type Output = PrivateMaxOut<UInt<U, B>, Ur, Compare<UInt<U, B>, Ur>>;
     fn max(self, rhs: Ur) -> Self::Output {
