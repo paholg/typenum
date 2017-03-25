@@ -57,7 +57,7 @@
 
 use core::cmp::Ordering;
 
-pub mod consts;
+include!(concat!(env!("OUT_DIR"), "/consts.rs"));
 pub mod bit;
 pub mod uint;
 pub mod int;
