@@ -248,9 +248,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for NInt<Ul>
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
     where Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>
 {
-    type Output = <Ul as PrivateIntegerAdd<
-        <Ul as Cmp<Ur>>::Output, Ur
-        >>::Output;
+    type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
     fn add(self, _: NInt<Ur>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -261,9 +259,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
     where Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>
 {
-    type Output = <Ur as PrivateIntegerAdd<
-        <Ur as Cmp<Ul>>::Output, Ul
-        >>::Output;
+    type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
     fn add(self, _: PInt<Ur>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -359,9 +355,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for NInt<Ul>
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
     where Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>
 {
-    type Output = <Ul as PrivateIntegerAdd<
-        <Ul as Cmp<Ur>>::Output, Ur
-        >>::Output;
+    type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
     fn sub(self, _: PInt<Ur>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -372,9 +366,7 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
     where Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>
 {
-    type Output = <Ur as PrivateIntegerAdd<
-        <Ur as Cmp<Ul>>::Output, Ul
-        >>::Output;
+    type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
     fn sub(self, _: NInt<Ur>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -722,5 +714,182 @@ impl<Ul: Unsigned + NonZero, Ur: Unsigned> Pow<PInt<UInt<Ur, B1>>> for NInt<Ul>
     type Output = NInt<<Ul as Pow<UInt<Ur, B1>>>::Output>;
     fn powi(self, _: PInt<UInt<Ur, B1>>) -> Self::Output {
         NInt::new()
+    }
+}
+
+// ---------------------------------------------------------------------------------------
+// Min
+use {Min, Minimum, Max, Maximum};
+
+impl Min<Z0> for Z0 {
+    type Output = Z0;
+    fn min(self, _: Z0) -> Self::Output {
+        self
+    }
+}
+
+impl<U> Min<PInt<U>> for Z0
+    where U: Unsigned + NonZero
+{
+    type Output = Z0;
+    fn min(self, _: PInt<U>) -> Self::Output {
+        self
+    }
+}
+
+impl<U> Min<NInt<U>> for Z0
+    where U: Unsigned + NonZero
+{
+    type Output = NInt<U>;
+    fn min(self, rhs: NInt<U>) -> Self::Output {
+        rhs
+    }
+}
+
+impl<U> Min<Z0> for PInt<U>
+    where U: Unsigned + NonZero
+{
+    type Output = Z0;
+    fn min(self, rhs: Z0) -> Self::Output {
+        rhs
+    }
+}
+
+impl<U> Min<Z0> for NInt<U>
+    where U: Unsigned + NonZero
+{
+    type Output = NInt<U>;
+    fn min(self, _: Z0) -> Self::Output {
+        self
+    }
+}
+
+impl<Ul, Ur> Min<PInt<Ur>> for PInt<Ul>
+    where Ul: Unsigned + NonZero + Min<Ur>,
+          Ur: Unsigned + NonZero,
+          Minimum<Ul, Ur>: Unsigned + NonZero
+{
+    type Output = PInt<Minimum<Ul, Ur>>;
+    fn min(self, _: PInt<Ur>) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+impl<Ul, Ur> Min<PInt<Ur>> for NInt<Ul>
+    where Ul: Unsigned + NonZero,
+          Ur: Unsigned + NonZero
+{
+    type Output = NInt<Ul>;
+    fn min(self, _: PInt<Ur>) -> Self::Output {
+        self
+    }
+}
+
+impl<Ul, Ur> Min<NInt<Ur>> for PInt<Ul>
+    where Ul: Unsigned + NonZero,
+          Ur: Unsigned + NonZero
+{
+    type Output = NInt<Ur>;
+    fn min(self, rhs: NInt<Ur>) -> Self::Output {
+        rhs
+    }
+}
+
+impl<Ul, Ur> Min<NInt<Ur>> for NInt<Ul>
+    where Ul: Unsigned + NonZero + Max<Ur>,
+          Ur: Unsigned + NonZero,
+          Maximum<Ul, Ur>: Unsigned + NonZero
+{
+    type Output = NInt<Maximum<Ul, Ur>>;
+    fn min(self, _: NInt<Ur>) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+// ---------------------------------------------------------------------------------------
+// Max
+
+impl Max<Z0> for Z0 {
+    type Output = Z0;
+    fn max(self, _: Z0) -> Self::Output {
+        self
+    }
+}
+
+impl<U> Max<PInt<U>> for Z0
+    where U: Unsigned + NonZero
+{
+    type Output = PInt<U>;
+    fn max(self, rhs: PInt<U>) -> Self::Output {
+        rhs
+    }
+}
+
+impl<U> Max<NInt<U>> for Z0
+    where U: Unsigned + NonZero
+{
+    type Output = Z0;
+    fn max(self, _: NInt<U>) -> Self::Output {
+        self
+    }
+}
+
+impl<U> Max<Z0> for PInt<U>
+    where U: Unsigned + NonZero
+{
+    type Output = PInt<U>;
+    fn max(self, _: Z0) -> Self::Output {
+        self
+    }
+}
+
+impl<U> Max<Z0> for NInt<U>
+    where U: Unsigned + NonZero
+{
+    type Output = Z0;
+    fn max(self, rhs: Z0) -> Self::Output {
+        rhs
+    }
+}
+
+impl<Ul, Ur> Max<PInt<Ur>> for PInt<Ul>
+    where Ul: Unsigned + NonZero + Max<Ur>,
+          Ur: Unsigned + NonZero,
+          Maximum<Ul, Ur>: Unsigned + NonZero
+{
+    type Output = PInt<Maximum<Ul, Ur>>;
+    fn max(self, _: PInt<Ur>) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+impl<Ul, Ur> Max<PInt<Ur>> for NInt<Ul>
+    where Ul: Unsigned + NonZero,
+          Ur: Unsigned + NonZero
+{
+    type Output = PInt<Ur>;
+    fn max(self, rhs: PInt<Ur>) -> Self::Output {
+        rhs
+    }
+}
+
+impl<Ul, Ur> Max<NInt<Ur>> for PInt<Ul>
+    where Ul: Unsigned + NonZero,
+          Ur: Unsigned + NonZero
+{
+    type Output = PInt<Ul>;
+    fn max(self, _: NInt<Ur>) -> Self::Output {
+        self
+    }
+}
+
+impl<Ul, Ur> Max<NInt<Ur>> for NInt<Ul>
+    where Ul: Unsigned + NonZero + Min<Ur>,
+          Ur: Unsigned + NonZero,
+          Minimum<Ul, Ur>: Unsigned + NonZero
+{
+    type Output = NInt<Minimum<Ul, Ur>>;
+    fn max(self, _: NInt<Ur>) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
     }
 }

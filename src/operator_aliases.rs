@@ -14,7 +14,7 @@
 //!
 //! Aliases!!!
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
-use type_operators::{Pow, Cmp, Len, PartialDiv};
+use type_operators::{Pow, Cmp, Len, PartialDiv, Min, Max};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -66,3 +66,10 @@ pub type Compare<A, B> = <A as Cmp<B>>::Output;
 
 /// Alias for the associated type of `Len`: `Length<A> = <A as Len>::Output`
 pub type Length<T> = <T as Len>::Output;
+
+
+/// Alias for the associated type of `Min`: `Minimum<A, B> = <A as Min<B>>::Output`
+pub type Minimum<A, B> = <A as Min<B>>::Output;
+
+/// Alias for the associated type of `Max`: `Maximum<A, B> = <A as Max<B>>::Output`
+pub type Maximum<A, B> = <A as Max<B>>::Output;

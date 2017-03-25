@@ -2,6 +2,9 @@
 
 This project follows semantic versioning.
 
+### 1.7.0 (2017-03-24)
+    - [added] Type operators `Min` and `Max` with accompanying aliases `Minimum` and `Maximum`
+
 ### 1.6.0 (2017-02-24)
     - [fixed] Bug in `Array` division.
     - [fixed] Bug where `Rem` would sometimes exit early with the wrong answer.
