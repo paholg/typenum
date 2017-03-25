@@ -4,6 +4,8 @@ use std::io::Write;
 use std::path::Path;
 use std::fmt;
 
+mod tests;
+
 pub enum UIntCode {
     Term,
     Zero(Box<UIntCode>),
@@ -107,4 +109,6 @@ pub use int::Z0; // re-export for convenience.
             write!(f, "pub type N{} = {};\n", i, gen_int(-i)).unwrap();
         }
     }
+
+    tests::build_tests().unwrap();
 }
