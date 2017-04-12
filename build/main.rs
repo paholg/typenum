@@ -5,6 +5,7 @@ use std::path::Path;
 use std::fmt;
 
 mod tests;
+mod op;
 
 pub enum UIntCode {
     Term,
@@ -164,4 +165,6 @@ pub mod consts {{
     write!(f, "}}").unwrap();
 
     tests::build_tests().unwrap();
+
+    op::write_op_macro().unwrap();
 }
