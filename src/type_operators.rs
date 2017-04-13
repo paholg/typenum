@@ -404,7 +404,7 @@ impl<A, B> IsGreaterOrEqual<B> for A
 /**
 A convenience macro for comparing type numbers.
 
-Due to the intricasies of the macro system, if the left-hand operand is more complex than a simple
+Due to the intricacies of the macro system, if the left-hand operand is more complex than a simple
 `ident`, you must place a comma between it and the comparison sign.
 
 For example, you can do `cmp!(P5 > P3)` or `cmp!(typenum::P5, > typenum::P3)` but not
