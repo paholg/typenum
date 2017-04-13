@@ -217,7 +217,8 @@ pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
     let f = fs::File::create(&dest)?;
     let mut writer = io::BufWriter::new(&f);
     use std::io::Write;
-    writer.write(b"
+    writer
+        .write(b"
 extern crate typenum;
 
 use std::ops::*;

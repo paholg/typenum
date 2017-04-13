@@ -282,3 +282,189 @@ pub trait Max<Rhs = Self> {
     /// Method returning the maximum
     fn max(self, rhs: Rhs) -> Self::Output;
 }
+
+use Compare;
+
+/// A **type operator** that returns `True` if `Self < Rhs`, otherwise returns `False`.
+pub trait IsLess<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_less(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsLessPrivate;
+impl<A, B> IsLess<B> for A
+    where A: Cmp<B> + IsLessPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_less(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+/// A **type operator** that returns `True` if `Self == Rhs`, otherwise returns `False`.
+pub trait IsEqual<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_equal(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsEqualPrivate;
+impl<A, B> IsEqual<B> for A
+    where A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_equal(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+
+/// A **type operator** that returns `True` if `Self > Rhs`, otherwise returns `False`.
+pub trait IsGreater<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_greater(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsGreaterPrivate;
+impl<A, B> IsGreater<B> for A
+    where A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_greater(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+/// A **type operator** that returns `True` if `Self <= Rhs`, otherwise returns `False`.
+pub trait IsLessOrEqual<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_less_or_equal(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsLessOrEqualPrivate;
+impl<A, B> IsLessOrEqual<B> for A
+    where A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_less_or_equal(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+/// A **type operator** that returns `True` if `Self != Rhs`, otherwise returns `False`.
+pub trait IsNotEqual<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_not_equal(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsNotEqualPrivate;
+impl<A, B> IsNotEqual<B> for A
+    where A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_not_equal(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+/// A **type operator** that returns `True` if `Self >= Rhs`, otherwise returns `False`.
+pub trait IsGreaterOrEqual<Rhs = Self> {
+    /// The type representing either `True` or `False`
+    type Output: Bit;
+    /// Method returning `True` or `False`.
+    fn is_greater_or_equal(self, rhs: Rhs) -> Self::Output;
+}
+
+use private::IsGreaterOrEqualPrivate;
+impl<A, B> IsGreaterOrEqual<B> for A
+    where A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>>
+{
+    type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
+
+    fn is_greater_or_equal(self, _: B) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+
+/**
+A convenience macro for comparing type numbers.
+
+Due to the intricacies of the macro system, if the left-hand operand is more complex than a simple
+`ident`, you must place a comma between it and the comparison sign.
+
+For example, you can do `cmp!(P5 > P3)` or `cmp!(typenum::P5, > typenum::P3)` but not
+`cmp!(typenum::P5 > typenum::P3)`.
+
+The result of this comparison will always be one of `True` (aka `B1`) or `False` (aka `B0`).
+
+# Example
+```rust
+#[macro_use] extern crate typenum;
+use typenum::consts::*;
+use typenum::Bit;
+
+fn main() {
+type Result = cmp!(P9 == op!(P1 + P2 * (P2 - N2)));
+assert_eq!(Result::to_bool(), true);
+}
+```
+*/
+#[macro_export]
+macro_rules! cmp {
+    ($a:ident < $b:ty) => (
+        <$a as $crate::IsLess<$b>>::Output
+    );
+    ($a:ty, < $b:ty) => (
+        <$a as $crate::IsLess<$b>>::Output
+    );
+
+    ($a:ident == $b:ty) => (
+        <$a as $crate::IsEqual<$b>>::Output
+    );
+    ($a:ty, == $b:ty) => (
+        <$a as $crate::IsEqual<$b>>::Output
+    );
+
+    ($a:ident > $b:ty) => (
+        <$a as $crate::IsGreater<$b>>::Output
+    );
+    ($a:ty, > $b:ty) => (
+        <$a as $crate::IsGreater<$b>>::Output
+    );
+
+    ($a:ident <= $b:ty) => (
+        <$a as $crate::IsLessOrEqual<$b>>::Output
+    );
+    ($a:ty, <= $b:ty) => (
+        <$a as $crate::IsLessOrEqual<$b>>::Output
+    );
+
+    ($a:ident != $b:ty) => (
+        <$a as $crate::IsNotEqual<$b>>::Output
+    );
+    ($a:ty, != $b:ty) => (
+        <$a as $crate::IsNotEqual<$b>>::Output
+    );
+
+    ($a:ident >= $b:ty) => (
+        <$a as $crate::IsGreaterOrEqual<$b>>::Output
+    );
+    ($a:ty, >= $b:ty) => (
+        <$a as $crate::IsGreaterOrEqual<$b>>::Output
+    );
+}

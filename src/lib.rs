@@ -55,9 +55,14 @@
 #![deny(clippy)]
 #![allow(type_complexity, len_without_is_empty)]
 
+// For debugging macros:
+// #![feature(trace_macros)]
+// trace_macros!(true);
+
 use core::cmp::Ordering;
 
 include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+include!(concat!(env!("OUT_DIR"), "/op.rs"));
 pub mod bit;
 pub mod uint;
 pub mod int;

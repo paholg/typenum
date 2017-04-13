@@ -2,6 +2,11 @@
 
 This project follows semantic versioning.
 
+### 1.8.0 (2017-04-12)
+    - [added] The `op!` macro for conveniently performing type-level operations.
+    - [added] The `cmp!` macro for conveniently performing type-level comparisons.
+    - [added] Some comparison type-operators that are used by the `cmp!` macro.
+
 ### 1.7.0 (2017-03-24)
     - [added] Type operators `Min` and `Max` with accompanying aliases `Minimum` and `Maximum`
 
