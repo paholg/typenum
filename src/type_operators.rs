@@ -283,7 +283,7 @@ pub trait Max<Rhs = Self> {
     fn max(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::Compare;
+use Compare;
 
 /// A **type operator** that returns `True` if `Self < Rhs`, otherwise returns `False`.
 pub trait IsLess<Rhs = Self> {
@@ -293,11 +293,13 @@ pub trait IsLess<Rhs = Self> {
     fn is_less(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsLessPrivate;
-impl<A, B> IsLess<B> for A where A: Cmp<B> + IsLessPrivate<B, Compare<A, B>> {
+use private::IsLessPrivate;
+impl<A, B> IsLess<B> for A
+    where A: Cmp<B> + IsLessPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_less(self, _: B) -> Self:: Output {
+    fn is_less(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -310,11 +312,13 @@ pub trait IsEqual<Rhs = Self> {
     fn is_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsEqualPrivate;
-impl<A, B> IsEqual<B> for A where A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>> {
+use private::IsEqualPrivate;
+impl<A, B> IsEqual<B> for A
+    where A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_equal(self, _: B) -> Self:: Output {
+    fn is_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -328,11 +332,13 @@ pub trait IsGreater<Rhs = Self> {
     fn is_greater(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsGreaterPrivate;
-impl<A, B> IsGreater<B> for A where A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>> {
+use private::IsGreaterPrivate;
+impl<A, B> IsGreater<B> for A
+    where A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_greater(self, _: B) -> Self:: Output {
+    fn is_greater(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -345,11 +351,13 @@ pub trait IsLessOrEqual<Rhs = Self> {
     fn is_less_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsLessOrEqualPrivate;
-impl<A, B> IsLessOrEqual<B> for A where A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>> {
+use private::IsLessOrEqualPrivate;
+impl<A, B> IsLessOrEqual<B> for A
+    where A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_less_or_equal(self, _: B) -> Self:: Output {
+    fn is_less_or_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -362,11 +370,13 @@ pub trait IsNotEqual<Rhs = Self> {
     fn is_not_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsNotEqualPrivate;
-impl<A, B> IsNotEqual<B> for A where A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>> {
+use private::IsNotEqualPrivate;
+impl<A, B> IsNotEqual<B> for A
+    where A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_not_equal(self, _: B) -> Self:: Output {
+    fn is_not_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -379,11 +389,13 @@ pub trait IsGreaterOrEqual<Rhs = Self> {
     fn is_greater_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use ::private::IsGreaterOrEqualPrivate;
-impl<A, B> IsGreaterOrEqual<B> for A where A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>> {
+use private::IsGreaterOrEqualPrivate;
+impl<A, B> IsGreaterOrEqual<B> for A
+    where A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>>
+{
     type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
 
-    fn is_greater_or_equal(self, _: B) -> Self:: Output {
+    fn is_greater_or_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
 }
@@ -395,7 +407,8 @@ A convenience macro for comparing type numbers.
 Due to the intricasies of the macro system, if the left-hand operand is more complex than a simple
 `ident`, you must place a comma between it and the comparison sign.
 
-For example, you can do `cmp!(P5 > P3)` or `cmp!(typenum::P5, > typenum::P3)` but not `cmp!(typenum::P5 > typenum::P3)`.
+For example, you can do `cmp!(P5 > P3)` or `cmp!(typenum::P5, > typenum::P3)` but not
+`cmp!(typenum::P5 > typenum::P3)`.
 
 # Example
 ```rust
@@ -453,4 +466,3 @@ macro_rules! cmp {
         <$a as $crate::IsGreaterOrEqual<$b>>::Output
     );
 }
-

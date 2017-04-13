@@ -284,7 +284,7 @@ pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Outpu
 
 // Comparisons
 
-use ::{True, False, Greater, Less, Equal};
+use {True, False, Greater, Less, Equal};
 
 pub trait IsLessPrivate<Rhs, Cmp> {
     type Output: Bit;
@@ -369,4 +369,3 @@ impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
 impl<A, B> IsGreaterOrEqualPrivate<B, Greater> for A {
     type Output = True;
 }
-
