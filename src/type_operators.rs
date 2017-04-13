@@ -410,6 +410,8 @@ Due to the intricacies of the macro system, if the left-hand operand is more com
 For example, you can do `cmp!(P5 > P3)` or `cmp!(typenum::P5, > typenum::P3)` but not
 `cmp!(typenum::P5 > typenum::P3)`.
 
+The result of this comparison will always be one of `True` (aka `B1`) or `False` (aka `B0`).
+
 # Example
 ```rust
 #[macro_use] extern crate typenum;
