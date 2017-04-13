@@ -280,3 +280,93 @@ pub trait PrivateMax<Rhs, CmpResult> {
     fn private_max(self, rhs: Rhs) -> Self::Output;
 }
 pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Output;
+
+
+// Comparisons
+
+use ::{True, False, Greater, Less, Equal};
+
+pub trait IsLessPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsLessPrivate<B, Less> for A {
+    type Output = True;
+}
+impl<A, B> IsLessPrivate<B, Equal> for A {
+    type Output = False;
+}
+impl<A, B> IsLessPrivate<B, Greater> for A {
+    type Output = False;
+}
+
+pub trait IsEqualPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsEqualPrivate<B, Less> for A {
+    type Output = False;
+}
+impl<A, B> IsEqualPrivate<B, Equal> for A {
+    type Output = True;
+}
+impl<A, B> IsEqualPrivate<B, Greater> for A {
+    type Output = False;
+}
+
+pub trait IsGreaterPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsGreaterPrivate<B, Less> for A {
+    type Output = False;
+}
+impl<A, B> IsGreaterPrivate<B, Equal> for A {
+    type Output = False;
+}
+impl<A, B> IsGreaterPrivate<B, Greater> for A {
+    type Output = True;
+}
+
+pub trait IsLessOrEqualPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsLessOrEqualPrivate<B, Less> for A {
+    type Output = True;
+}
+impl<A, B> IsLessOrEqualPrivate<B, Equal> for A {
+    type Output = True;
+}
+impl<A, B> IsLessOrEqualPrivate<B, Greater> for A {
+    type Output = False;
+}
+
+pub trait IsNotEqualPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsNotEqualPrivate<B, Less> for A {
+    type Output = True;
+}
+impl<A, B> IsNotEqualPrivate<B, Equal> for A {
+    type Output = False;
+}
+impl<A, B> IsNotEqualPrivate<B, Greater> for A {
+    type Output = True;
+}
+
+pub trait IsGreaterOrEqualPrivate<Rhs, Cmp> {
+    type Output: Bit;
+}
+
+impl<A, B> IsGreaterOrEqualPrivate<B, Less> for A {
+    type Output = False;
+}
+impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
+    type Output = True;
+}
+impl<A, B> IsGreaterOrEqualPrivate<B, Greater> for A {
+    type Output = True;
+}
+

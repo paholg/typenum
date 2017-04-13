@@ -1,20 +1,129 @@
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+enum OpType {
+    Operator,
+    Function,
+}
+
+use self::OpType::*;
+
 struct Op {
-    token: char,
+    token: &'static str,
     operator: &'static str,
+    example: (&'static str, &'static str),
     precedence: u8,
-}
-
-struct Function {
-    symbol: &'static str,
-    operator: &'static str,
     n_args: u8,
+    op_type: OpType,
 }
-
 
 pub fn write_op_macro() -> ::std::io::Result<()> {
     let out_dir = ::std::env::var("OUT_DIR").unwrap();
     let dest = ::std::path::Path::new(&out_dir).join("op.rs");
     let mut f = ::std::fs::File::create(&dest).unwrap();
+
+    let ops = &[Op {
+                    token: "*",
+                    operator: "Prod",
+                    example: ("P3 * P2", "P6"),
+                    precedence: 3,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "/",
+                    operator: "Quot",
+                    example: ("P6 / P2", "P3"),
+                    precedence: 3,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "%",
+                    operator: "Mod",
+                    example: ("P5 % P3", "P2"),
+                    precedence: 3,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "+",
+                    operator: "Sum",
+                    example: ("P2 + P3", "P5"),
+                    precedence: 2,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "-",
+                    operator: "Diff",
+                    example: ("P2 - P3", "N1"),
+                    precedence: 2,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "^",
+                    operator: "Xor",
+                    example: ("U5 ^ U3", "U6"),
+                    precedence: 1,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "|",
+                    operator: "Or",
+                    example: ("U5 | U3", "U7"),
+                    precedence: 1,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "&",
+                    operator: "And",
+                    example: ("U5 & U3", "U1"),
+                    precedence: 1,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "sqr",
+                    operator: "Square",
+                    example: ("sqr(P2)", "P4"),
+                    precedence: !0,
+                    n_args: 1,
+                    op_type: Function,
+                },
+                Op {
+                    token: "cube",
+                    operator: "Cube",
+                    example: ("cube(P2)", "P8"),
+                    precedence: !0,
+                    n_args: 1,
+                    op_type: Function,
+                },
+                Op {
+                    token: "pow",
+                    operator: "Exp",
+                    example: ("pow(P2, P3)", "P8"),
+                    precedence: !0,
+                    n_args: 2,
+                    op_type: Function,
+                },
+                Op {
+                    token: "min",
+                    operator: "Minimum",
+                    example: ("min(P2, P3)", "P2"),
+                    precedence: !0,
+                    n_args: 2,
+                    op_type: Function,
+                },
+                Op {
+                    token: "max",
+                    operator: "Maximum",
+                    example: ("max(P2, P3)", "P3"),
+                    precedence: !0,
+                    n_args: 2,
+                    op_type: Function,
+                }];
 
     use std::io::Write;
     write!(f,
@@ -22,76 +131,63 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
 /**
 Convenient type operations.
 
-The following operations are supported: `*`, `/`, `+`, `-`, `sq`, `pow`, `min`, `max`, as well as
-parentheses.
+Any types representing values must be able to be expressed as `ident`s. That means they need to be
+in scope.
+
+For example, `P5` is okay, but `typenum::P5` is not.
+
+You may combine operators arbitrarily.
+
 
 # Example
 ```rust
 #[macro_use] extern crate typenum;
-use typenum::{{P1, P2, P3, P4, P5, N3, N7}};
+use typenum::{{P1, P2, P3, P4, P5, P10, N3, N7}};
 
 fn main() {{
-    type Test = op!(min(P5 * (P3 + P4), (P1 - P2) * (N3 + N7)));
-    use typenum::Integer;
-    assert_eq!(<Test as Integer>::to_i64(), 10);
+    type Result = cmp!(P10 == op!(min(P5 * (P3 + P4), (P1 - P2) * (N3 + N7))));
+    use typenum::Bit;
+    assert!(Result::to_bool());
 }}
 ```
-*/
+
+The full list of supported operators is as follows. They all expand to type aliases defined in the
+`operator_aliases` module.
+
+")?;
+
+    //write!(f, "Token | Alias | Example\n ===|===|===\n")?;
+
+    for op in ops.iter() {
+        write!(f,
+               "---\nOperator `{token}`. Expands to `{operator}`.
+
+```rust
+# #[macro_use] extern crate typenum;
+# use typenum::consts::*;
+# use typenum::Bit;
+# fn main() {{
+type Result = cmp!({ex1} == op!({ex0}));    assert!(Result::to_bool());
+# }}
+```\n
+",
+               token = op.token,
+               operator = op.operator,
+               ex0 = op.example.0,
+               ex1 = op.example.1)?;
+    }
+
+    write!(f,
+           "*/
 #[macro_export]
 macro_rules! op {{
     ($($tail:tt)*) => ( __op_internal__!($($tail)*) );
 }}
-")?;
-    write!(f,
-           "
+
     #[doc(hidden)]
     #[macro_export]
     macro_rules! __op_internal__ {{
 ")?;
-
-    let mul = Op {
-        token: '*',
-        operator: "Prod",
-        precedence: 3,
-    };
-    let div = Op {
-        token: '/',
-        operator: "Div",
-        precedence: 3,
-    };
-    let add = Op {
-        token: '+',
-        operator: "Sum",
-        precedence: 2,
-    };
-    let sub = Op {
-        token: '-',
-        operator: "Diff",
-        precedence: 2,
-    };
-    let ops = &[mul, div, add, sub];
-
-    let square = Function {
-        symbol: "sq",
-        operator: "Square",
-        n_args: 1,
-    };
-    let pow = Function {
-        symbol: "pow",
-        operator: "Exp",
-        n_args: 2,
-    };
-    let min = Function {
-        symbol: "min",
-        operator: "Minimum",
-        n_args: 2,
-    };
-    let max = Function {
-        symbol: "max",
-        operator: "Maximum",
-        n_args: 2,
-    };
-    let funs = &[square, pow, min, max];
 
     // We first us the shunting-yard algorithm to produce our tokens in Polish notation.
     // See: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
@@ -101,10 +197,12 @@ macro_rules! op {{
     // Stage 1: There are tokens to be read:
 
     // Token is an operator, o1:
-    for o1 in ops {
+    for o1 in ops.iter().filter(|op| op.op_type == Operator) {
         // if top of stack is operator o2 with o1.precedence <= o2.precedence,
         // then pop o2 off stack onto queue:
-        for o2 in ops.iter().filter(|o2| o1.precedence <= o2.precedence) {
+        for o2 in ops.iter()
+                .filter(|op| op.op_type == Operator)
+                .filter(|o2| o1.precedence <= o2.precedence) {
             write!(f,
                    "
 (@stack[{o2_op}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {o1_token} $($tail:tt)*) => (
@@ -124,13 +222,13 @@ macro_rules! op {{
     }
 
     // Token is a function, push it onto the stack:
-    for fun in funs {
+    for fun in ops.iter().filter(|f| f.op_type == Function) {
         write!(f,
                "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {f_sym} $($tail:tt)*) => (
     __op_internal__!(@stack[{f_op}, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
 );",
-               f_sym = fun.symbol,
+               f_sym = fun.token,
                f_op = fun.operator)?;
     }
 
@@ -176,13 +274,13 @@ macro_rules! op {{
     __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: RParen $($tail)*)
 );")?;
     // 3. Check for function:
-    for fun in funs {
+    for fun in ops.iter().filter(|f| f.op_type == Function) {
         write!(f,
                "
 (@rp3 @stack[{fun_sym}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
     __op_internal__!(@rp3 @stack[$($stack,)*] @queue[{fun_op}, $($queue,)*] @tail: $($tail)*)
 );",
-               fun_sym = fun.symbol,
+               fun_sym = fun.token,
                fun_op = fun.operator)?;
     }
     // 3. Base case:
@@ -226,28 +324,24 @@ macro_rules! op {{
 );")?;
 
     // Stage 3: Evaluate in Reverse Polish Notation
-    // Functions / Operators with 2 args:
-    for op in ops.iter()
-            .map(|op| op.operator)
-            .chain(funs.iter()
-                       .filter(|f| f.n_args == 2)
-                       .map(|f| f.operator)) {
+    // Operators / Operators with 2 args:
+    for op in ops.iter().filter(|op| op.n_args == 2) {
         // Note: We have to switch $a and $b here, otherwise non-commutative functions are backwards
         write!(f,
                "
 (@eval @stack[$a:ty, $b:ty, $($stack:ty,)*] @input[{op}, $($tail:ident,)*]) => (
     __op_internal__!(@eval @stack[$crate::{op}<$b, $a>, $($stack,)*] @input[$($tail,)*])
 );",
-               op = op)?;
+               op = op.operator)?;
     }
-    // Functions with 1 arg:
-    for fun in funs.iter().filter(|f| f.n_args == 1) {
+    // Operators with 1 arg:
+    for op in ops.iter().filter(|op| op.n_args == 1) {
         write!(f,
                "
 (@eval @stack[$a:ty, $($stack:ty,)*] @input[{op}, $($tail:ident,)*]) => (
     __op_internal__!(@eval @stack[$crate::{op}<$a>, $($stack,)*] @input[$($tail,)*])
 );",
-               op = fun.operator)?;
+               op = op.operator)?;
     }
 
     // Wasn't a function or operator, so must be a value => push onto stack

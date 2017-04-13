@@ -140,6 +140,8 @@ use typenum::{{N3, N2, N1, Z0, P1, P2, P3}};
 # #[allow(unused_imports)]
 use typenum::{{U774, N17, N10000, P1024, P4096}};
 ```
+
+We also define the aliases `False` and `True` for `B0` and `B1`, respectively.
 */
 #[allow(missing_docs)]
 pub mod consts {{
@@ -148,6 +150,9 @@ pub mod consts {{
 
     pub use bit::{{B0, B1}};
     pub use int::Z0;
+
+    pub type True = B1;
+    pub type False = B0;
 ",
            highest = highest)
             .unwrap();
