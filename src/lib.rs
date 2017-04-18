@@ -120,3 +120,32 @@ impl Ord for Equal {
         Ordering::Equal
     }
 }
+
+/**
+Asserts that two types are the same.
+*/
+#[macro_export]
+macro_rules! assert_type_eq {
+    ($a:ty, $b:ty) => (
+        let _: <$a as $crate::Same<$b>>::Output;
+    );
+}
+
+/**
+Asserts that a type is `True`, aka `B1`.
+*/
+#[macro_export]
+macro_rules! assert_type {
+    ($a:ty) => (
+        let _: <$a as $crate::Same<True>>::Output;
+    );
+}
+
+
+// fixme: temporary
+#[test]
+fn testacular() {
+    use consts::*;
+
+    assert_type_eq!(op!(sqr(U1) == U1), True);
+}

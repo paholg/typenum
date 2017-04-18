@@ -20,11 +20,17 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
     let dest = ::std::path::Path::new(&out_dir).join("op.rs");
     let mut f = ::std::fs::File::create(&dest).unwrap();
 
+    // Operator precedence is taken from
+    // https://doc.rust-lang.org/reference.html#operator-precedence
+    //
+    // We choose 16 as the highest precedence (functions are set to 255 but it doesn't matter
+    // for them).  We also only use operators that are left associative so we don't have to worry
+    // about that.
     let ops = &[Op {
                     token: "*",
                     operator: "Prod",
-                    example: ("P3 * P2", "P6"),
-                    precedence: 3,
+                    example: ("P2 * P3", "P6"),
+                    precedence: 16,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -32,7 +38,7 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     token: "/",
                     operator: "Quot",
                     example: ("P6 / P2", "P3"),
-                    precedence: 3,
+                    precedence: 16,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -40,7 +46,7 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     token: "%",
                     operator: "Mod",
                     example: ("P5 % P3", "P2"),
-                    precedence: 3,
+                    precedence: 16,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -48,7 +54,7 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     token: "+",
                     operator: "Sum",
                     example: ("P2 + P3", "P5"),
-                    precedence: 2,
+                    precedence: 15,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -56,23 +62,23 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     token: "-",
                     operator: "Diff",
                     example: ("P2 - P3", "N1"),
-                    precedence: 2,
+                    precedence: 15,
                     n_args: 2,
                     op_type: Operator,
                 },
                 Op {
-                    token: "^",
-                    operator: "Xor",
-                    example: ("U5 ^ U3", "U6"),
-                    precedence: 1,
+                    token: "<<",
+                    operator: "Shleft",
+                    example: ("U1 << U5", "U32"),
+                    precedence: 14,
                     n_args: 2,
                     op_type: Operator,
                 },
                 Op {
-                    token: "|",
-                    operator: "Or",
-                    example: ("U5 | U3", "U7"),
-                    precedence: 1,
+                    token: ">>",
+                    operator: "Shright",
+                    example: ("U32 >> U5", "U1"),
+                    precedence: 14,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -80,7 +86,71 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     token: "&",
                     operator: "And",
                     example: ("U5 & U3", "U1"),
-                    precedence: 1,
+                    precedence: 13,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "^",
+                    operator: "Xor",
+                    example: ("U5 ^ U3", "U6"),
+                    precedence: 12,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "|",
+                    operator: "Or",
+                    example: ("U5 | U3", "U7"),
+                    precedence: 11,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "==",
+                    operator: "Eq",
+                    example: ("P5 == P3 + P2", "True"),
+                    precedence: 10,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "!=",
+                    operator: "NotEq",
+                    example: ("P5 != P3 + P2", "False"),
+                    precedence: 10,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "<=",
+                    operator: "LeEq",
+                    example: ("P6 <= P3 + P2", "False"),
+                    precedence: 10,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: ">=",
+                    operator: "GrEq",
+                    example: ("P6 >= P3 + P2", "True"),
+                    precedence: 10,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: "<",
+                    operator: "Le",
+                    example: ("P4 < P3 + P2", "True"),
+                    precedence: 10,
+                    n_args: 2,
+                    op_type: Operator,
+                },
+                Op {
+                    token: ">",
+                    operator: "Gr",
+                    example: ("P5 < P3 + P2", "False"),
+                    precedence: 10,
                     n_args: 2,
                     op_type: Operator,
                 },
@@ -136,25 +206,36 @@ in scope.
 
 For example, `P5` is okay, but `typenum::P5` is not.
 
-You may combine operators arbitrarily.
-
+You may combine operators arbitrarily, although doing so excessively may require raising the
+recursion limit.
 
 # Example
 ```rust
+#![recursion_limit=\"128\"]
 #[macro_use] extern crate typenum;
-use typenum::{{P1, P2, P3, P4, P5, P10, N3, N7}};
+use typenum::consts::*;
 
 fn main() {{
-    type Result = cmp!(P10 == op!(min(P5 * (P3 + P4), (P1 - P2) * (N3 + N7))));
-    use typenum::Bit;
-    assert!(Result::to_bool());
+    assert_type!(
+        op!(min((P1 - P2) * (N3 + N7), P5 * (P3 + P4)) == P10)
+    );
 }}
 ```
+Operators are evaluated based on the operator precedence outlined
+[here](https://doc.rust-lang.org/reference.html#operator-precedence).
 
-The full list of supported operators is as follows. They all expand to type aliases defined in the
-`operator_aliases` module.
+The full list of supported operators and functions is as follows. They all expand to type aliases
+defined in the `operator_aliases` module:
 
-")?;
+{}
+
+And here is an expanded list, including examples:
+
+",
+           ops.iter()
+               .map(|op| format!("`{}`", op.token))
+               .collect::<Vec<_>>()
+               .join(", "))?;
 
     //write!(f, "Token | Alias | Example\n ===|===|===\n")?;
 
@@ -165,9 +246,8 @@ The full list of supported operators is as follows. They all expand to type alia
 ```rust
 # #[macro_use] extern crate typenum;
 # use typenum::consts::*;
-# use typenum::Bit;
 # fn main() {{
-type Result = cmp!({ex1} == op!({ex0}));    assert!(Result::to_bool());
+assert_type_eq!(op!({ex0}), {ex1});
 # }}
 ```\n
 ",
@@ -192,14 +272,46 @@ macro_rules! op {{
     // We first us the shunting-yard algorithm to produce our tokens in Polish notation.
     // See: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 
-    // Note: ue to macro asymmetry, "the top of the stack" refers to the first element, not the last
+    // Note: Due to macro asymmetry, "the top of the stack" refers to the first element, not the
+    // last
 
+    // -----------------------------------------------------------------------------------------
     // Stage 1: There are tokens to be read:
 
-    // Token is an operator, o1:
+    // -------
+    // Case 1: Token is a function => Push it onto the stack:
+    for fun in ops.iter().filter(|f| f.op_type == Function) {
+        write!(f,
+               "
+(@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {f_token} $($tail:tt)*) => (
+    __op_internal__!(@stack[{f_op}, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
+);",
+               f_token = fun.token,
+               f_op = fun.operator)?;
+    }
+
+    // -------
+    // Case 2: Token is a comma => Until the top of the stack is a LParen,
+    //                             Pop operators from stack to queue
+
+    // Base case: Top of stack is LParen, ditch comma and continue
+    write!(f,
+           "
+(@stack[LParen, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
+    __op_internal__!(@stack[LParen, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
+);")?;
+    // Recursive case: Not LParen, pop from stack to queue
+    write!(f,
+           "
+(@stack[$stack_top:ident, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
+    __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: , $($tail)*)
+);")?;
+
+    // -------
+    // Case 3: Token is an operator, o1:
     for o1 in ops.iter().filter(|op| op.op_type == Operator) {
-        // if top of stack is operator o2 with o1.precedence <= o2.precedence,
-        // then pop o2 off stack onto queue:
+        // If top of stack is operator o2 with o1.precedence <= o2.precedence,
+        // Then pop o2 off stack onto queue:
         for o2 in ops.iter()
                 .filter(|op| op.op_type == Operator)
                 .filter(|o2| o1.precedence <= o2.precedence) {
@@ -221,33 +333,9 @@ macro_rules! op {{
                o1_token = o1.token)?;
     }
 
-    // Token is a function, push it onto the stack:
-    for fun in ops.iter().filter(|f| f.op_type == Function) {
-        write!(f,
-               "
-(@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {f_sym} $($tail:tt)*) => (
-    __op_internal__!(@stack[{f_op}, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
-);",
-               f_sym = fun.token,
-               f_op = fun.operator)?;
-    }
-
-    // Token is a comma: until the top of the stack is a LParen, pop operators from stack to queue
-    // Base case: top of stack is LParen
-    write!(f,
-           "
-(@stack[LParen, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
-    __op_internal__!(@stack[LParen, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
-);")?;
-    // Recursive case: not LParen, pop from stack to queue
-    write!(f,
-           "
-(@stack[$stack_top:ident, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
-    __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: , $($tail)*)
-);")?;
-
-    // Token is "(": push it onto stack as "LParen". Also convert the ")" to "RParen" to appease
-    // the macro gods:
+    // -------
+    // Case 4: Token is "(": push it onto stack as "LParen". Also convert the ")" to "RParen" to
+    // appease the macro gods:
     write!(f,
            "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: ( $($stuff:tt)* ) $($tail:tt)* )
@@ -256,10 +344,11 @@ macro_rules! op {{
                      @tail: $($stuff)* RParen $($tail)*)
 );")?;
 
-    // Token is "RParen":
-    //     1. pop from stack to queue until we see an "LParen",
-    //     2. kill the "LParen",
-    //     3. if the top of the stack is a function, pop it onto the queue
+    // -------
+    // Case 5: Token is "RParen":
+    //     1. Pop from stack to queue until we see an "LParen",
+    //     2. Kill the "LParen",
+    //     3. If the top of the stack is a function, pop it onto the queue
     // 2. Base case:
     write!(f,
            "
@@ -277,27 +366,28 @@ macro_rules! op {{
     for fun in ops.iter().filter(|f| f.op_type == Function) {
         write!(f,
                "
-(@rp3 @stack[{fun_sym}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
-    __op_internal__!(@rp3 @stack[$($stack,)*] @queue[{fun_op}, $($queue,)*] @tail: $($tail)*)
+(@rp3 @stack[{fun_op}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
+    __op_internal__!(@stack[$($stack,)*] @queue[{fun_op}, $($queue,)*] @tail: $($tail)*)
 );",
-               fun_sym = fun.token,
                fun_op = fun.operator)?;
     }
-    // 3. Base case:
+    // 3. If no function found:
     write!(f,
            "
 (@rp3 @stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
 );")?;
 
-    // Token is a number: Push it onto the queue
+    // -------
+    // Case 6: Token is a number: Push it onto the queue
     write!(f,
            "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $num:ident $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$num, $($queue,)*] @tail: $($tail)*)
 );")?;
 
-    // Out of tokens:
+    // -------
+    // Case 7: Out of tokens:
     // Base case: Stack empty: Start evaluating
     write!(f,
            "
@@ -311,6 +401,7 @@ macro_rules! op {{
     __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: )
 );")?;
 
+    // -----------------------------------------------------------------------------------------
     // Stage 2: Reverse so we have RPN
     write!(f,
            "
@@ -323,6 +414,7 @@ macro_rules! op {{
     __op_internal__!(@eval @stack[] @input[$($revved,)*])
 );")?;
 
+    // -----------------------------------------------------------------------------------------
     // Stage 3: Evaluate in Reverse Polish Notation
     // Operators / Operators with 2 args:
     for op in ops.iter().filter(|op| op.n_args == 2) {
@@ -358,6 +450,7 @@ macro_rules! op {{
     $stack
 );")?;
 
+    // -----------------------------------------------------------------------------------------
     // Stage 0: Get it started
     write!(f,
            "

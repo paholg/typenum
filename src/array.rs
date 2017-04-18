@@ -37,7 +37,7 @@ impl<V, A> TypeArray for TArr<V, A> {}
 /// use typenum::consts::*;
 ///
 /// type Array = tarr![P3, N4, Z0, P38];
-/// # fn main() {}
+/// # fn main() { let _: Array; }
 #[macro_export]
 macro_rules! tarr {
     () => ( $crate::ATerm );

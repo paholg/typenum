@@ -2,6 +2,12 @@
 
 This project follows semantic versioning.
 
+### Unpublished ()
+    - [added] The `assert_type!` and `assert_type_eq!` macros.
+    - [added] Operators to the `op!` macro, including those performed by `cmp!`.
+    - [fixed] Bug in `op!` macro involving functions and convoluted expressions.
+    - [deprecated] The `cmp!` macro.
+
 ### 1.8.0 (2017-04-12)
     - [added] The `op!` macro for conveniently performing type-level operations.
     - [added] The `cmp!` macro for conveniently performing type-level comparisons.

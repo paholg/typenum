@@ -226,7 +226,7 @@ use std::cmp::Ordering;
 use typenum::*;
 ")?;
     use std::cmp;
-    // uint operators: BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Pow, Cmp, Min, Max
+    // uint operators:
     for (a, b) in uints {
         write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b))?;
         write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b))?;
@@ -250,7 +250,7 @@ use typenum::*;
         write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32)))?;
         write!(writer, "{}", uint_cmp_test(a, b))?;
     }
-    // int operators: Add, Sub, Mul, Div, Rem, Cmp, Min, Max
+    // int operators:
     for (a, b) in ints {
         write!(writer, "{}", int_binary_test(a, "Add", b, a + b))?;
         write!(writer, "{}", int_binary_test(a, "Sub", b, a - b))?;
@@ -260,15 +260,18 @@ use typenum::*;
         if b != 0 {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b))?;
             write!(writer, "{}", int_binary_test(a, "Rem", b, a % b))?;
+            if a % b == 0 {
+                write!(writer, "{}", int_binary_test(a, "PartialDiv", b, a / b))?;
+            }
         }
-        if b >= 0 || a == 1 || a == -1 {
+        if b >= 0 || a.abs() == 1 {
             let result = if b < 0 {
                 if a == 1 {
                     a
                 } else if a == -1 {
                     a.pow((-b) as u32)
                 } else {
-                    panic!("THIS CAN'T HAPPEN");
+                    unreachable!()
                 }
             } else {
                 a.pow(b as u32)
