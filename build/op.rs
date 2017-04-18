@@ -232,12 +232,12 @@ fn main() {{
 Operators are evaluated based on the operator precedence outlined
 [here](https://doc.rust-lang.org/reference.html#operator-precedence).
 
-The full list of supported operators and functions is as follows. They all expand to type aliases
-defined in the `operator_aliases` module:
+The full list of supported operators and functions is as follows:
 
 {}
 
-And here is an expanded list, including examples:
+They all expand to type aliases defined in the `operator_aliases` module. Here is an expanded list,
+including examples:
 
 ",
            ops.iter()
