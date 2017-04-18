@@ -155,6 +155,14 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
                     op_type: Operator,
                 },
                 Op {
+                    token: "cmp",
+                    operator: "Compare",
+                    example: ("cmp(P2, P3)", "Less"),
+                    precedence: !0,
+                    n_args: 2,
+                    op_type: Function,
+                },
+                Op {
                     token: "sqr",
                     operator: "Square",
                     example: ("sqr(P2)", "P4"),
@@ -245,7 +253,7 @@ And here is an expanded list, including examples:
 
 ```rust
 # #[macro_use] extern crate typenum;
-# use typenum::consts::*;
+# use typenum::*;
 # fn main() {{
 assert_type_eq!(op!({ex0}), {ex1});
 # }}

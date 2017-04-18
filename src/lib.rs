@@ -140,12 +140,3 @@ macro_rules! assert_type {
         let _: <$a as $crate::Same<True>>::Output;
     );
 }
-
-
-// fixme: temporary
-#[test]
-fn testacular() {
-    use consts::*;
-
-    assert_type_eq!(op!(sqr(U1) == U1), True);
-}

@@ -74,7 +74,6 @@ pub fn no_std() {}
 // fixme: get a warning when testing without this
 #[allow(dead_code)]
 fn main() {
-    // If you change this, change also the comments in src/consts.rs
     let highest: u64 = 1024;
 
 
