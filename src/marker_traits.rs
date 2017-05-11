@@ -1,6 +1,7 @@
-//! These are all of the **marker traits** used in typenum. Note that the definition here
-//! for marker traits is slightly different than the conventional one --- we include traits
-//! with functions that convert a type to the corresponding value.
+//! All of the **marker traits** used in typenum.
+//!
+//! Note that the definition here for marker traits is slightly different than the conventional one
+//! -- we include traits with functions that convert a type to the corresponding value.
 //!
 //! For example, the `Integer` trait includes the function (among others) `fn to_i32() ->
 //! i32` so that one can do this:

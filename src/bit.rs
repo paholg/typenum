@@ -1,4 +1,6 @@
-//! Type-level bits. These are rather simple and are used as the building blocks of the
+//! Type-level bits.
+//!
+//! These are rather simple and are used as the building blocks of the
 //! other number types in this crate.
 //!
 //!

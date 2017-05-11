@@ -1,4 +1,4 @@
-//! This module provides a type-level array of type-level numbers.
+//! A type-level array of type-level numbers.
 //!
 //! It is not very featureful right now, and should be considered a work in progress.
 

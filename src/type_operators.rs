@@ -1,5 +1,4 @@
-//! This module provides useful **type operators** that are not defined in `core`.
-//!
+//! Useful **type operators** that are not defined in `core::ops`.
 //!
 
 use {Unsigned, Bit, UInt, PInt, NInt, NonZero, UTerm, Z0};
@@ -431,10 +430,7 @@ impl<A, B> IsGreaterOrEqual<B> for A
 
 
 /**
-A convenience macro for comparing type numbers. **Use `op!` instead.**
-
-**NOTE**: The functionality of this macro has been merged into `op!`. Use that macro instead. This
-one will be removed at some point in the future.
+A convenience macro for comparing type numbers. Use `op!` instead.
 
 Due to the intricacies of the macro system, if the left-hand operand is more complex than a simple
 `ident`, you must place a comma between it and the comparison sign.

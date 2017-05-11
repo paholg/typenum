@@ -1,5 +1,7 @@
-//! This module provides aliases for the type operators used in this crate. Their purpose is
-//! to increase the ergonomics of performing operations on the types defined here.
+//! Aliases for the type operators used in this crate.
+
+//! Their purpose is to increase the ergonomics of performing operations on the types defined
+//! here. For even more ergonomics, consider using the `op!` macro instead.
 //!
 //! For example, type `X` and type `Y` are the same here:
 //!
@@ -17,7 +19,8 @@
 //! ```
 //!
 //!
-//! Aliases!!!
+
+// Aliases!!!
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
 use type_operators::{Abs, Pow, Cmp, Len, PartialDiv, Min, Max};
 
