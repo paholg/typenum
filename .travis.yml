@@ -23,6 +23,7 @@ script:
     # Note: The "no_std" flag is deprecated and this test remains to make sure we don't break compatibility.
     travis-cargo --only stable test -- --features "no_std" &&
     travis-cargo --only nightly test -- --features "clippy" &&
+    travis-cargo --only nightly test -- --features "i128" &&
     travis-cargo --only stable doc
 
 after_success:
@@ -33,7 +34,9 @@ after_success:
 
 env:
   global:
+    # GitHub SSH stuff
+    - COMMIT_AUTHOR_EMAIL: "paho@paholg.com"
     # GH_TOKEN
-    - secure: "OXWPsRIwbD28t4X2Vc039YpleH97Ant5vaf3ZOM3gaCgnLa+lsTHlAoXJYcJ8b/BaDVw8IkGkdSJ2h13kzZufILmwJBoS9o7qsTji90VO1ig8nvqKIS3ZND3b5+yKRb8PiT0rxOq2D3H8vAQkHmj8AWwIusjLeI94iOHw1wmw7Gn+XpK3yKCI/T5ZkM6jaEteM5zJpz+xW3sawLG3JIwx4ftlCR7L6OvYpgQYG5qP9N4uYfXg2cItS0hpLzDd7ZP7FhQ4Ue+inJfOB51KhpY3yUr3FerqM7oLsUQNQmP+AABCpxrsEmo4OvCAx739+F5DXmKOphfZU5GTYZDR28u9u5v4HVhoyvJ/8jT7L0F3fEBn5VVN1qqYYwQrS1Gqv642FUckc1tmfSTiRoK/olkxKZWm3UcxccOvBx8tP3Vz8gDwto49v6nKWEfe00GbfxDNRhhq0YeBF+/e/hTB3sM/tx3gJ/NrNL9JdlP0LstY0K46jakUiiOqBfJ/9ZEtVSqdts0MlMrqbNp4O3AjnlChE/IpNS31poK/KNdnPNutwTshTAbISSG17WNybJJxcg93plLvPkD4LykBCggJejS4nBbSlsVKuE+0dp7tZ5OKrdaFWVC8vOAERRbaMgvwnysQ7UboXBpn0EiRiZGop6TX7WssjX1r9mDP2yVcmiUhkk="
+    - secure: "jEnVq9nswc2mm2A77SEI5C9ytubHrAGpMu9mqF+wr7GoaGee48LjA5OkawY3VHzreB+3djy3LO6h+JUTkKN699KRZt+RvyIBR+yY1C5O+5IwY3k5pZn/Bm4xJZfeGfRwnZ9UYl1iNEAy+yHverMcQC+Lv5wzCSRCmTa18FQpKBeYKsdXfPP1wa+PWbei3bBrO0tBxuiIA5BZUuK8QqYXluUPxKETvJxtdKgFOUbMbf4DDJ4igOrt9OZQQxKrTZWDy+5Hwv4wMh2cir3ExYuM/8dfBewxxGOty1dlZWAUAFsIJ6Ww/mhEAGtsPYjqh3tB5G5JEss2FSvLuYJcKpA9p/mf+K4tagRVF68AydjQISWVBjOarwln2+HzK9tcykfyO8fGIUNgf0ptuZETA95g3BxwKF3O0LvhGJG2QOas8Bjqpdrg3iDoT5QGy2j8DnQLL7HgM31oCvzu1BOqDn3EvRSjwWpmBpXFz/FeUoRdIX1fOZpgw3cYWTpsT/mqW+mUfO98wTHKn3QBOnskLwf9AteTmJwsdx9Kdc4e1a3BqJE/UGNZv16SnVNtun+zMQ3P84HplvCIXL5k2pUDAUpDQne9nxmZ5ADpQJQluDosA5ydtbl+Z6x2o+zGrBOlo1vxoL/x4uuAFYyiwh1DUGyNgN9x2m1A3WtqqzXX5H4XwZ0="
     # CRATESIO_TOKEN
     - secure: "cchJKaN5hM2ceBpLqDokhUWFUyFubTlrUxj8d/5JjDXOxVvpZQWQuPxihnSyz0U+GSY4HwUh8C9+jRe2i8UBmhS6pPMG4Bl0Xo2T1HU9ilWb43vSqsbg77UgQ2SELNd+7g1xSI/UTsaFH0YlTOw7DsF6plruVduyOy8C44Ox1nAo4hIgN1ThRs9nhKTWydREr2zRQ/7n4c99RnPQz54ITnrHx/Ks2bvy3zgTOP7CeiQQJKh521U5tuH23r48eljje7776UA4Jbs2j1LsnMaBsraadIzNMopEwaSE1oNLOobfWG9YzvyTZ2i4yElDX4A7tscwo631Ig5AUH2+QbvN2k0q2EKETQJ9Mov5OSmK3aeMSW1GA3hQ44Uvz0F7SZru8D84sKgfSXNbfck1hTVfBPPOpmUIKDb+rSthulYq2SW2XG9cpVXrJmhYD2WTNKEuSmw7imVbTCPS03dbbMoLchpmOBkcgLtcMNDyC94xdZYSkyz9+RCG0bEfwIu9oG7o6gv+8a42pgVSP8mfOOq0+MELHntIqumlmTO0jGGH10Prs4Pgs8eVn6S84w+oz8yrbYroVaqrI2TZl73KnOmvAlnYZdCSIBGV5XsTukzochfwgaTKWI2h2iK1yt6k5I5ZgOoVlTUPB4ElwhIDfgYhc7fltHd53EO81GHGDPSI49M="

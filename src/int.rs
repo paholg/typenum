@@ -99,6 +99,11 @@ impl Integer for Z0 {
     fn to_i64() -> i64 {
         0
     }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_i128() -> i128 {
+        0
+    }
     #[inline]
     fn to_isize() -> isize {
         0
@@ -122,6 +127,11 @@ impl<U: Unsigned + NonZero> Integer for PInt<U> {
     fn to_i64() -> i64 {
         <U as Unsigned>::to_i64()
     }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_i128() -> i128 {
+        <U as Unsigned>::to_i128()
+    }
     #[inline]
     fn to_isize() -> isize {
         <U as Unsigned>::to_isize()
@@ -144,6 +154,11 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
     #[inline]
     fn to_i64() -> i64 {
         -<U as Unsigned>::to_i64()
+    }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_i128() -> i128 {
+        -<U as Unsigned>::to_i128()
     }
     #[inline]
     fn to_isize() -> isize {

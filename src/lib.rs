@@ -46,6 +46,7 @@
 #![no_std]
 #![warn(missing_docs)]
 
+#![cfg_attr(feature="i128", feature(i128_type))]
 
 // For clippy:
 #![cfg_attr(feature="clippy", feature(plugin))]

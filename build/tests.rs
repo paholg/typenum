@@ -281,9 +281,10 @@ use typenum::*;
         write!(writer, "{}", int_cmp_test(a, b))?;
     }
 
-    // int unary operatorss: Neg
+    // int unary operators:
     for n in -high..high + 1 {
         write!(writer, "{}", int_unary_test("Neg", n, -n))?;
+        write!(writer, "{}", int_unary_test("Abs", n, n.abs()))?;
     }
 
     writer.flush()?;

@@ -54,6 +54,9 @@ pub trait Unsigned {
     fn to_u32() -> u32;
     #[allow(missing_docs)]
     fn to_u64() -> u64;
+    #[cfg(feature="i128")]
+    #[allow(missing_docs)]
+    fn to_u128() -> u128;
     #[allow(missing_docs)]
     fn to_usize() -> usize;
 
@@ -65,6 +68,9 @@ pub trait Unsigned {
     fn to_i32() -> i32;
     #[allow(missing_docs)]
     fn to_i64() -> i64;
+    #[cfg(feature="i128")]
+    #[allow(missing_docs)]
+    fn to_i128() -> i128;
     #[allow(missing_docs)]
     fn to_isize() -> isize;
 }
@@ -88,6 +94,9 @@ pub trait Integer {
     fn to_i32() -> i32;
     #[allow(missing_docs)]
     fn to_i64() -> i64;
+    #[cfg(feature="i128")]
+    #[allow(missing_docs)]
+    fn to_i128() -> i128;
     #[allow(missing_docs)]
     fn to_isize() -> isize;
 }
