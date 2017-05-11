@@ -1,6 +1,9 @@
 # Changelog
 
 This project follows semantic versioning.
+### Unpublished
+    - [added] The `Abs` type operater and corresponding `AbsVal` alias.
+    - [added] The feature `i128` that enables creating 128-bit integers from typenums.
 
 ### 1.8.0 (2017-04-12)
     - [added] The `op!` macro for conveniently performing type-level operations.
