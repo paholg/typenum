@@ -2,6 +2,8 @@
 //!
 //!
 
+use {Unsigned, Bit, UInt, PInt, NInt, NonZero, UTerm, Z0};
+
 /// A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 /// for writing macros that can take arbitrary binary or unary operators.
 ///
@@ -29,6 +31,31 @@ pub trait Same<Rhs = Self> {
 
 impl<T> Same<T> for T {
     type Output = T;
+}
+
+/// A **type operator** that returns the absolute value.
+///
+/// # Example
+/// ```rust
+/// use typenum::{Abs, N5, Integer};
+///
+/// assert_eq!(<N5 as Abs>::Output::to_i32(), 5);
+/// ```
+pub trait Abs {
+    /// The absolute value.
+    type Output;
+}
+
+impl Abs for Z0 {
+    type Output = Z0;
+}
+
+impl<U: Unsigned + NonZero> Abs for PInt<U> {
+    type Output = Self;
+}
+
+impl<U: Unsigned + NonZero> Abs for NInt<U> {
+    type Output = PInt<U>;
 }
 
 /// A **type operator** that provides exponentiation by repeated squaring.
@@ -60,7 +87,6 @@ pub trait Pow<Exp> {
     fn powi(self, exp: Exp) -> Self::Output;
 }
 
-use {Unsigned, Bit, UInt, PInt, NonZero, UTerm, Z0};
 macro_rules! impl_pow_f {
     ($t: ty) => (
         impl Pow<UTerm> for $t {
@@ -183,6 +209,8 @@ macro_rules! impl_pow_i {
 }
 
 impl_pow_i!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
+#[cfg(feature="i128")]
+impl_pow_i!(u128, i128);
 
 #[test]
 fn pow_test() {

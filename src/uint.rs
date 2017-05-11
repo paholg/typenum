@@ -74,6 +74,11 @@ impl Unsigned for UTerm {
     fn to_u64() -> u64 {
         0
     }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_u128() -> u128 {
+        0
+    }
     #[inline]
     fn to_usize() -> usize {
         0
@@ -93,6 +98,11 @@ impl Unsigned for UTerm {
     }
     #[inline]
     fn to_i64() -> i64 {
+        0
+    }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_i128() -> i128 {
         0
     }
     #[inline]
@@ -147,6 +157,11 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     fn to_u64() -> u64 {
         B::to_u8() as u64 | U::to_u64() << 1
     }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_u128() -> u128 {
+        B::to_u8() as u128 | U::to_u128() << 1
+    }
     #[inline]
     fn to_usize() -> usize {
         B::to_u8() as usize | U::to_usize() << 1
@@ -167,6 +182,11 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     #[inline]
     fn to_i64() -> i64 {
         B::to_u8() as i64 | U::to_i64() << 1
+    }
+    #[cfg(feature="i128")]
+    #[inline]
+    fn to_i128() -> i128 {
+        B::to_u8() as i128 | U::to_i128() << 1
     }
     #[inline]
     fn to_isize() -> isize {

@@ -18,6 +18,7 @@
 
 [features]
   no_std = []
+  i128 = []
 
 [dependencies]
   clippy = { version = "0.0.131", optional = true }

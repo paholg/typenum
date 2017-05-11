@@ -14,7 +14,7 @@
 //!
 //! Aliases!!!
 use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
-use type_operators::{Pow, Cmp, Len, PartialDiv, Min, Max};
+use type_operators::{Abs, Pow, Cmp, Len, PartialDiv, Min, Max};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -46,6 +46,9 @@ pub type PartialQuot<A, B> = <A as PartialDiv<B>>::Output;
 
 /// Alias for the associated type of `Neg`: `Negate<A> = <A as Neg>::Output`
 pub type Negate<A> = <A as Neg>::Output;
+
+/// Alias for the associated type of `Abs`: `AbsVal<A> = <A as Abs>::Output`
+pub type AbsVal<A> = <A as Abs>::Output;
 
 /// Alias for the associated type of `Pow`: `Exp<A, B> = <A as Pow<B>>::Output`
 pub type Exp<A, B> = <A as Pow<B>>::Output;
