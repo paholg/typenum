@@ -20,6 +20,7 @@ use {Unsigned, Bit, UInt, PInt, NInt, NonZero, UTerm, Z0};
 /// assert_eq!(<U5 as Same<U5>>::Output::to_u32(), 5);
 ///
 /// // Only an error if we use it:
+/// # #[allow(dead_code)]
 /// type Undefined = <U5 as Same<U4>>::Output;
 /// // Compiler error:
 /// // Undefined::to_u32();
@@ -266,7 +267,7 @@ fn pow_test() {
 ///
 /// # Example
 /// ```rust
-/// use typenum::{Cmp, Ord, Greater, Less, Equal, N3, P2, P5};
+/// use typenum::{Cmp, Ord, N3, P2, P5};
 /// use std::cmp::Ordering;
 ///
 /// assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Ordering::Greater);
@@ -430,7 +431,10 @@ impl<A, B> IsGreaterOrEqual<B> for A
 
 
 /**
-A convenience macro for comparing type numbers.
+A convenience macro for comparing type numbers. **Use `op!` instead.**
+
+**NOTE**: The functionality of this macro has been merged into `op!`. Use that macro instead. This
+one will be removed at some point in the future.
 
 Due to the intricacies of the macro system, if the left-hand operand is more complex than a simple
 `ident`, you must place a comma between it and the comparison sign.
@@ -451,7 +455,8 @@ type Result = cmp!(P9 == op!(P1 + P2 * (P2 - N2)));
 assert_eq!(Result::to_bool(), true);
 }
 ```
-*/
+ */
+#[deprecated(since="1.9.0", note="use the `op!` macro instead")]
 #[macro_export]
 macro_rules! cmp {
     ($a:ident < $b:ty) => (

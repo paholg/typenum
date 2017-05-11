@@ -122,8 +122,9 @@ impl Unsigned for UTerm {
 ///
 /// # Example
 /// ```rust
-/// use typenum::{B0, B1, UInt, UTerm, Unsigned};
+/// use typenum::{B0, B1, UInt, UTerm};
 ///
+/// # #[allow(dead_code)]
 /// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 /// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
@@ -274,7 +275,7 @@ impl<U: Unsigned> Add<B1> for UInt<U, B0> {
 /// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
 impl<U: Unsigned> Add<B1> for UInt<U, B1>
     where U: Add<B1>,
-          Sum<U, B1>: Unsigned
+          Add1<U>: Unsigned
 {
     type Output = UInt<Add1<U>, B0>;
     fn add(self, _: B1) -> Self::Output {

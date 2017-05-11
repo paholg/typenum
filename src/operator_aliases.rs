@@ -4,11 +4,16 @@
 //! For example, type `X` and type `Y` are the same here:
 //!
 //! ```rust
+//! # #[macro_use] extern crate typenum;
+//! # fn main() {
 //! use std::ops::Mul;
 //! use typenum::{Prod, P5, P7};
 //!
 //! type X = <P7 as Mul<P5>>::Output;
 //! type Y = Prod<P7, P5>;
+//!
+//! assert_type_eq!(X, Y);
+//! # }
 //! ```
 //!
 //!
@@ -76,3 +81,19 @@ pub type Minimum<A, B> = <A as Min<B>>::Output;
 
 /// Alias for the associated type of `Max`: `Maximum<A, B> = <A as Max<B>>::Output`
 pub type Maximum<A, B> = <A as Max<B>>::Output;
+
+
+use type_operators::{IsLess, IsEqual, IsGreater, IsGreaterOrEqual, IsLessOrEqual, IsNotEqual};
+/// Alias for the associated type of `IsLess`: `Le<A, B> = <A as IsLess<B>>::Output`
+pub type Le<A, B> = <A as IsLess<B>>::Output;
+/// Alias for the associated type of `IsEqual`: `Eq<A, B> = <A as IsEqual<B>>::Output`
+pub type Eq<A, B> = <A as IsEqual<B>>::Output;
+/// Alias for the associated type of `IsGreater`: `Gr<A, B> = <A as IsGreater<B>>::Output`
+pub type Gr<A, B> = <A as IsGreater<B>>::Output;
+/// Alias for the associated type of `IsGreaterOrEqual`:
+/// `GrEq<A, B> = <A as IsGreaterOrEqual<B>>::Output`
+pub type GrEq<A, B> = <A as IsGreaterOrEqual<B>>::Output;
+/// Alias for the associated type of `IsLessOrEqual`: `LeEq<A, B> = <A as IsLessOrEqual<B>>::Output`
+pub type LeEq<A, B> = <A as IsLessOrEqual<B>>::Output;
+/// Alias for the associated type of `IsNotEqual`: `NotEq<A, B> = <A as IsNotEqual<B>>::Output`
+pub type NotEq<A, B> = <A as IsNotEqual<B>>::Output;
