@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `int` mod in crate `typenum`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, int">
+
+    <title>typenum::int - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>typenum</a></p><script>window.sidebarCurrent = {name: 'int', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>typenum</a>::<wbr><a class="mod" href=''>int</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/typenum/int.rs.html#1-910' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Type-level signed integers.</p>
+
+<p>Type <strong>operators</strong> implemented:</p>
+
+<p>From <code>core::ops</code>: <code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, and <code>Rem</code>.
+From <code>typenum</code>: <code>Same</code>, <code>Cmp</code>, and <code>Pow</code>.</p>
+
+<p>Rather than directly using the structs defined in this module, it is recommended that
+you import and use the relevant aliases from the <a href="../consts/index.html">consts</a> module.</p>
+
+<p>Note that operators that work on the underlying structure of the number are
+intentionally not implemented. This is because this implementation of signed integers
+does <em>not</em> use twos-complement, and implementing them would require making arbitrary
+choices, causing the results of such operators to be difficult to reason about.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">Mul</span>, <span class="ident">Div</span>, <span class="ident">Rem</span>};
+<span class="kw">use</span> <span class="ident">typenum</span>::{<span class="ident">Integer</span>, <span class="ident">N3</span>, <span class="ident">P2</span>};
+
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">N3</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">P2</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>::<span class="ident">to_i32</span>(), <span class="op">-</span><span class="number">1</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">N3</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">P2</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>::<span class="ident">to_i32</span>(), <span class="op">-</span><span class="number">5</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">N3</span> <span class="kw">as</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">P2</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>::<span class="ident">to_i32</span>(), <span class="op">-</span><span class="number">6</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">N3</span> <span class="kw">as</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">P2</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>::<span class="ident">to_i32</span>(), <span class="op">-</span><span class="number">1</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">N3</span> <span class="kw">as</span> <span class="ident">Rem</span><span class="op">&lt;</span><span class="ident">P2</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>::<span class="ident">to_i32</span>(), <span class="op">-</span><span class="number">1</span>);</pre>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use marker_traits::<a class="trait" href="../../typenum/marker_traits/trait.Integer.html" title="trait typenum::marker_traits::Integer">Integer</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.NInt.html"
+                                  title='struct typenum::int::NInt'>NInt</a></td>
+                           <td class='docblock-short'>
+                                <p>Type-level signed integers with negative sign.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PInt.html"
+                                  title='struct typenum::int::PInt'>PInt</a></td>
+                           <td class='docblock-short'>
+                                <p>Type-level signed integers with positive sign.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Z0.html"
+                                  title='struct typenum::int::Z0'>Z0</a></td>
+                           <td class='docblock-short'>
+                                <p>The type-level signed integer 0.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "typenum";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

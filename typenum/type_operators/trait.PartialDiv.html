@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `PartialDiv` trait in crate `typenum`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, PartialDiv">
+
+    <title>typenum::type_operators::PartialDiv - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc trait">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>typenum</a>::<wbr><a href='index.html'>type_operators</a></p><script>window.sidebarCurrent = {name: 'PartialDiv', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>typenum</a>::<wbr><a href='index.html'>type_operators</a>::<wbr><a class="trait" href=''>PartialDiv</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/typenum/type_operators.rs.html#290-295' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait PartialDiv&lt;Rhs&nbsp;=&nbsp;Self&gt; {
+    type <a href='#associatedtype.Output' class="type">Output</a>;
+    fn <a href='#tymethod.partial_div' class='fnname'>partial_div</a>(self, _: Rhs) -&gt; Self::<a class="trait" href="../../typenum/type_operators/trait.PartialDiv.html" title="trait typenum::type_operators::PartialDiv">Output</a>;
+}</pre><div class='docblock'><p>Division as a partial function. This <strong>type operator</strong> performs division just as <code>Div</code>, but is
+only defined when the result is an integer (i.e. there is no remainder).</p>
+</div>
+            <h2 id='associated-types'>Associated Types</h2>
+            <div class='methods'>
+        <h3 id='associatedtype.Output' class='method'><span id='Output.t' class='invisible'><code>type <a href='#associatedtype.Output' class="type">Output</a></code></span></h3><div class='docblock'><p>The type of the result of the division</p>
+</div></div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.partial_div' class='method'><span id='partial_div.v' class='invisible'><code>fn <a href='#tymethod.partial_div' class='fnname'>partial_div</a>(self, _: Rhs) -&gt; Self::<a class="trait" href="../../typenum/type_operators/trait.PartialDiv.html" title="trait typenum::type_operators::PartialDiv">Output</a></code></span></h3><div class='docblock'><p>Method for performing the division</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;Ur:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Unsigned.html" title="trait typenum::marker_traits::Unsigned">Unsigned</a>, Br:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Bit.html" title="trait typenum::marker_traits::Bit">Bit</a>&gt; PartialDiv&lt;<a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ur, Br&gt;&gt; for <a class="struct" href="../../typenum/uint/struct.UTerm.html" title="struct typenum::uint::UTerm">UTerm</a></code></li>
+<li><code>impl&lt;Ul:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Unsigned.html" title="trait typenum::marker_traits::Unsigned">Unsigned</a>, Bl:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Bit.html" title="trait typenum::marker_traits::Bit">Bit</a>, Ur:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Unsigned.html" title="trait typenum::marker_traits::Unsigned">Unsigned</a>, Br:&nbsp;<a class="trait" href="../../typenum/marker_traits/trait.Bit.html" title="trait typenum::marker_traits::Bit">Bit</a>&gt; PartialDiv&lt;<a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ur, Br&gt;&gt; for <a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ul, Bl&gt; <span class="where fmt-newline">where <a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ul, Bl&gt;: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Div.html" title="trait core::ops::Div">Div</a>&lt;<a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ur, Br&gt;&gt; + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Rem.html" title="trait core::ops::Rem">Rem</a>&lt;<a class="struct" href="../../typenum/uint/struct.UInt.html" title="struct typenum::uint::UInt">UInt</a>&lt;Ur, Br&gt;, Output=<a class="type" href="../../typenum/consts/type.U0.html" title="type typenum::consts::U0">U0</a>&gt;</span></code></li>
+<li><code>impl&lt;M, N&gt; PartialDiv&lt;N&gt; for M <span class="where fmt-newline">where M: <a class="trait" href="../../typenum/marker_traits/trait.Integer.html" title="trait typenum::marker_traits::Integer">Integer</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Div.html" title="trait core::ops::Div">Div</a>&lt;N&gt; + <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Rem.html" title="trait core::ops::Rem">Rem</a>&lt;N, Output=<a class="struct" href="../../typenum/int/struct.Z0.html" title="struct typenum::int::Z0">Z0</a>&gt;</span></code></li>
+<li><code>impl&lt;Rhs&gt; PartialDiv&lt;Rhs&gt; for <a class="struct" href="../../typenum/array/struct.ATerm.html" title="struct typenum::array::ATerm">ATerm</a></code></li>
+<li><code>impl&lt;V, A, Rhs&gt; PartialDiv&lt;Rhs&gt; for <a class="struct" href="../../typenum/array/struct.TArr.html" title="struct typenum::array::TArr">TArr</a>&lt;V, A&gt; <span class="where fmt-newline">where V: <a class="trait" href="../../typenum/type_operators/trait.PartialDiv.html" title="trait typenum::type_operators::PartialDiv">PartialDiv</a>&lt;Rhs&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A: <a class="trait" href="../../typenum/type_operators/trait.PartialDiv.html" title="trait typenum::type_operators::PartialDiv">PartialDiv</a>&lt;Rhs&gt;</span></code></li>
+</ul><script type="text/javascript" async
+                         src="../../implementors/typenum/type_operators/trait.PartialDiv.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "typenum";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>
