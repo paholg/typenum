@@ -21,4 +21,4 @@
   i128 = []
 
 [dependencies]
-  clippy = { version = "0.0.131", optional = true }
+  clippy = { version = "0.0.133", optional = true }
