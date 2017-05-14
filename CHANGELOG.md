@@ -2,7 +2,7 @@
 
 This project follows semantic versioning.
 
-### Unpublished
+### 1.9.0 (2017-05-14)
 - [added] The `Abs` type operater and corresponding `AbsVal` alias.
 - [added] The feature `i128` that enables creating 128-bit integers from typenums.
 - [added] The `assert_type!` and `assert_type_eq!` macros.
