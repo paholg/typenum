@@ -22,8 +22,8 @@
 #![doc(hidden)]
 
 // use ::{Sub};
-use bit::{Bit, B1, B0};
-use uint::{Unsigned, UInt, UTerm};
+use bit::{B0, B1, Bit};
+use uint::{UInt, UTerm, Unsigned};
 
 /// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`
 pub trait Trim {
@@ -127,7 +127,8 @@ impl Invert for UTerm {
 }
 
 impl<U: Unsigned, B: Bit> Invert for UInt<U, B>
-    where U: PrivateInvert<InvertedUInt<InvertedUTerm, B>>
+where
+    U: PrivateInvert<InvertedUInt<InvertedUTerm, B>>,
 {
     type Output = PrivateInvertOut<U, InvertedUInt<InvertedUTerm, B>>;
 }
@@ -138,7 +139,8 @@ impl<IU: InvertedUnsigned> PrivateInvert<IU> for UTerm {
 }
 
 impl<IU: InvertedUnsigned, U: Unsigned, B: Bit> PrivateInvert<IU> for UInt<U, B>
-    where U: PrivateInvert<InvertedUInt<IU, B>>
+where
+    U: PrivateInvert<InvertedUInt<IU, B>>,
 {
     type Output = PrivateInvertOut<U, InvertedUInt<IU, B>>;
 }
@@ -161,7 +163,8 @@ impl Invert for InvertedUTerm {
 }
 
 impl<IU: InvertedUnsigned, B: Bit> Invert for InvertedUInt<IU, B>
-    where IU: PrivateInvert<UInt<UTerm, B>>
+where
+    IU: PrivateInvert<UInt<UTerm, B>>,
 {
     type Output = <IU as PrivateInvert<UInt<UTerm, B>>>::Output;
 }
@@ -171,7 +174,8 @@ impl<U: Unsigned> PrivateInvert<U> for InvertedUTerm {
 }
 
 impl<U: Unsigned, IU: InvertedUnsigned, B: Bit> PrivateInvert<U> for InvertedUInt<IU, B>
-    where IU: PrivateInvert<UInt<U, B>>
+where
+    IU: PrivateInvert<UInt<U, B>>,
 {
     type Output = <IU as PrivateInvert<UInt<U, B>>>::Output;
 }
@@ -202,15 +206,17 @@ impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
 }
 
 impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0>
-    where IU: TrimTrailingZeros
+where
+    IU: TrimTrailingZeros,
 {
     type Output = <IU as TrimTrailingZeros>::Output;
 }
 
 impl<U: Unsigned> Trim for U
-    where U: Invert,
-          <U as Invert>::Output: TrimTrailingZeros,
-          <<U as Invert>::Output as TrimTrailingZeros>::Output: Invert
+where
+    U: Invert,
+    <U as Invert>::Output: TrimTrailingZeros,
+    <<U as Invert>::Output as TrimTrailingZeros>::Output: Invert,
 {
     type Output = <<<U as Invert>::Output as TrimTrailingZeros>::Output as Invert>::Output;
 }
@@ -243,18 +249,22 @@ pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
     type Remainder;
 }
 
-pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N,
-                                                                             D,
-                                                                             Q,
-                                                                             R,
-                                                                             I,
-                                                                             RcmpD>>::Quotient;
-pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<N,
-                                                                            D,
-                                                                            Q,
-                                                                            R,
-                                                                            I,
-                                                                            RcmpD>>::Remainder;
+pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<
+    N,
+    D,
+    Q,
+    R,
+    I,
+    RcmpD,
+>>::Quotient;
+pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> = <() as PrivateDivIf<
+    N,
+    D,
+    Q,
+    R,
+    I,
+    RcmpD,
+>>::Remainder;
 
 // Div for signed ints
 pub trait PrivateDivInt<C, Divisor> {
@@ -284,7 +294,7 @@ pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Outpu
 
 // Comparisons
 
-use {True, False, Greater, Less, Equal};
+use {Equal, False, Greater, Less, True};
 
 pub trait IsLessPrivate<Rhs, Cmp> {
     type Output: Bit;

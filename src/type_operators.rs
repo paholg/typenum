@@ -1,7 +1,7 @@
 //! Useful **type operators** that are not defined in `core::ops`.
 //!
 
-use {Unsigned, Bit, UInt, PInt, NInt, NonZero, UTerm, Z0};
+use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
 
 /// A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 /// for writing macros that can take arbitrary binary or unary operators.
@@ -209,7 +209,7 @@ macro_rules! impl_pow_i {
 }
 
 impl_pow_i!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
-#[cfg(feature="i128")]
+#[cfg(feature = "i128")]
 impl_pow_i!(u128, i128);
 
 #[test]
@@ -323,7 +323,8 @@ pub trait IsLess<Rhs = Self> {
 
 use private::IsLessPrivate;
 impl<A, B> IsLess<B> for A
-    where A: Cmp<B> + IsLessPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsLessPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
 
@@ -342,7 +343,8 @@ pub trait IsEqual<Rhs = Self> {
 
 use private::IsEqualPrivate;
 impl<A, B> IsEqual<B> for A
-    where A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
 
@@ -362,7 +364,8 @@ pub trait IsGreater<Rhs = Self> {
 
 use private::IsGreaterPrivate;
 impl<A, B> IsGreater<B> for A
-    where A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
 
@@ -381,7 +384,8 @@ pub trait IsLessOrEqual<Rhs = Self> {
 
 use private::IsLessOrEqualPrivate;
 impl<A, B> IsLessOrEqual<B> for A
-    where A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
 
@@ -400,7 +404,8 @@ pub trait IsNotEqual<Rhs = Self> {
 
 use private::IsNotEqualPrivate;
 impl<A, B> IsNotEqual<B> for A
-    where A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
 
@@ -419,7 +424,8 @@ pub trait IsGreaterOrEqual<Rhs = Self> {
 
 use private::IsGreaterOrEqualPrivate;
 impl<A, B> IsGreaterOrEqual<B> for A
-    where A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>>
+where
+    A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>>,
 {
     type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
 
@@ -452,7 +458,7 @@ assert_eq!(Result::to_bool(), true);
 }
 ```
  */
-#[deprecated(since="1.9.0", note="use the `op!` macro instead")]
+#[deprecated(since = "1.9.0", note = "use the `op!` macro instead")]
 #[macro_export]
 macro_rules! cmp {
     ($a:ident < $b:ty) => (

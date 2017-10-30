@@ -11,7 +11,7 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use {NonZero, Cmp, Greater, Less, Equal};
+use {Cmp, Equal, Greater, Less, NonZero};
 
 pub use marker_traits::Bit;
 

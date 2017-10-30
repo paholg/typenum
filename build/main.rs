@@ -66,11 +66,11 @@ pub fn gen_int(i: i64) -> IntCode {
     }
 }
 
-#[cfg_attr(feature="no_std", deprecated(
-    since="1.3.0",
-    note="the `no_std` flag is no \
-    longer necessary and will be \
-    removed in the future"))]
+#[cfg_attr(feature = "no_std",
+           deprecated(since = "1.3.0",
+                      note = "the `no_std` flag is no \
+                              longer necessary and will be \
+                              removed in the future"))]
 pub fn no_std() {}
 
 // fixme: get a warning when testing without this
@@ -94,8 +94,9 @@ fn main() {
     no_std();
 
     // Header stuff here!
-    write!(f,
-           "
+    write!(
+        f,
+        "
 /**
 Type aliases for many constants.
 
@@ -158,17 +159,18 @@ pub mod consts {{
     pub type True = B1;
     pub type False = B0;
 ",
-           highest = highest)
-            .unwrap();
+        highest = highest
+    ).unwrap();
 
     for u in uints {
         write!(f, "    pub type U{} = {};\n", u, gen_uint(u)).unwrap();
         if u <= ::std::i64::MAX as u64 && u != 0 {
             let i = u as i64;
-            write!(f,
-                   "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
-                   i = i)
-                    .unwrap();
+            write!(
+                f,
+                "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
+                i = i
+            ).unwrap();
         }
     }
     write!(f, "}}").unwrap();

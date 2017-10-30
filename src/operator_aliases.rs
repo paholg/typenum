@@ -21,8 +21,8 @@
 //!
 
 // Aliases!!!
-use core::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem, Neg};
-use type_operators::{Abs, Pow, Cmp, Len, PartialDiv, Min, Max};
+use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Shr, Sub};
+use type_operators::{Abs, Cmp, Len, Max, Min, PartialDiv, Pow};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -86,7 +86,7 @@ pub type Minimum<A, B> = <A as Min<B>>::Output;
 pub type Maximum<A, B> = <A as Max<B>>::Output;
 
 
-use type_operators::{IsLess, IsEqual, IsGreater, IsGreaterOrEqual, IsLessOrEqual, IsNotEqual};
+use type_operators::{IsEqual, IsGreater, IsGreaterOrEqual, IsLess, IsLessOrEqual, IsNotEqual};
 /// Alias for the associated type of `IsLess`: `Le<A, B> = <A as IsLess<B>>::Output`
 pub type Le<A, B> = <A as IsLess<B>>::Output;
 /// Alias for the associated type of `IsEqual`: `Eq<A, B> = <A as IsEqual<B>>::Output`
