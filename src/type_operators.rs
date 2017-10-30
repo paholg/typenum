@@ -108,7 +108,7 @@ macro_rules! impl_pow_f {
 
                 if exp == 0 { return 1.0 }
 
-                while exp & 1 == 0 {
+                while exp.trailing_zeros() >= 1 {
                     base *= base;
                     exp >>= 1;
                 }
@@ -145,7 +145,7 @@ macro_rules! impl_pow_f {
 
                 if exp == 0 { return 1.0 }
 
-                while exp & 1 == 0 {
+                while exp.trailing_zeros() >= 1 {
                     base *= base;
                     exp >>= 1;
                 }

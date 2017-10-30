@@ -118,7 +118,7 @@ impl InvertedUnsigned for InvertedUTerm {
 
 impl<IU: InvertedUnsigned, B: Bit> InvertedUnsigned for InvertedUInt<IU, B> {
     fn to_u64() -> u64 {
-        B::to_u8() as u64 | IU::to_u64() << 1
+        u64::from(B::to_u8()) | IU::to_u64() << 1
     }
 }
 
