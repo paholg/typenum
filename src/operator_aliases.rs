@@ -69,7 +69,7 @@ pub type Sub1<A> = <A as Sub<::bit::B1>>::Output;
 
 /// Alias to make it easy to square. `Square<A> = <A as Mul<A>>::Output`
 pub type Square<A> = <A as Mul>::Output;
-/// Alias to make it easy to square. `Cube<A> = <Square<A> as Mul<A>>::Output`
+/// Alias to make it easy to cube. `Cube<A> = <Square<A> as Mul<A>>::Output`
 pub type Cube<A> = <Square<A> as Mul<A>>::Output;
 
 /// Alias for the associated type of `Cmp`: `Compare<A, B> = <A as Cmp<B>>::Output`
