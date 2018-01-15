@@ -110,3 +110,19 @@ pub trait Integer {
 /// other marker traits here. However, that requires stabilization of associated consts or of
 /// const functions.
 pub trait TypeArray {}
+
+/// The **marker trait** for type-level numbers which are a power of two.
+///
+/// This trait should not be implemented for anything outside this crate.
+///
+/// # Example
+/// ```rust
+/// use typenum::{P4, P8, P9, PowerOfTwo};
+///
+/// fn only_p2<P: PowerOfTwo>() { }
+///
+/// only_p2::<P4>();
+/// only_p2::<P8>();
+/// // only_p2::<P9>(); // does not compile.
+/// ```
+pub trait PowerOfTwo {}

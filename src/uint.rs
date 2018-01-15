@@ -42,7 +42,7 @@ use private::{TrimOut, PrivateAndOut, PrivateXorOut, PrivateSubOut, PrivateCmpOu
 use consts::{U0, U1};
 use {Or, Shleft, Shright, Sum, Prod, Add1, Sub1, Square, Length};
 
-pub use marker_traits::Unsigned;
+pub use marker_traits::{Unsigned, PowerOfTwo};
 
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
@@ -196,6 +196,9 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
+
+impl PowerOfTwo for UInt<UTerm, B1> {}
+impl<U: Unsigned + PowerOfTwo> PowerOfTwo for UInt<U, B0> {}
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.

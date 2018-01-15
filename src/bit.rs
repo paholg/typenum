@@ -11,7 +11,7 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use {NonZero, Cmp, Greater, Less, Equal};
+use {NonZero, Cmp, Greater, Less, Equal, PowerOfTwo};
 
 pub use marker_traits::Bit;
 
@@ -62,6 +62,7 @@ impl Bit for B1 {
 }
 
 impl NonZero for B1 {}
+impl PowerOfTwo for B1 {}
 
 // macro for testing operation results. Uses `Same` to ensure the types are equal and
 // not just the values they evaluate to.
