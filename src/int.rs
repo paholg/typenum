@@ -30,7 +30,7 @@
 use core::ops::{Neg, Add, Sub, Mul, Div, Rem};
 use core::marker::PhantomData;
 
-use {NonZero, Pow, Cmp, Greater, Equal, Less};
+use {NonZero, Pow, Cmp, Greater, Equal, Less, PowerOfTwo};
 use uint::{Unsigned, UInt};
 use bit::{Bit, B0, B1};
 use private::{PrivateIntegerAdd, PrivateDivInt, PrivateRem};
@@ -66,7 +66,6 @@ impl<U: Unsigned + NonZero> NInt<U> {
     }
 }
 
-
 /// The type-level signed integer 0.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct Z0;
@@ -81,6 +80,8 @@ impl Z0 {
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
+
+impl<U: Unsigned + NonZero + PowerOfTwo> PowerOfTwo for PInt<U> {}
 
 impl Integer for Z0 {
     #[inline]
