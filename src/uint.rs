@@ -149,24 +149,24 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     }
     #[inline]
     fn to_u16() -> u16 {
-        B::to_u8() as u16 | U::to_u16() << 1
+        u16::from(B::to_u8()) | U::to_u16() << 1
     }
     #[inline]
     fn to_u32() -> u32 {
-        B::to_u8() as u32 | U::to_u32() << 1
+        u32::from(B::to_u8()) | U::to_u32() << 1
     }
     #[inline]
     fn to_u64() -> u64 {
-        B::to_u8() as u64 | U::to_u64() << 1
+        u64::from(B::to_u8()) | U::to_u64() << 1
     }
     #[cfg(feature = "i128")]
     #[inline]
     fn to_u128() -> u128 {
-        B::to_u8() as u128 | U::to_u128() << 1
+        u128::from(B::to_u8()) | U::to_u128() << 1
     }
     #[inline]
     fn to_usize() -> usize {
-        B::to_u8() as usize | U::to_usize() << 1
+        usize::from(B::to_u8()) | U::to_usize() << 1
     }
 
     #[inline]
@@ -175,20 +175,20 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     }
     #[inline]
     fn to_i16() -> i16 {
-        B::to_u8() as i16 | U::to_i16() << 1
+        i16::from(B::to_u8()) | U::to_i16() << 1
     }
     #[inline]
     fn to_i32() -> i32 {
-        B::to_u8() as i32 | U::to_i32() << 1
+        i32::from(B::to_u8()) | U::to_i32() << 1
     }
     #[inline]
     fn to_i64() -> i64 {
-        B::to_u8() as i64 | U::to_i64() << 1
+        i64::from(B::to_u8()) | U::to_i64() << 1
     }
     #[cfg(feature = "i128")]
     #[inline]
     fn to_i128() -> i128 {
-        B::to_u8() as i128 | U::to_i128() << 1
+        i128::from(B::to_u8()) | U::to_i128() << 1
     }
     #[inline]
     fn to_isize() -> isize {
@@ -200,23 +200,6 @@ impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
 
 impl PowerOfTwo for UInt<UTerm, B1> {}
 impl<U: Unsigned + PowerOfTwo> PowerOfTwo for UInt<U, B0> {}
-
-// macro for testing operation results. Uses `Same` to ensure the types are equal and
-// not just the values they evaluate to.
-macro_rules! test_uint_op {
-    ($op:ident $Lhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
-        }
-        );
-    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Unsigned>::to_u64(), <Test as Unsigned>::to_u64());
-        }
-        );
-}
 
 // ---------------------------------------------------------------------------------------
 // Getting length of unsigned integers, which is defined as the number of bits before `UTerm`
@@ -969,27 +952,6 @@ impl<SoFar: Ord> PrivateCmp<UTerm, SoFar> for UTerm {
     type Output = SoFar;
 }
 
-macro_rules! test_ord {
-    ($Lhs:ident > $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
-        }
-        );
-    ($Lhs:ident == $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
-        }
-        );
-    ($Lhs:ident < $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Less, <Test as Ord>::to_ordering());
-        }
-    );
-}
-
 // ---------------------------------------------------------------------------------------
 // Getting difference in number of bits
 
@@ -1203,37 +1165,39 @@ fn test_set_bit() {
 //     R -= D
 //     Q[i] = 1
 
-macro_rules! test_div {
-    ($a:ident / $b:ident = $c:ident) => (
-        {
-            type R = Quot<$a, $b>;
-            assert_eq!(<R as Unsigned>::to_usize(), $c::to_usize());
-        }
-    );
+#[cfg(tests)]
+mod tests {
+    macro_rules! test_div {
+        ($a:ident / $b:ident = $c:ident) => (
+            {
+                type R = Quot<$a, $b>;
+                assert_eq!(<R as Unsigned>::to_usize(), $c::to_usize());
+            }
+        );
+    }
+    #[test]
+    fn test_div() {
+        use consts::*;
+        use {Quot, Same};
+
+        test_div!(U0 / U1 = U0);
+        test_div!(U1 / U1 = U1);
+        test_div!(U2 / U1 = U2);
+        test_div!(U3 / U1 = U3);
+        test_div!(U4 / U1 = U4);
+
+        test_div!(U0 / U2 = U0);
+        test_div!(U1 / U2 = U0);
+        test_div!(U2 / U2 = U1);
+        test_div!(U3 / U2 = U1);
+        test_div!(U4 / U2 = U2);
+        test_div!(U6 / U2 = U3);
+        test_div!(U7 / U2 = U3);
+
+        type T = <SetBitOut<U0, U1, B1> as Same<U2>>::Output;
+        <T as Unsigned>::to_u32();
+    }
 }
-#[test]
-fn test_div() {
-    use consts::*;
-    use {Quot, Same};
-
-    test_div!(U0 / U1 = U0);
-    test_div!(U1 / U1 = U1);
-    test_div!(U2 / U1 = U2);
-    test_div!(U3 / U1 = U3);
-    test_div!(U4 / U1 = U4);
-
-    test_div!(U0 / U2 = U0);
-    test_div!(U1 / U2 = U0);
-    test_div!(U2 / U2 = U1);
-    test_div!(U3 / U2 = U1);
-    test_div!(U4 / U2 = U2);
-    test_div!(U6 / U2 = U3);
-    test_div!(U7 / U2 = U3);
-
-    type T = <SetBitOut<U0, U1, B1> as Same<U2>>::Output;
-    <T as Unsigned>::to_u32();
-}
-
 // -----------------------------------------
 // Div
 use core::ops::Div;

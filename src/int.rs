@@ -171,23 +171,6 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
     }
 }
 
-// macro for testing operation results. Uses `Same` to ensure the types are equal and
-// not just the values they evaluate to.
-macro_rules! test_int_op {
-    ($op:ident $Lhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Integer>::to_i64(), <Test as Integer>::to_i64());
-        }
-        );
-    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Integer>::to_i64(), <Test as Integer>::to_i64());
-        }
-        );
-}
-
 // ---------------------------------------------------------------------------------------
 // Neg
 
@@ -588,27 +571,6 @@ impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for
 /// -X <==> -Y
 impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
     type Output = <Nr as Cmp<Nl>>::Output;
-}
-
-macro_rules! test_ord {
-    ($Lhs:ident > $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Greater, <Test as Ord>::to_ordering());
-        }
-        );
-    ($Lhs:ident == $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Equal, <Test as Ord>::to_ordering());
-        }
-        );
-    ($Lhs:ident < $Rhs:ident) => (
-        {
-            type Test = <$Lhs as Cmp<$Rhs>>::Output;
-            assert_eq!(::core::cmp::Ordering::Less, <Test as Ord>::to_ordering());
-        }
-        );
 }
 
 // ---------------------------------------------------------------------------------------
