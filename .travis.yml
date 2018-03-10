@@ -2,32 +2,32 @@ language: rust
 sudo: false
 rust:
   - stable
-  - nightly
   - beta
+  - nightly
 cache: cargo
 
 notifications:
   email:
     recipients: paho@paholg.com
 
-before_script:
-  - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
-  - export TRAVIS_CARGO_NIGHTLY_FEATURE=""
-  - test -x $HOME/.cargo/bin/rustfmt || cargo install rustfmt # Only install rustfmt if it's not there
+matrix:
+  include:
+    - rust: nightly-2018-03-06
+      env:
+        - CLIPPY_VERSION=0.0.187
+      before_script:
+        - rustup component add rustfmt-preview
+        - cargo install clippy --version $CLIPPY_VERSION || echo "Clippy already installed"
+      script:
+        cargo fmt -- --write-mode=diff &&
+        cargo clippy --all-features -- -D clippy
 
-script:
-  - |
-    PATH=$PATH:~/.cargo/bin cargo fmt -- --write-mode=diff &&
-    travis-cargo build &&
-    travis-cargo test &&
-    # Note: The "no_std" flag is deprecated and this test remains to make sure we don't break compatibility.
-    travis-cargo --only stable test -- --features "no_std" &&
-    travis-cargo --only nightly test -- --features "clippy" &&
-    travis-cargo --only nightly test -- --features "i128" &&
-    travis-cargo --only stable doc
+script: |
+  cargo build --features "no_std strict" &&
+  cargo test --features "no_std strict" &&
+  cargo doc --features "no_std strict"
 
 after_success:
-  - travis-cargo --only stable doc-upload
   - test $TRAVIS_PULL_REQUEST == "false" &&
     test $TRAVIS_BRANCH == "master" &&
     cargo publish --token ${CRATESIO_TOKEN}

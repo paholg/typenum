@@ -9,7 +9,7 @@ supports bits, unsigned integers, and signed integers.
 
 Typenum depends only on libcore, and so is suitable for use on any platform!
 
-For the full documentation, go [here](http://paholg.com/typenum).
+For the full documentation, go [here](https://docs.rs/typenum).
 
 ### Importing
 
