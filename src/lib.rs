@@ -45,16 +45,12 @@
 
 #![no_std]
 #![warn(missing_docs)]
-
-#![cfg_attr(feature="i128", feature(i128_type))]
-
-// For clippy:
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-
-#![allow(unknown_lints)]
-#![deny(clippy)]
-#![allow(type_complexity, len_without_is_empty)]
+#![cfg_attr(feature = "i128", feature(i128_type))]
+#![cfg_attr(feature = "strict", deny(missing_docs))]
+#![cfg_attr(feature = "strict", deny(warnings))]
+#![cfg_attr(feature = "cargo-clippy", deny(clippy))]
+#![cfg_attr(feature = "cargo-clippy",
+            allow(type_complexity, len_without_is_empty, new_without_default_derive))]
 
 // For debugging macros:
 // #![feature(trace_macros)]
@@ -81,7 +77,7 @@ pub use operator_aliases::*;
 
 pub use uint::{UInt, UTerm};
 pub use int::{NInt, PInt};
-pub use array::{TArr, ATerm};
+pub use array::{ATerm, TArr};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
@@ -122,9 +118,7 @@ impl Ord for Equal {
     }
 }
 
-/**
-Asserts that two types are the same.
-*/
+/// Asserts that two types are the same.
 #[macro_export]
 macro_rules! assert_type_eq {
     ($a:ty, $b:ty) => (
@@ -132,9 +126,7 @@ macro_rules! assert_type_eq {
     );
 }
 
-/**
-Asserts that a type is `True`, aka `B1`.
-*/
+/// Asserts that a type is `True`, aka `B1`.
 #[macro_export]
 macro_rules! assert_type {
     ($a:ty) => (

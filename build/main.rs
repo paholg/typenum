@@ -76,13 +76,11 @@ pub fn no_std() {}
 fn main() {
     let highest: u64 = 1024;
 
-
     let first2: u32 = (highest as f64).log(2.0) as u32 + 1;
     let first10: u32 = (highest as f64).log(10.0) as u32 + 1;
     let uints = (0..(highest + 1))
         .chain((first2..64).map(|i| 2u64.pow(i)))
         .chain((first10..20).map(|i| 10u64.pow(i)));
-
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
@@ -92,8 +90,9 @@ fn main() {
     no_std();
 
     // Header stuff here!
-    write!(f,
-           "
+    write!(
+        f,
+        "
 /**
 Type aliases for many constants.
 
@@ -156,17 +155,18 @@ pub mod consts {{
     pub type True = B1;
     pub type False = B0;
 ",
-           highest = highest)
-            .unwrap();
+        highest = highest
+    ).unwrap();
 
     for u in uints {
         write!(f, "    pub type U{} = {};\n", u, gen_uint(u)).unwrap();
         if u <= ::std::i64::MAX as u64 && u != 0 {
             let i = u as i64;
-            write!(f,
-                   "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
-                   i = i)
-                    .unwrap();
+            write!(
+                f,
+                "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
+                i = i
+            ).unwrap();
         }
     }
     write!(f, "}}").unwrap();

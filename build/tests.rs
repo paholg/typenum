@@ -1,4 +1,4 @@
-use std::{env, fs, io, fmt, path};
+use std::{env, fmt, fs, io, path};
 
 use super::{gen_int, gen_uint};
 
@@ -22,9 +22,9 @@ struct UIntTest {
 impl fmt::Display for UIntTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.b {
-            Some(b) => {
-                write!(f,
-                       "
+            Some(b) => write!(
+                f,
+                "
 #[test]
 #[allow(non_snake_case)]
 fn test_{a}_{op}_{b}() {{
@@ -37,17 +37,17 @@ fn test_{a}_{op}_{b}() {{
 
     assert_eq!(<U{a}{op}U{b} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
 }}",
-                       gen_a = gen_uint(self.a),
-                       gen_b = gen_uint(b),
-                       r = self.r,
-                       result = gen_uint(self.r),
-                       a = self.a,
-                       b = b,
-                       op = self.op)
-            }
-            None => {
-                write!(f,
-                       "
+                gen_a = gen_uint(self.a),
+                gen_b = gen_uint(b),
+                r = self.r,
+                result = gen_uint(self.r),
+                a = self.a,
+                b = b,
+                op = self.op
+            ),
+            None => write!(
+                f,
+                "
 #[test]
 #[allow(non_snake_case)]
 fn test_{a}_{op}() {{
@@ -58,12 +58,12 @@ fn test_{a}_{op}() {{
     type {op}U{a} = <<A as {op}>::Output as Same<U{r}>>::Output;
     assert_eq!(<{op}U{a} as Unsigned>::to_u64(), <U{r} as Unsigned>::to_u64());
 }}",
-                       gen_a = gen_uint(self.a),
-                       r = self.r,
-                       result = gen_uint(self.r),
-                       a = self.a,
-                       op = self.op)
-            }
+                gen_a = gen_uint(self.a),
+                r = self.r,
+                result = gen_uint(self.r),
+                a = self.a,
+                op = self.op
+            ),
         }
     }
 }
@@ -90,8 +90,9 @@ struct IntBinaryTest {
 
 impl fmt::Display for IntBinaryTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-               "
+        write!(
+            f,
+            "
 #[test]
 #[allow(non_snake_case)]
 fn test_{sa}{a}_{op}_{sb}{b}() {{
@@ -104,16 +105,17 @@ fn test_{sa}{a}_{op}_{sb}{b}() {{
 
     assert_eq!(<{sa}{a}{op}{sb}{b} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
 }}",
-               gen_a = gen_int(self.a),
-               gen_b = gen_int(self.b),
-               r = self.r.abs(),
-               sr = sign(self.r),
-               result = gen_int(self.r),
-               a = self.a.abs(),
-               b = self.b.abs(),
-               sa = sign(self.a),
-               sb = sign(self.b),
-               op = self.op)
+            gen_a = gen_int(self.a),
+            gen_b = gen_int(self.b),
+            r = self.r.abs(),
+            sr = sign(self.r),
+            result = gen_int(self.r),
+            a = self.a.abs(),
+            b = self.b.abs(),
+            sa = sign(self.a),
+            sb = sign(self.b),
+            op = self.op
+        )
     }
 }
 
@@ -134,8 +136,9 @@ struct IntUnaryTest {
 
 impl fmt::Display for IntUnaryTest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-               "
+        write!(
+            f,
+            "
 #[test]
 #[allow(non_snake_case)]
 fn test_{sa}{a}_{op}() {{
@@ -146,13 +149,14 @@ fn test_{sa}{a}_{op}() {{
     type {op}{sa}{a} = <<A as {op}>::Output as Same<{sr}{r}>>::Output;
     assert_eq!(<{op}{sa}{a} as Integer>::to_i64(), <{sr}{r} as Integer>::to_i64());
 }}",
-               gen_a = gen_int(self.a),
-               r = self.r.abs(),
-               sr = sign(self.r),
-               result = gen_int(self.r),
-               a = self.a.abs(),
-               sa = sign(self.a),
-               op = self.op)
+            gen_a = gen_int(self.a),
+            r = self.r.abs(),
+            sr = sign(self.r),
+            result = gen_int(self.r),
+            a = self.a.abs(),
+            sa = sign(self.a),
+            op = self.op
+        )
     }
 }
 
@@ -165,7 +169,8 @@ fn int_unary_test(op: &'static str, a: i64, result: i64) -> IntUnaryTest {
 }
 
 fn uint_cmp_test(a: u64, b: u64) -> String {
-    format!("
+    format!(
+        "
 #[test]
 #[allow(non_snake_case)]
 fn test_{a}_cmp_{b}() {{
@@ -176,15 +181,17 @@ fn test_{a}_cmp_{b}() {{
     type U{a}CmpU{b} = <A as Cmp<B>>::Output;
     assert_eq!(<U{a}CmpU{b} as Ord>::to_ordering(), Ordering::{result:?});
 }}",
-            a = a,
-            b = b,
-            gen_a = gen_uint(a),
-            gen_b = gen_uint(b),
-            result = a.cmp(&b))
+        a = a,
+        b = b,
+        gen_a = gen_uint(a),
+        gen_b = gen_uint(b),
+        result = a.cmp(&b)
+    )
 }
 
 fn int_cmp_test(a: i64, b: i64) -> String {
-    format!("
+    format!(
+        "
 #[test]
 #[allow(non_snake_case)]
 fn test_{sa}{a}_cmp_{sb}{b}() {{
@@ -195,36 +202,37 @@ fn test_{sa}{a}_cmp_{sb}{b}() {{
     type {sa}{a}Cmp{sb}{b} = <A as Cmp<B>>::Output;
     assert_eq!(<{sa}{a}Cmp{sb}{b} as Ord>::to_ordering(), Ordering::{result:?});
 }}",
-            a = a.abs(),
-            b = b.abs(),
-            sa = sign(a),
-            sb = sign(b),
-            gen_a = gen_int(a),
-            gen_b = gen_int(b),
-            result = a.cmp(&b))
+        a = a.abs(),
+        b = b.abs(),
+        sa = sign(a),
+        sb = sign(b),
+        gen_a = gen_int(a),
+        gen_b = gen_int(b),
+        result = a.cmp(&b)
+    )
 }
 
 pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
 
-    let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a + 1).cycle().zip((0..high as u64 + 1)));
-    let ints = (-high..high + 1).flat_map(|a| (a..a + 1).cycle().zip((-high..high + 1)));
-
+    let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a + 1).cycle().zip(0..high as u64 + 1));
+    let ints = (-high..high + 1).flat_map(|a| (a..a + 1).cycle().zip(-high..high + 1));
 
     let out_dir = env::var("OUT_DIR")?;
     let dest = path::Path::new(&out_dir).join("tests.rs");
     let f = fs::File::create(&dest)?;
     let mut writer = io::BufWriter::new(&f);
     use std::io::Write;
-    writer
-        .write(b"
+    writer.write(
+        b"
 extern crate typenum;
 
 use std::ops::*;
 use std::cmp::Ordering;
 use typenum::*;
-")?;
+",
+    )?;
     use std::cmp;
     // uint operators:
     for (a, b) in uints {

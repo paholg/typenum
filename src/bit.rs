@@ -11,7 +11,7 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use {NonZero, Cmp, Greater, Less, Equal, PowerOfTwo};
+use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 
 pub use marker_traits::Bit;
 
@@ -63,23 +63,6 @@ impl Bit for B1 {
 
 impl NonZero for B1 {}
 impl PowerOfTwo for B1 {}
-
-// macro for testing operation results. Uses `Same` to ensure the types are equal and
-// not just the values they evaluate to.
-macro_rules! test_bit_op {
-    ($op:ident $Lhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
-        }
-        );
-    ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
-        {
-            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
-            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
-        }
-        );
-}
 
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
@@ -173,25 +156,45 @@ impl BitXor<B1> for B1 {
     }
 }
 
-#[test]
-fn bit_operations() {
-    test_bit_op!(Not B0 = B1);
-    test_bit_op!(Not B1 = B0);
+#[cfg(tests)]
+mod tests {
+    // macro for testing operation results. Uses `Same` to ensure the types are equal and
+    // not just the values they evaluate to.
+    macro_rules! test_bit_op {
+        ($op:ident $Lhs:ident = $Answer:ident) => (
+            {
+                type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
+                assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
+            }
+        );
+        ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
+            {
+                type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
+                assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
+            }
+        );
+    }
 
-    test_bit_op!(B0 BitAnd B0 = B0);
-    test_bit_op!(B0 BitAnd B1 = B0);
-    test_bit_op!(B1 BitAnd B0 = B0);
-    test_bit_op!(B1 BitAnd B1 = B1);
+    #[test]
+    fn bit_operations() {
+        test_bit_op!(Not B0 = B1);
+        test_bit_op!(Not B1 = B0);
 
-    test_bit_op!(B0 BitOr B0 = B0);
-    test_bit_op!(B0 BitOr B1 = B1);
-    test_bit_op!(B1 BitOr B0 = B1);
-    test_bit_op!(B1 BitOr B1 = B1);
+        test_bit_op!(B0 BitAnd B0 = B0);
+        test_bit_op!(B0 BitAnd B1 = B0);
+        test_bit_op!(B1 BitAnd B0 = B0);
+        test_bit_op!(B1 BitAnd B1 = B1);
 
-    test_bit_op!(B0 BitXor B0 = B0);
-    test_bit_op!(B0 BitXor B1 = B1);
-    test_bit_op!(B1 BitXor B0 = B1);
-    test_bit_op!(B1 BitXor B1 = B0);
+        test_bit_op!(B0 BitOr B0 = B0);
+        test_bit_op!(B0 BitOr B1 = B1);
+        test_bit_op!(B1 BitOr B0 = B1);
+        test_bit_op!(B1 BitOr B1 = B1);
+
+        test_bit_op!(B0 BitXor B0 = B0);
+        test_bit_op!(B0 BitXor B1 = B1);
+        test_bit_op!(B1 BitXor B0 = B1);
+        test_bit_op!(B1 BitXor B1 = B0);
+    }
 }
 
 impl Cmp<B0> for B0 {
@@ -209,7 +212,6 @@ impl Cmp<B0> for B1 {
 impl Cmp<B1> for B1 {
     type Output = Equal;
 }
-
 
 use Min;
 impl Min<B0> for B0 {
