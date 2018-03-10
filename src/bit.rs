@@ -11,7 +11,7 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use {NonZero, Cmp, Greater, Less, Equal, PowerOfTwo};
+use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 
 pub use marker_traits::Bit;
 
@@ -209,7 +209,6 @@ impl Cmp<B0> for B1 {
 impl Cmp<B1> for B1 {
     type Output = Equal;
 }
-
 
 use Min;
 impl Min<B0> for B0 {

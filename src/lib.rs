@@ -45,13 +45,10 @@
 
 #![no_std]
 #![warn(missing_docs)]
-
-#![cfg_attr(feature="i128", feature(i128_type))]
-
+#![cfg_attr(feature = "i128", feature(i128_type))]
 // For clippy:
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-
+#![cfg_attr(feature = "clippy", feature(plugin))]
+#![cfg_attr(feature = "clippy", plugin(clippy))]
 #![allow(unknown_lints)]
 #![deny(clippy)]
 #![allow(type_complexity, len_without_is_empty)]
@@ -81,7 +78,7 @@ pub use operator_aliases::*;
 
 pub use uint::{UInt, UTerm};
 pub use int::{NInt, PInt};
-pub use array::{TArr, ATerm};
+pub use array::{ATerm, TArr};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
