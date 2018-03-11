@@ -4,6 +4,7 @@ use std::io::Write;
 use std::path::Path;
 use std::fmt;
 
+#[cfg(tests)]
 mod tests;
 mod op;
 
@@ -171,6 +172,7 @@ pub mod consts {{
     }
     write!(f, "}}").unwrap();
 
+    #[cfg(tests)]
     tests::build_tests().unwrap();
 
     op::write_op_macro().unwrap();

@@ -58,6 +58,22 @@ impl UTerm {
 }
 
 impl Unsigned for UTerm {
+    const U8: u8 = 0;
+    const U16: u16 = 0;
+    const U32: u32 = 0;
+    const U64: u64 = 0;
+    #[cfg(feature = "i128")]
+    const U128: u128 = 0;
+    const USIZE: usize = 0;
+
+    const I8: i8 = 0;
+    const I16: i16 = 0;
+    const I32: i32 = 0;
+    const I64: i64 = 0;
+    #[cfg(feature = "i128")]
+    const I128: i128 = 0;
+    const ISIZE: isize = 0;
+
     #[inline]
     fn to_u8() -> u8 {
         0
@@ -143,6 +159,22 @@ impl<U: Unsigned, B: Bit> UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
+    const U8: u8 = B::U8 | U::U8 << 1;
+    const U16: u16 = B::U8 as u16 | U::U16 << 1;
+    const U32: u32 = B::U8 as u32 | U::U32 << 1;
+    const U64: u64 = B::U8 as u64 | U::U64 << 1;
+    #[cfg(feature = "i128")]
+    const U128: u128 = B::U8 as u128 | U::U128 << 1;
+    const USIZE: usize = B::U8 as usize | U::USIZE << 1;
+
+    const I8: i8 = B::U8 as i8 | U::I8 << 1;
+    const I16: i16 = B::U8 as i16 | U::I16 << 1;
+    const I32: i32 = B::U8 as i32 | U::I32 << 1;
+    const I64: i64 = B::U8 as i64 | U::I64 << 1;
+    #[cfg(feature = "i128")]
+    const I128: i128 = B::U8 as i128 | U::I128 << 1;
+    const ISIZE: isize = B::U8 as isize | U::ISIZE << 1;
+
     #[inline]
     fn to_u8() -> u8 {
         B::to_u8() | U::to_u8() << 1

@@ -2,6 +2,10 @@
 
 This project follows semantic versioning.
 
+### 1.10.0 (2018-03-11)
+- [added] The `PowerOfTwo` marker trait.
+- [added] Associated constants for `Bit`, `Unsigned`, and `Integer`.
+
 ### 1.9.0 (2017-05-14)
 - [added] The `Abs` type operater and corresponding `AbsVal` alias.
 - [added] The feature `i128` that enables creating 128-bit integers from typenums.

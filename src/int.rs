@@ -88,6 +88,14 @@ impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
 impl<U: Unsigned + NonZero + PowerOfTwo> PowerOfTwo for PInt<U> {}
 
 impl Integer for Z0 {
+    const I8: i8 = 0;
+    const I16: i16 = 0;
+    const I32: i32 = 0;
+    const I64: i64 = 0;
+    #[cfg(feature = "i128")]
+    const I128: i128 = 0;
+    const ISIZE: isize = 0;
+
     #[inline]
     fn to_i8() -> i8 {
         0
@@ -116,6 +124,14 @@ impl Integer for Z0 {
 }
 
 impl<U: Unsigned + NonZero> Integer for PInt<U> {
+    const I8: i8 = U::I8;
+    const I16: i16 = U::I16;
+    const I32: i32 = U::I32;
+    const I64: i64 = U::I64;
+    #[cfg(feature = "i128")]
+    const I128: i128 = U::I128;
+    const ISIZE: isize = U::ISIZE;
+
     #[inline]
     fn to_i8() -> i8 {
         <U as Unsigned>::to_i8()
@@ -144,6 +160,14 @@ impl<U: Unsigned + NonZero> Integer for PInt<U> {
 }
 
 impl<U: Unsigned + NonZero> Integer for NInt<U> {
+    const I8: i8 = -U::I8;
+    const I16: i16 = -U::I16;
+    const I32: i32 = -U::I32;
+    const I64: i64 = -U::I64;
+    #[cfg(feature = "i128")]
+    const I128: i128 = -U::I128;
+    const ISIZE: isize = -U::ISIZE;
+
     #[inline]
     fn to_i8() -> i8 {
         -<U as Unsigned>::to_i8()
