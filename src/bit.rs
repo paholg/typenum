@@ -40,6 +40,9 @@ impl B1 {
 }
 
 impl Bit for B0 {
+    const U8: u8 = 0;
+    const BOOL: bool = false;
+
     #[inline]
     fn to_u8() -> u8 {
         0
@@ -51,6 +54,9 @@ impl Bit for B0 {
 }
 
 impl Bit for B1 {
+    const U8: u8 = 1;
+    const BOOL: bool = true;
+
     #[inline]
     fn to_u8() -> u8 {
         1

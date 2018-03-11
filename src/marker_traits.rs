@@ -1,17 +1,19 @@
 //! All of the **marker traits** used in typenum.
 //!
-//! Note that the definition here for marker traits is slightly different than the conventional one
-//! -- we include traits with functions that convert a type to the corresponding value.
+//! Note that the definition here for marker traits is slightly different than
+//! the conventional one -- we include traits with functions that convert a type
+//! to the corresponding value, as well as associated constants that do the
+//! same.
 //!
-//! For example, the `Integer` trait includes the function (among others) `fn to_i32() ->
-//! i32` so that one can do this:
+//! For example, the `Integer` trait includes the function (among others) `fn
+//! to_i32() -> i32` and the associated constant `I32` so that one can do this:
 //!
 //! ```
 //! use typenum::{N42, Integer};
 //!
 //! assert_eq!(-42, N42::to_i32());
+//! assert_eq!(-42, N42::I32);
 //! ```
-//!
 //!
 
 /// A **marker trait** to designate that a type is not zero. All number types in this
@@ -31,6 +33,11 @@ pub trait Ord {
 /// This trait should not be implemented for anything outside this crate.
 pub trait Bit {
     #[allow(missing_docs)]
+    const U8: u8;
+    #[allow(missing_docs)]
+    const BOOL: bool;
+
+    #[allow(missing_docs)]
     fn to_u8() -> u8;
     #[allow(missing_docs)]
     fn to_bool() -> bool;
@@ -45,8 +52,37 @@ pub trait Bit {
 /// use typenum::{U3, Unsigned};
 ///
 /// assert_eq!(U3::to_u32(), 3);
+/// assert_eq!(U3::I32, 3);
 /// ```
 pub trait Unsigned {
+    #[allow(missing_docs)]
+    const U8: u8;
+    #[allow(missing_docs)]
+    const U16: u16;
+    #[allow(missing_docs)]
+    const U32: u32;
+    #[allow(missing_docs)]
+    const U64: u64;
+    #[cfg(feature = "i128")]
+    #[allow(missing_docs)]
+    const U128: u128;
+    #[allow(missing_docs)]
+    const USIZE: usize;
+
+    #[allow(missing_docs)]
+    const I8: i8;
+    #[allow(missing_docs)]
+    const I16: i16;
+    #[allow(missing_docs)]
+    const I32: i32;
+    #[allow(missing_docs)]
+    const I64: i64;
+    #[cfg(feature = "i128")]
+    #[allow(missing_docs)]
+    const I128: i128;
+    #[allow(missing_docs)]
+    const ISIZE: isize;
+
     #[allow(missing_docs)]
     fn to_u8() -> u8;
     #[allow(missing_docs)]
@@ -85,8 +121,23 @@ pub trait Unsigned {
 /// use typenum::{P3, Integer};
 ///
 /// assert_eq!(P3::to_i32(), 3);
+/// assert_eq!(P3::I32, 3);
 /// ```
 pub trait Integer {
+    #[allow(missing_docs)]
+    const I8: i8;
+    #[allow(missing_docs)]
+    const I16: i16;
+    #[allow(missing_docs)]
+    const I32: i32;
+    #[allow(missing_docs)]
+    const I64: i64;
+    #[cfg(feature = "i128")]
+    #[allow(missing_docs)]
+    const I128: i128;
+    #[allow(missing_docs)]
+    const ISIZE: isize;
+
     #[allow(missing_docs)]
     fn to_i8() -> i8;
     #[allow(missing_docs)]
@@ -106,9 +157,9 @@ pub trait Integer {
 ///
 /// This trait should not be implemented for anything outside this crate.
 ///
-/// Someday, it will contain a function or associated constant to produce a runtime array, like the
-/// other marker traits here. However, that requires stabilization of associated consts or of
-/// const functions.
+/// Someday, it may contain an associated constant to produce a runtime array,
+/// like the other marker traits here. However, that is blocked by [this
+/// issue](https://github.com/rust-lang/rust/issues/44168).
 pub trait TypeArray {}
 
 /// The **marker trait** for type-level numbers which are a power of two.
@@ -131,13 +182,13 @@ pub trait TypeArray {}
 /// Numbers which are not a power of two will fail to compile in this example:
 ///
 /// ```rust,compile_fail
-/// use typenum::{P9, P511, P6372, PowerOfTwo};
+/// use typenum::{P9, P511, P1023, PowerOfTwo};
 ///
 /// fn only_p2<P: PowerOfTwo>() { }
 ///
 /// only_p2::<P9>();
 /// only_p2::<P511>();
-/// only_p2::<P6372>();
+/// only_p2::<P1023>();
 /// ```
 
 pub trait PowerOfTwo {}
