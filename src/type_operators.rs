@@ -498,3 +498,13 @@ macro_rules! cmp {
         <$a as $crate::IsGreaterOrEqual<$b>>::Output
     );
 }
+
+/// A **type operator** for taking the integer square root of `Self`.
+///
+/// The integer square root of `n` is the largest integer `m` such
+/// that `n >= m*m`. This definition is equivalent to truncating the
+/// real-valued square root: `floor(real_sqrt(n))`.
+pub trait SquareRoot {
+    /// The result of the integer square root.
+    type Output;
+}

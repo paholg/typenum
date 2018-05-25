@@ -30,7 +30,7 @@
 
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use core::marker::PhantomData;
-use {Cmp, Equal, Greater, Len, Less, NonZero, Ord, Pow};
+use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow};
 
 use bit::{B0, B1, Bit};
 
@@ -40,7 +40,7 @@ use private::{BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSu
               PrivateXorOut, TrimOut};
 
 use consts::{U0, U1};
-use {Add1, Length, Or, Prod, Shleft, Shright, Square, Sub1, Sum};
+use {Add1, Double, GrEq, Length, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
 
 pub use marker_traits::{PowerOfTwo, Unsigned};
 
@@ -1569,4 +1569,83 @@ where
     fn max(self, rhs: Ur) -> Self::Output {
         self.private_max(rhs)
     }
+}
+
+// -----------------------------------------
+// SquareRoot
+use SquareRoot;
+
+// sqrt(0) = 0.
+impl SquareRoot for UTerm {
+    type Output = UTerm;
+}
+
+// sqrt(1) = 1.
+impl SquareRoot for UInt<UTerm, B1> {
+    type Output = UInt<UTerm, B1>;
+}
+
+// General case of sqrt(Self) where Self >= 2. If a and b are
+// bit-valued and Self = 4*u + 2*a + b, then the integer-valued
+// (fractional part truncated) square root of Self is either 2*sqrt(u)
+// or 2*sqrt(u)+1. Guess and check by comparing (2*sqrt(u)+1)^2
+// against Self. Since the `typenum` result of that comparison is a
+// bit, directly add that bit to 2*sqrt(u).
+//
+// Use `Sum<Double<Sqrt<U>>, GrEq<...>>` instead of `UInt<Sqrt<U>,
+// GrEq<...>>` because `Sqrt<U>` can turn out to be `UTerm` and
+// `GrEq<...>` can turn out to be `B0`, which would not be a valid
+// UInt as leading zeros are disallowed.
+impl<U, Ba, Bb> SquareRoot for UInt<UInt<U, Ba>, Bb>
+where
+    U: Unsigned,
+    Ba: Bit,
+    Bb: Bit,
+    U: SquareRoot,
+    Sqrt<U>: Shl<B1>,
+    Double<Sqrt<U>>: Add<B1>,
+    Add1<Double<Sqrt<U>>>: Mul,
+    Self: IsGreaterOrEqual<Square<Add1<Double<Sqrt<U>>>>>,
+    Double<Sqrt<U>>: Add<GrEq<Self, Square<Add1<Double<Sqrt<U>>>>>>,
+{
+    type Output = Sum<Double<Sqrt<U>>, GrEq<Self, Square<Add1<Double<Sqrt<U>>>>>>;
+}
+
+#[test]
+fn sqrt_test() {
+    use consts::*;
+
+    assert_eq!(0, <Sqrt<U0>>::to_u32());
+
+    assert_eq!(1, <Sqrt<U1>>::to_u32());
+    assert_eq!(1, <Sqrt<U2>>::to_u32());
+    assert_eq!(1, <Sqrt<U3>>::to_u32());
+
+    assert_eq!(2, <Sqrt<U4>>::to_u32());
+    assert_eq!(2, <Sqrt<U5>>::to_u32());
+    assert_eq!(2, <Sqrt<U6>>::to_u32());
+    assert_eq!(2, <Sqrt<U7>>::to_u32());
+    assert_eq!(2, <Sqrt<U8>>::to_u32());
+
+    assert_eq!(3, <Sqrt<U9>>::to_u32());
+    assert_eq!(3, <Sqrt<U10>>::to_u32());
+    assert_eq!(3, <Sqrt<U11>>::to_u32());
+    assert_eq!(3, <Sqrt<U12>>::to_u32());
+    assert_eq!(3, <Sqrt<U13>>::to_u32());
+    assert_eq!(3, <Sqrt<U14>>::to_u32());
+    assert_eq!(3, <Sqrt<U15>>::to_u32());
+
+    assert_eq!(4, <Sqrt<U16>>::to_u32());
+    assert_eq!(4, <Sqrt<U17>>::to_u32());
+    assert_eq!(4, <Sqrt<U18>>::to_u32());
+    assert_eq!(4, <Sqrt<U19>>::to_u32());
+    assert_eq!(4, <Sqrt<U20>>::to_u32());
+    assert_eq!(4, <Sqrt<U21>>::to_u32());
+    assert_eq!(4, <Sqrt<U22>>::to_u32());
+    assert_eq!(4, <Sqrt<U23>>::to_u32());
+    assert_eq!(4, <Sqrt<U24>>::to_u32());
+
+    assert_eq!(5, <Sqrt<U25>>::to_u32());
+    assert_eq!(5, <Sqrt<U26>>::to_u32());
+    // ...
 }
