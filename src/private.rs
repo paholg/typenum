@@ -359,3 +359,7 @@ impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
 impl<A, B> IsGreaterOrEqualPrivate<B, Greater> for A {
     type Output = True;
 }
+
+pub trait PrivateSquareRoot {
+    type Output;
+}

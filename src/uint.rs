@@ -30,11 +30,12 @@
 
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use core::marker::PhantomData;
-use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow};
+use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow, SquareRoot};
 
 use bit::{B0, B1, Bit};
 
-use private::{BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSub, PrivateXor, Trim};
+use private::{BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub,
+              PrivateXor, Trim};
 
 use private::{BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut,
               PrivateXorOut, TrimOut};
@@ -1573,15 +1574,21 @@ where
 
 // -----------------------------------------
 // SquareRoot
-use SquareRoot;
+
+impl<N> SquareRoot for N
+where
+    N: PrivateSquareRoot,
+{
+    type Output = <Self as PrivateSquareRoot>::Output;
+}
 
 // sqrt(0) = 0.
-impl SquareRoot for UTerm {
+impl PrivateSquareRoot for UTerm {
     type Output = UTerm;
 }
 
 // sqrt(1) = 1.
-impl SquareRoot for UInt<UTerm, B1> {
+impl PrivateSquareRoot for UInt<UTerm, B1> {
     type Output = UInt<UTerm, B1>;
 }
 
@@ -1596,7 +1603,7 @@ impl SquareRoot for UInt<UTerm, B1> {
 // GrEq<...>>` because `Sqrt<U>` can turn out to be `UTerm` and
 // `GrEq<...>` can turn out to be `B0`, which would not be a valid
 // UInt as leading zeros are disallowed.
-impl<U, Ba, Bb> SquareRoot for UInt<UInt<U, Ba>, Bb>
+impl<U, Ba, Bb> PrivateSquareRoot for UInt<UInt<U, Ba>, Bb>
 where
     U: Unsigned,
     Ba: Bit,
