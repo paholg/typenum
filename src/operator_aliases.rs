@@ -22,7 +22,7 @@
 
 // Aliases!!!
 use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Shr, Sub};
-use type_operators::{Abs, Cmp, Len, Max, Min, PartialDiv, Pow};
+use type_operators::{Abs, Cmp, Len, Max, Min, PartialDiv, Pow, SquareRoot};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -65,10 +65,16 @@ pub type Add1<A> = <A as Add<::bit::B1>>::Output;
 /// Alias to make it easy to subtract 1: `Sub1<A> = <A as Sub<B1>>::Output`
 pub type Sub1<A> = <A as Sub<::bit::B1>>::Output;
 
+/// Alias to make it easy to multiply by 2. `Double<A> = Shleft<A, B1>`
+pub type Double<A> = Shleft<A, ::bit::B1>;
+
 /// Alias to make it easy to square. `Square<A> = <A as Mul<A>>::Output`
 pub type Square<A> = <A as Mul>::Output;
 /// Alias to make it easy to cube. `Cube<A> = <Square<A> as Mul<A>>::Output`
 pub type Cube<A> = <Square<A> as Mul<A>>::Output;
+
+/// Alias for the associated type of `SquareRoot`: `Sqrt<A> = <A as SquareRoot>::Output`
+pub type Sqrt<A> = <A as SquareRoot>::Output;
 
 /// Alias for the associated type of `Cmp`: `Compare<A, B> = <A as Cmp<B>>::Output`
 pub type Compare<A, B> = <A as Cmp<B>>::Output;
