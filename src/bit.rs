@@ -167,18 +167,14 @@ mod tests {
     // macro for testing operation results. Uses `Same` to ensure the types are equal and
     // not just the values they evaluate to.
     macro_rules! test_bit_op {
-        ($op:ident $Lhs:ident = $Answer:ident) => (
-            {
-                type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
-                assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
-            }
-        );
-        ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => (
-            {
-                type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
-                assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
-            }
-        );
+        ($op:ident $Lhs:ident = $Answer:ident) => {{
+            type Test = <<$Lhs as $op>::Output as ::Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
+        }};
+        ($Lhs:ident $op:ident $Rhs:ident = $Answer:ident) => {{
+            type Test = <<$Lhs as $op<$Rhs>>::Output as ::Same<$Answer>>::Output;
+            assert_eq!(<$Answer as Bit>::to_u8(), <Test as Bit>::to_u8());
+        }};
     }
 
     #[test]

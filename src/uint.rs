@@ -28,17 +28,19 @@
 //! ```
 //!
 
-use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use core::marker::PhantomData;
+use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow, SquareRoot};
 
 use bit::{B0, B1, Bit};
 
-use private::{BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub,
-              PrivateXor, Trim};
+use private::{
+    BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
+};
 
-use private::{BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut,
-              PrivateXorOut, TrimOut};
+use private::{
+    BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut, PrivateXorOut, TrimOut,
+};
 
 use consts::{U0, U1};
 use {Add1, Double, GrEq, Length, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
@@ -1201,12 +1203,10 @@ fn test_set_bit() {
 #[cfg(tests)]
 mod tests {
     macro_rules! test_div {
-        ($a:ident / $b:ident = $c:ident) => (
-            {
-                type R = Quot<$a, $b>;
-                assert_eq!(<R as Unsigned>::to_usize(), $c::to_usize());
-            }
-        );
+        ($a:ident / $b:ident = $c:ident) => {{
+            type R = Quot<$a, $b>;
+            assert_eq!(<R as Unsigned>::to_usize(), $c::to_usize());
+        }};
     }
     #[test]
     fn test_div() {

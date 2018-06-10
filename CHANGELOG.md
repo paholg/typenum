@@ -3,6 +3,8 @@
 This project follows semantic versioning.
 
 ### unreleased
+- [changed] Removed `feature(i128_type)` when running with the `i128` feature. Kept the feature flag
+  for typenum to maintain compatibility with old Rust versions.
 - [added] Integer `sqrt` to the `op!` macro.
 - [added] Integer square root operator `SquareRoot` with alias `Sqrt`.
 
