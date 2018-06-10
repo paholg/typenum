@@ -3,6 +3,7 @@
 This project follows semantic versioning.
 
 ### unreleased
+- [added] Integer `sqrt` to the `op!` macro.
 - [added] Integer square root operator `SquareRoot` with alias `Sqrt`.
 
 ### 1.10.0 (2018-03-11)

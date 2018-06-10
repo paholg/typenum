@@ -172,6 +172,14 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
             op_type: Function,
         },
         Op {
+            token: "sqrt",
+            operator: "Sqrt",
+            example: ("sqrt(U9)", "U3"),
+            precedence: !0,
+            n_args: 1,
+            op_type: Function,
+        },
+        Op {
             token: "abs",
             operator: "AbsVal",
             example: ("abs(N2)", "P2"),
