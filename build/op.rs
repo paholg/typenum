@@ -172,6 +172,14 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
             op_type: Function,
         },
         Op {
+            token: "sqrt",
+            operator: "Sqrt",
+            example: ("sqrt(U9)", "U3"),
+            precedence: !0,
+            n_args: 1,
+            op_type: Function,
+        },
+        Op {
             token: "abs",
             operator: "AbsVal",
             example: ("abs(N2)", "P2"),
@@ -342,7 +350,8 @@ macro_rules! op {{
     for o1 in ops.iter().filter(|op| op.op_type == Operator) {
         // If top of stack is operator o2 with o1.precedence <= o2.precedence,
         // Then pop o2 off stack onto queue:
-        for o2 in ops.iter()
+        for o2 in ops
+            .iter()
             .filter(|op| op.op_type == Operator)
             .filter(|o2| o1.precedence <= o2.precedence)
         {
