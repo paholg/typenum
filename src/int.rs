@@ -887,6 +887,78 @@ where
 }
 
 // ---------------------------------------------------------------------------------------
+// Gcd
+use {Gcd, Gcf};
+
+impl Gcd<Z0> for Z0 {
+    type Output = Z0;
+}
+
+impl<U> Gcd<PInt<U>> for Z0
+where
+    U: Unsigned + NonZero,
+{
+    type Output = PInt<U>;
+}
+
+impl<U> Gcd<Z0> for PInt<U>
+where
+    U: Unsigned + NonZero,
+{
+    type Output = PInt<U>;
+}
+
+impl<U> Gcd<NInt<U>> for Z0
+where
+    U: Unsigned + NonZero,
+{
+    type Output = PInt<U>;
+}
+
+impl<U> Gcd<Z0> for NInt<U>
+where
+    U: Unsigned + NonZero,
+{
+    type Output = PInt<U>;
+}
+
+impl<U1, U2> Gcd<PInt<U2>> for PInt<U1>
+where
+    U1: Unsigned + NonZero + Gcd<U2>,
+    U2: Unsigned + NonZero,
+    Gcf<U1, U2>: Unsigned + NonZero,
+{
+    type Output = PInt<Gcf<U1, U2>>;
+}
+
+impl<U1, U2> Gcd<PInt<U2>> for NInt<U1>
+where
+    U1: Unsigned + NonZero + Gcd<U2>,
+    U2: Unsigned + NonZero,
+    Gcf<U1, U2>: Unsigned + NonZero,
+{
+    type Output = PInt<Gcf<U1, U2>>;
+}
+
+impl<U1, U2> Gcd<NInt<U2>> for PInt<U1>
+where
+    U1: Unsigned + NonZero + Gcd<U2>,
+    U2: Unsigned + NonZero,
+    Gcf<U1, U2>: Unsigned + NonZero,
+{
+    type Output = PInt<Gcf<U1, U2>>;
+}
+
+impl<U1, U2> Gcd<NInt<U2>> for NInt<U1>
+where
+    U1: Unsigned + NonZero + Gcd<U2>,
+    U2: Unsigned + NonZero,
+    Gcf<U1, U2>: Unsigned + NonZero,
+{
+    type Output = PInt<Gcf<U1, U2>>;
+}
+
+// ---------------------------------------------------------------------------------------
 // Min
 use {Max, Maximum, Min, Minimum};
 
