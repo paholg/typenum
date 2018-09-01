@@ -526,3 +526,19 @@ pub trait Logarithm2 {
     /// The result of the integer binary logarithm.
     type Output;
 }
+
+/// A **type operator** that computes the [greatest common divisor][gcd] of `Self` and `Rhs`.
+///
+/// [gcd]: https://en.wikipedia.org/wiki/Greatest_common_divisor
+///
+/// # Example
+///
+/// ```rust
+/// use typenum::{Gcd, U12, U8, Unsigned};
+///
+/// assert_eq!(<U12 as Gcd<U8>>::Output::to_i32(), 4);
+/// ```
+pub trait Gcd<Rhs> {
+    /// The greatest common divisor.
+    type Output;
+}
