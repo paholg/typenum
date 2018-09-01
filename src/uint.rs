@@ -29,7 +29,10 @@
 //!
 
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
-use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, NonZero, Ord, Pow, SquareRoot};
+use {
+    Cmp, Equal, Gcd, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, Maximum, Minimum, NonZero,
+    Ord, Pow, SquareRoot,
+};
 
 use bit::{Bit, B0, B1};
 
@@ -45,7 +48,7 @@ use private::{
 use private::{Internal, InternalMarker};
 
 use consts::{U0, U1};
-use {Add1, Double, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
+use {Add1, Double, Gcf, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
 
 pub use marker_traits::{PowerOfTwo, Unsigned};
 
@@ -1356,6 +1359,113 @@ where
     #[inline]
     fn private_pow(self, y: Y, n: UInt<UInt<U, B>, B1>) -> Self::Output {
         (self * self).private_pow(self * y, n.msb)
+    }
+}
+
+//------------------------------------------
+// Greatest Common Divisor
+
+/// The even number 2*N
+type Even<N> = UInt<N, B0>;
+
+/// The odd number 2*N + 1
+type Odd<N> = UInt<N, B1>;
+
+// gcd(0, 0) = 0
+impl Gcd<U0> for U0 {
+    type Output = U0;
+}
+
+// gcd(x, 0) = x
+impl<X> Gcd<U0> for X
+where
+    X: Unsigned + NonZero,
+{
+    type Output = X;
+}
+
+// gcd(0, y) = y
+impl<Y> Gcd<Y> for U0
+where
+    Y: Unsigned + NonZero,
+{
+    type Output = Y;
+}
+
+// gcd(x, y) = 2*gcd(x/2, y/2) if both x and y even
+impl<Xp, Yp> Gcd<Even<Yp>> for Even<Xp>
+where
+    Xp: Gcd<Yp>,
+    Even<Xp>: NonZero,
+    Even<Yp>: NonZero,
+{
+    type Output = UInt<Gcf<Xp, Yp>, B0>;
+}
+
+// gcd(x, y) = gcd(x, y/2) if x odd and y even
+impl<Xp, Yp> Gcd<Even<Yp>> for Odd<Xp>
+where
+    Odd<Xp>: Gcd<Yp>,
+    Even<Yp>: NonZero,
+{
+    type Output = Gcf<Odd<Xp>, Yp>;
+}
+
+// gcd(x, y) = gcd(x/2, y) if x even and y odd
+impl<Xp, Yp> Gcd<Odd<Yp>> for Even<Xp>
+where
+    Xp: Gcd<Odd<Yp>>,
+    Even<Xp>: NonZero,
+{
+    type Output = Gcf<Xp, Odd<Yp>>;
+}
+
+// gcd(x, y) = gcd([max(x, y) - min(x, y)], min(x, y)) if both x and y odd
+//
+// This will immediately invoke the case for x even and y odd because the difference of two odd
+// numbers is an even number.
+impl<Xp, Yp> Gcd<Odd<Yp>> for Odd<Xp>
+where
+    Odd<Xp>: Max<Odd<Yp>> + Min<Odd<Yp>>,
+    Odd<Yp>: Max<Odd<Xp>> + Min<Odd<Xp>>,
+    Maximum<Odd<Xp>, Odd<Yp>>: Sub<Minimum<Odd<Xp>, Odd<Yp>>>,
+    Diff<Maximum<Odd<Xp>, Odd<Yp>>, Minimum<Odd<Xp>, Odd<Yp>>>: Gcd<Minimum<Odd<Xp>, Odd<Yp>>>,
+{
+    type Output = Gcf<
+        Diff<
+            Maximum<Odd<Xp>, Odd<Yp>>,
+            Minimum<Odd<Xp>, Odd<Yp>>
+        >,
+        Minimum<Odd<Xp>, Odd<Yp>>
+    >;
+}
+
+#[cfg(test)]
+mod gcd_tests {
+    use super::*;
+    use consts::*;
+
+    macro_rules! gcd_test {
+        (
+            $( $a:ident, $b:ident => $c:ident ),* $(,)*
+        ) => {
+            $(
+                assert_eq!(<Gcf<$a, $b> as Unsigned>::to_usize(), $c::to_usize());
+                assert_eq!(<Gcf<$b, $a> as Unsigned>::to_usize(), $c::to_usize());
+             )*
+        }
+    }
+
+    #[test]
+    fn gcd() {
+        gcd_test! {
+            U0,   U42   => U42,
+            U12,  U8    => U4,
+            U13,  U1013 => U1,  // Two primes
+            U9,   U26   => U1,  // Not prime but coprime
+            U143, U273  => U13,
+            U117, U273  => U39,
+        }
     }
 }
 

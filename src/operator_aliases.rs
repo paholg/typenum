@@ -22,7 +22,7 @@
 
 // Aliases!!!
 use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Shr, Sub};
-use type_operators::{Abs, Cmp, Len, Logarithm2, Max, Min, PartialDiv, Pow, SquareRoot};
+use type_operators::{Abs, Cmp, Gcd, Len, Logarithm2, Max, Min, PartialDiv, Pow, SquareRoot};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -59,6 +59,9 @@ pub type AbsVal<A> = <A as Abs>::Output;
 
 /// Alias for the associated type of `Pow`: `Exp<A, B> = <A as Pow<B>>::Output`
 pub type Exp<A, B> = <A as Pow<B>>::Output;
+
+/// Alias for the associated type of `Gcd`: `Gcf<A, B> = <A as Gcd<B>>::Output>`
+pub type Gcf<A, B> = <A as Gcd<B>>::Output;
 
 /// Alias to make it easy to add 1: `Add1<A> = <A as Add<B1>>::Output`
 pub type Add1<A> = <A as Add<::bit::B1>>::Output;
