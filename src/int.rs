@@ -159,39 +159,41 @@ impl<U: Unsigned + NonZero> Integer for PInt<U> {
     }
 }
 
+// Simply negating the result of e.g. `U::I8` will result in overflow for `std::i8::MIN`. Instead,
+// we use the fact that `U: NonZero` by subtracting one from the `U::U8` before negating.
 impl<U: Unsigned + NonZero> Integer for NInt<U> {
-    const I8: i8 = -U::I8;
-    const I16: i16 = -U::I16;
-    const I32: i32 = -U::I32;
-    const I64: i64 = -U::I64;
+    const I8: i8 = -((U::U8 - 1) as i8) - 1;
+    const I16: i16 = -((U::U16 - 1) as i16) - 1;
+    const I32: i32 = -((U::U32 - 1) as i32) - 1;
+    const I64: i64 = -((U::U64 - 1) as i64) - 1;
     #[cfg(feature = "i128")]
-    const I128: i128 = -U::I128;
-    const ISIZE: isize = -U::ISIZE;
+    const I128: i128 = -((U::U128 - 1) as i128) - 1;
+    const ISIZE: isize = -((U::USIZE - 1) as isize) - 1;
 
     #[inline]
     fn to_i8() -> i8 {
-        -<U as Unsigned>::to_i8()
+        Self::I8
     }
     #[inline]
     fn to_i16() -> i16 {
-        -<U as Unsigned>::to_i16()
+        Self::I16
     }
     #[inline]
     fn to_i32() -> i32 {
-        -<U as Unsigned>::to_i32()
+        Self::I32
     }
     #[inline]
     fn to_i64() -> i64 {
-        -<U as Unsigned>::to_i64()
+        Self::I64
     }
     #[cfg(feature = "i128")]
     #[inline]
     fn to_i128() -> i128 {
-        -<U as Unsigned>::to_i128()
+        Self::I128
     }
     #[inline]
     fn to_isize() -> isize {
-        -<U as Unsigned>::to_isize()
+        Self::ISIZE
     }
 }
 
@@ -938,5 +940,16 @@ where
     type Output = NInt<Minimum<Ul, Ur>>;
     fn max(self, _: NInt<Ur>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use ::{Integer, consts::*};
+
+    #[test]
+    fn to_ix_min() {
+        assert_eq!(N128::to_i8(), ::core::i8::MIN);
+        assert_eq!(N32768::to_i16(), ::core::i16::MIN);
     }
 }
