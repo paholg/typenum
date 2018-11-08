@@ -58,9 +58,15 @@
 // trace_macros!(true);
 
 use core::cmp::Ordering;
-
+#[cfg(not(target_os = "windows"))]
 include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+#[cfg(not(target_os = "windows"))]
 include!(concat!(env!("OUT_DIR"), "/op.rs"));
+#[cfg(target_os = "windows")]
+include!(concat!(env!("OUT_DIR"), "\\consts.rs"));
+#[cfg(target_os = "windows")]
+include!(concat!(env!("OUT_DIR"), "\\op.rs"));
+
 pub mod bit;
 pub mod int;
 pub mod marker_traits;
