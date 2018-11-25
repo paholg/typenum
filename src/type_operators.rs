@@ -516,3 +516,13 @@ pub trait SquareRoot {
     /// The result of the integer square root.
     type Output;
 }
+
+/// A **type operator** for taking the integer binary logarithm of `Self`.
+///
+/// The integer binary logarighm of `n` is the largest integer `m` such
+/// that `n >= 2^m`. This definition is equivalent to truncating the
+/// real-valued binary logarithm: `floor(log2(n))`.
+pub trait Logarithm2 {
+    /// The result of the integer binary logarithm.
+    type Output;
+}

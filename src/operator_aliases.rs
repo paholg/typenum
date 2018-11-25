@@ -22,7 +22,7 @@
 
 // Aliases!!!
 use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Shr, Sub};
-use type_operators::{Abs, Cmp, Len, Max, Min, PartialDiv, Pow, SquareRoot};
+use type_operators::{Abs, Cmp, Len, Logarithm2, Max, Min, PartialDiv, Pow, SquareRoot};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -102,3 +102,5 @@ pub type GrEq<A, B> = <A as IsGreaterOrEqual<B>>::Output;
 pub type LeEq<A, B> = <A as IsLessOrEqual<B>>::Output;
 /// Alias for the associated type of `IsNotEqual`: `NotEq<A, B> = <A as IsNotEqual<B>>::Output`
 pub type NotEq<A, B> = <A as IsNotEqual<B>>::Output;
+/// Alias for the associated type of `Logarithm2`: `Log2<A> = <A as Logarithm2>::Output`
+pub type Log2<A> = <A as Logarithm2>::Output;
