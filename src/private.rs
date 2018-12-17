@@ -61,6 +61,11 @@ pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
     _marker: (IU, B),
 }
 
+pub trait PrivateNot {
+    type Output;
+}
+pub type PrivateNotOut<A> = <A as PrivateNot>::Output;
+
 /// Does the real anding for `UInt`s; `And` just calls this and then `Trim`.
 pub trait PrivateAnd<Rhs = Self> {
     type Output;

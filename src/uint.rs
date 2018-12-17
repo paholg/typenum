@@ -29,17 +29,17 @@
 //!
 
 use core::marker::PhantomData;
-use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
+use core::ops::{Not, Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow, SquareRoot};
 
 use bit::{B0, B1, Bit};
 
 use private::{
-    BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
+    BitDiff, PrivateNot, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
 };
 
 use private::{
-    BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut, PrivateXorOut, TrimOut,
+    BitDiffOut, PrivateNotOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut, PrivateXorOut, TrimOut,
 };
 
 use consts::{U0, U1};
@@ -477,6 +477,75 @@ where
     Ul: PrivateSub<Ur>,
 {
     type Output = UInt<PrivateSubOut<Ul, Ur>, B0>;
+}
+
+// ---------------------------------------------------------------------------------------
+// Not unsigned integers
+
+impl Not for UTerm {
+    type Output = UTerm;
+
+    fn not(self) -> Self {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+impl<U: Unsigned, B: Bit> Not for UInt<U, B>
+where
+    UInt<U, B>: PrivateNot,
+    PrivateNotOut<UInt<U, B>>: Trim,
+{
+    type Output = TrimOut<PrivateNotOut<UInt<U, B>>>;
+
+    fn not(self) -> Self::Output {
+        unsafe { ::core::mem::uninitialized() }
+    }
+}
+
+impl PrivateNot for UTerm {
+    type Output = UTerm;
+}
+
+impl PrivateNot for UInt<UTerm, B1>
+{
+    type Output = UInt<UTerm, B0>;
+}
+
+impl PrivateNot for UInt<UTerm, B0>
+{
+    type Output = UInt<UTerm, B1>;
+}
+
+impl<U: Unsigned, B: Bit> PrivateNot for UInt<UInt<U, B>, B1>
+where
+  U: PrivateNot,
+  PrivateNotOut<U>: Unsigned,
+{
+    type Output = UInt<PrivateNotOut<U>, B0>;
+}
+
+impl<U: Unsigned, B: Bit> PrivateNot for UInt<UInt<U, B>, B0>
+where
+  U: PrivateNot,
+  PrivateNotOut<U>: Unsigned,
+{
+    type Output = UInt<PrivateNotOut<U>, B1>;
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::UInt;
+    use consts::{U0, U2, U11, U15};
+
+    #[test]
+    fn test_not() {
+        let fifteen: U15 = UInt::new();
+        let _zero: U0 = !fifteen;
+
+        let eleven: U11 = UInt::new();
+        let _two: U2 = !eleven;
+    }
 }
 
 // ---------------------------------------------------------------------------------------
