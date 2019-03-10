@@ -30,12 +30,12 @@
 
 use core::marker::PhantomData;
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
-use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, NonZero, Ord, Pow, SquareRoot};
+use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, NonZero, Ord, Pow, SquareRoot};
 
 use bit::{B0, B1, Bit};
 
 use private::{
-    BitDiff, PrivateAnd, PrivateCmp, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
+    BitDiff, PrivateAnd, PrivateCmp, PrivateLogarithm2, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
 };
 
 use private::{
@@ -43,7 +43,7 @@ use private::{
 };
 
 use consts::{U0, U1};
-use {Add1, Double, GrEq, Length, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
+use {Add1, Double, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
 
 pub use marker_traits::{PowerOfTwo, Unsigned};
 
@@ -1654,5 +1654,75 @@ fn sqrt_test() {
 
     assert_eq!(5, <Sqrt<U25>>::to_u32());
     assert_eq!(5, <Sqrt<U26>>::to_u32());
+    // ...
+}
+
+// -----------------------------------------
+// Logarithm2
+
+impl<N> Logarithm2 for N
+where
+    N: PrivateLogarithm2,
+{
+    type Output = <Self as PrivateLogarithm2>::Output;
+}
+
+// log2(1) = 0.
+impl PrivateLogarithm2 for UInt<UTerm, B1> {
+    type Output = U0;
+}
+
+// General case of log2(Self) where Self >= 2.
+impl<U, B> PrivateLogarithm2 for UInt<U, B>
+where
+    U: Unsigned + Logarithm2,
+    B: Bit,
+    Log2<U>: Add<B1>,
+{
+    type Output = Add1<Log2<U>>;
+}
+
+#[test]
+fn log2_test() {
+    use consts::*;
+
+    assert_eq!(0, <Log2<U1>>::to_u32());
+
+    assert_eq!(1, <Log2<U2>>::to_u32());
+    assert_eq!(1, <Log2<U3>>::to_u32());
+
+    assert_eq!(2, <Log2<U4>>::to_u32());
+    assert_eq!(2, <Log2<U5>>::to_u32());
+    assert_eq!(2, <Log2<U6>>::to_u32());
+    assert_eq!(2, <Log2<U7>>::to_u32());
+
+    assert_eq!(3, <Log2<U8>>::to_u32());
+    assert_eq!(3, <Log2<U9>>::to_u32());
+    assert_eq!(3, <Log2<U10>>::to_u32());
+    assert_eq!(3, <Log2<U11>>::to_u32());
+    assert_eq!(3, <Log2<U12>>::to_u32());
+    assert_eq!(3, <Log2<U13>>::to_u32());
+    assert_eq!(3, <Log2<U14>>::to_u32());
+    assert_eq!(3, <Log2<U15>>::to_u32());
+
+    assert_eq!(4, <Log2<U16>>::to_u32());
+    assert_eq!(4, <Log2<U17>>::to_u32());
+    assert_eq!(4, <Log2<U18>>::to_u32());
+    assert_eq!(4, <Log2<U19>>::to_u32());
+    assert_eq!(4, <Log2<U20>>::to_u32());
+    assert_eq!(4, <Log2<U21>>::to_u32());
+    assert_eq!(4, <Log2<U22>>::to_u32());
+    assert_eq!(4, <Log2<U23>>::to_u32());
+    assert_eq!(4, <Log2<U24>>::to_u32());
+    assert_eq!(4, <Log2<U25>>::to_u32());
+    assert_eq!(4, <Log2<U26>>::to_u32());
+    assert_eq!(4, <Log2<U27>>::to_u32());
+    assert_eq!(4, <Log2<U28>>::to_u32());
+    assert_eq!(4, <Log2<U29>>::to_u32());
+    assert_eq!(4, <Log2<U30>>::to_u32());
+    assert_eq!(4, <Log2<U31>>::to_u32());
+
+    assert_eq!(5, <Log2<U32>>::to_u32());
+    assert_eq!(5, <Log2<U33>>::to_u32());
     // ...
 }

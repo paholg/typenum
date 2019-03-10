@@ -219,6 +219,14 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
             n_args: 2,
             op_type: Function,
         },
+        Op {
+            token: "log2",
+            operator: "Log2",
+            example: ("log2(U9)", "U3"),
+            precedence: !0,
+            n_args: 1,
+            op_type: Function,
+        },
     ];
 
     use std::io::Write;

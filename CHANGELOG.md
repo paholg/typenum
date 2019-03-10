@@ -3,6 +3,8 @@
 This project follows semantic versioning.
 
 ### unreleased
+- [added] Integer `log2` to the `op!` macro.
+- [added] Integer binary logarithm operator `Logarithm2` with alias `Log2`.
 - [changed] Removed `feature(i128_type)` when running with the `i128` feature. Kept the feature flag
   for typenum to maintain compatibility with old Rust versions.
 - [added] Integer `sqrt` to the `op!` macro.
