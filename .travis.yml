@@ -21,7 +21,8 @@ matrix:
         - rustup component add clippy
       script: |
         cargo fmt --all -- --check &&
-        cargo clippy --all-features -- -D clippy &&
+        cargo clippy -- -D warnings &&
+        cargo clippy --all-features -- -D warnings &&
         cargo build --features "no_std strict" &&
         cargo test --features "no_std strict" &&
         cargo doc --features "no_std strict"
