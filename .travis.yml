@@ -2,7 +2,6 @@ language: rust
 cache: cargo
 sudo: false
 rust:
-  - stable
   - beta
   - nightly
 
@@ -10,28 +9,32 @@ notifications:
   email:
     recipients: paho@paholg.com
 
+before_script:
+  - rustup component add rustfmt-preview
+  - rustup component add clippy
+
 matrix:
   include:
-    - rust: nightly-2018-06-19
-      env:
-        - CLIPPY_VERSION=0.0.209
+    - rust: stable
       before_script:
         - rustup component add rustfmt-preview
-        - cargo install clippy --version $CLIPPY_VERSION || echo "Clippy already installed"
-        - cargo clippy --version
-      script:
+        - rustup component add clippy
+      script: |
         cargo fmt --all -- --check &&
-        cargo clippy --all-features -- -D clippy
+        cargo clippy --all-features -- -D clippy &&
+        cargo build --features "no_std strict" &&
+        cargo test --features "no_std strict" &&
+        cargo doc --features "no_std strict"
+      after_success:
+        - test $TRAVIS_PULL_REQUEST == "false" &&
+          test $TRAVIS_BRANCH == "master" &&
+          cargo publish --token ${CRATESIO_TOKEN}
 
 script: |
   cargo build --features "no_std strict" &&
   cargo test --features "no_std strict" &&
   cargo doc --features "no_std strict"
 
-after_success:
-  - test $TRAVIS_PULL_REQUEST == "false" &&
-    test $TRAVIS_BRANCH == "master" &&
-    cargo publish --token ${CRATESIO_TOKEN}
 
 env:
   global:
