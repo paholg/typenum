@@ -49,7 +49,11 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 #![cfg_attr(
     feature = "cargo-clippy",
-    allow(clippy::type_complexity, clippy::len_without_is_empty, clippy::new_without_default)
+    allow(
+        clippy::type_complexity,
+        clippy::len_without_is_empty,
+        clippy::new_without_default
+    )
 )]
 
 // For debugging macros:
