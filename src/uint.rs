@@ -32,10 +32,11 @@ use core::marker::PhantomData;
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, NonZero, Ord, Pow, SquareRoot};
 
-use bit::{B0, B1, Bit};
+use bit::{Bit, B0, B1};
 
 use private::{
-    BitDiff, PrivateAnd, PrivateCmp, PrivateLogarithm2, PrivatePow, PrivateSquareRoot, PrivateSub, PrivateXor, Trim,
+    BitDiff, PrivateAnd, PrivateCmp, PrivateLogarithm2, PrivatePow, PrivateSquareRoot, PrivateSub,
+    PrivateXor, Trim,
 };
 
 use private::{
