@@ -22,7 +22,7 @@
 #![doc(hidden)]
 
 // use ::{Sub};
-use bit::{B0, B1, Bit};
+use bit::{Bit, B0, B1};
 use uint::{UInt, UTerm, Unsigned};
 
 /// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`

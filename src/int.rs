@@ -30,7 +30,7 @@
 use core::marker::PhantomData;
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
-use bit::{B0, B1, Bit};
+use bit::{Bit, B0, B1};
 use consts::{N1, P1, U0, U1};
 use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
 use uint::{UInt, Unsigned};
@@ -945,7 +945,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use ::{Integer, consts::*};
+    use {consts::*, Integer};
 
     #[test]
     fn to_ix_min() {

@@ -161,7 +161,8 @@ pub mod consts {{
     pub type False = B0;
 ",
         highest = highest
-    ).unwrap();
+    )
+    .unwrap();
 
     for u in uints {
         write!(f, "    pub type U{} = {};\n", u, gen_uint(u)).unwrap();
@@ -171,7 +172,8 @@ pub mod consts {{
                 f,
                 "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
                 i = i
-            ).unwrap();
+            )
+            .unwrap();
         }
     }
     write!(f, "}}").unwrap();
