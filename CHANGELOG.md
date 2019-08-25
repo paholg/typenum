@@ -2,13 +2,16 @@
 
 This project follows semantic versioning.
 
-### unreleased
+### Unreleased
+
+### 1.11.0 (2019-08-25)
 - [added] Integer `log2` to the `op!` macro.
 - [added] Integer binary logarithm operator `Logarithm2` with alias `Log2`.
-- [changed] Removed `feature(i128_type)` when running with the `i128` feature. Kept the feature flag
+- [changed] Removed `feature(i128_type)` when running with the `i128` feature. Kept the feature flag.
   for typenum to maintain compatibility with old Rust versions.
 - [added] Integer `sqrt` to the `op!` macro.
 - [added] Integer square root operator `SquareRoot` with alias `Sqrt`.
+- [fixed] Bug with attempting to create U1024 type alias twice.
 
 ### 1.10.0 (2018-03-11)
 - [added] The `PowerOfTwo` marker trait.
