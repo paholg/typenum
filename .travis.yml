@@ -10,10 +10,6 @@ notifications:
   email:
     recipients: paho@paholg.com
 
-before_script:
-  - rustup component add rustfmt-preview
-  - rustup component add clippy
-
 matrix:
   include:
     - rust: stable
