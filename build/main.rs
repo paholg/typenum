@@ -89,6 +89,7 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
+    println!("cargo:rustc-env=TYPENUM_BUILD_OP={}", dest.display());
 
     let mut f = File::create(&dest).unwrap();
 
