@@ -2,7 +2,13 @@
 
 This project follows semantic versioning.
 
+The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested against this Rust
+version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
+
 ### Unreleased
+
+### 1.11.1 (2019-08-25)
+- [fixed] Builds on earlier Rust builds again and added Rust 1.22.0 to Travis to prevent future breakage.
 
 ### 1.11.0 (2019-08-25)
 - [added] Integer `log2` to the `op!` macro.
