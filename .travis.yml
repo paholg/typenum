@@ -4,6 +4,7 @@ sudo: false
 rust:
   - beta
   - nightly
+  - 1.22.0
 
 notifications:
   email:

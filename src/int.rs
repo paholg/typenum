@@ -945,7 +945,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use {consts::*, Integer};
+    use consts::*;
+    use Integer;
 
     #[test]
     fn to_ix_min() {
