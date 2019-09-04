@@ -1070,6 +1070,7 @@ where
 // Greatest Common Divisor
 
 /// The even number 2*N
+#[allow(unused)] // Silence spurious warning on older versions of rust
 type Even<N> = UInt<N, B0>;
 
 /// The odd number 2*N + 1
