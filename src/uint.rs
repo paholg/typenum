@@ -1083,39 +1083,44 @@ impl Gcd<U0> for U0 {
 
 /// gcd(x, 0) = x
 impl<X> Gcd<U0> for X
-    where X: Unsigned + NonZero,
+where
+    X: Unsigned + NonZero,
 {
     type Output = X;
 }
 
 /// gcd(0, y) = y
 impl<Y> Gcd<Y> for U0
-    where Y: Unsigned + NonZero,
+where
+    Y: Unsigned + NonZero,
 {
     type Output = Y;
 }
 
 /// gcd(x, y) = 2*gcd(x/2, y/2) if both x and y even
 impl<Xp, Yp> Gcd<Even<Yp>> for Even<Xp>
-    where Xp: Gcd<Yp>,
-          Even<Xp>: NonZero,
-          Even<Yp>: NonZero,
+where
+    Xp: Gcd<Yp>,
+    Even<Xp>: NonZero,
+    Even<Yp>: NonZero,
 {
     type Output = UInt<Gcf<Xp, Yp>, B0>;
 }
 
 /// gcd(x, y) = gcd(x, y/2) if x odd and y even
 impl<Xp, Yp> Gcd<Even<Yp>> for Odd<Xp>
-    where Odd<Xp>: Gcd<Yp>,
-          Even<Yp>: NonZero,
+where
+    Odd<Xp>: Gcd<Yp>,
+    Even<Yp>: NonZero,
 {
     type Output = Gcf<Odd<Xp>, Yp>;
 }
 
 /// gcd(x, y) = gcd(x/2, y) if x even and y odd
 impl<Xp, Yp> Gcd<Odd<Yp>> for Even<Xp>
-    where Xp: Gcd<Odd<Yp>>,
-          Even<Xp>: NonZero,
+where
+    Xp: Gcd<Odd<Yp>>,
+    Even<Xp>: NonZero,
 {
     type Output = Gcf<Xp, Odd<Yp>>;
 }
@@ -1125,19 +1130,14 @@ impl<Xp, Yp> Gcd<Odd<Yp>> for Even<Xp>
 /// This will immediately invoke the case for x even and y odd because the difference of two odd
 /// numbers is an even number.
 impl<Xp, Yp> Gcd<Odd<Yp>> for Odd<Xp>
-    where Odd<Xp>: Max<Odd<Yp>> + Min<Odd<Yp>>,
-          Odd<Yp>: Max<Odd<Xp>> + Min<Odd<Xp>>,
-          Maximum<Odd<Xp>, Odd<Yp>>: Sub<Minimum<Odd<Xp>, Odd<Yp>>>,
-          Diff<Maximum<Odd<Xp>, Odd<Yp>>, Minimum<Odd<Xp>, Odd<Yp>>>: Gcd<Minimum<Odd<Xp>, Odd<Yp>>>,
+where
+    Odd<Xp>: Max<Odd<Yp>> + Min<Odd<Yp>>,
+    Odd<Yp>: Max<Odd<Xp>> + Min<Odd<Xp>>,
+    Maximum<Odd<Xp>, Odd<Yp>>: Sub<Minimum<Odd<Xp>, Odd<Yp>>>,
+    Diff<Maximum<Odd<Xp>, Odd<Yp>>, Minimum<Odd<Xp>, Odd<Yp>>>: Gcd<Minimum<Odd<Xp>, Odd<Yp>>>,
 {
     type Output =
-        Gcf<
-            Diff<
-                Maximum<Odd<Xp>, Odd<Yp>>,
-                Minimum<Odd<Xp>, Odd<Yp>>
-            >,
-            Minimum<Odd<Xp>, Odd<Yp>>
-        >;
+        Gcf<Diff<Maximum<Odd<Xp>, Odd<Yp>>, Minimum<Odd<Xp>, Odd<Yp>>>, Minimum<Odd<Xp>, Odd<Yp>>>;
 }
 
 #[cfg(test)]
