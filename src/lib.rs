@@ -62,8 +62,16 @@
 
 use core::cmp::Ordering;
 
-include!(env!("TYPENUM_BUILD_OP"));
-include!(env!("TYPENUM_BUILD_CONSTS"));
+#[cfg(force_unix_path_separator)]
+mod generated {
+    include!(concat!(env!("OUT_DIR"), "/op.rs"));
+    include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+}
+#[cfg(not(force_unix_path_separator))]
+mod generated {
+    include!(env!("TYPENUM_BUILD_OP"));
+    include!(env!("TYPENUM_BUILD_CONSTS"));
+}
 
 pub mod bit;
 pub mod int;
@@ -75,6 +83,7 @@ pub mod uint;
 
 pub mod array;
 
+pub use generated::consts as consts;
 pub use consts::*;
 pub use marker_traits::*;
 pub use operator_aliases::*;
