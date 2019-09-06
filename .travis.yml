@@ -27,19 +27,20 @@ matrix:
         cargo fmt --all -- --check &&
         cargo clippy -- -D warnings &&
         cargo clippy --all-features -- -D warnings &&
-        cargo build --features "no_std strict" &&
-        cargo test --features "no_std strict" &&
-        cargo doc --features "no_std strict"
-      after_success:
-        - test $TRAVIS_PULL_REQUEST == "false" &&
-          test $TRAVIS_BRANCH == "master" &&
-          cargo publish --token ${CRATESIO_TOKEN}
+        cargo build --features "strict" &&
+        cargo test --features "strict" &&
+        cargo doc --features "strict"
 
 script: |
-  cargo build --features "no_std strict" &&
-  cargo test --features "no_std strict" &&
-  cargo doc --features "no_std strict"
+  cargo build --features "strict" &&
+  cargo test --features "strict" &&
+  cargo doc --features "strict"
 
+deploy:
+  provider: cargo
+  token: $CRATESIO_TOKEN
+  on:
+    tags: true
 
 env:
   global:
