@@ -5,6 +5,10 @@ rust:
   - beta
   - nightly
   - 1.22.0
+os:
+  - linux
+  - osx
+  - windows
 
 notifications:
   email:
