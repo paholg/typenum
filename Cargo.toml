@@ -9,7 +9,7 @@
   documentation = "https://docs.rs/typenum"
   repository = "https://github.com/paholg/typenum"
   readme = "README.md"
-  license = "MIT/Apache-2.0"
+  license = "MIT OR Apache-2.0"
   description = "Typenum is a Rust library for type-level numbers evaluated at compile time. It currently supports bits, unsigned integers, and signed integers. It also provides a type-level array of type-level numbers, but its implementation is incomplete."
   categories = ["no-std"]
 
