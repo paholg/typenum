@@ -53,6 +53,7 @@ macro_rules! tarr {
 /// Length of `ATerm` by itself is 0
 impl Len for ATerm {
     type Output = U0;
+    #[inline]
     fn len(&self) -> Self::Output {
         UTerm
     }
@@ -66,6 +67,7 @@ where
     Sum<Length<A>, B1>: Unsigned,
 {
     type Output = Add1<Length<A>>;
+    #[inline]
     fn len(&self) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -77,6 +79,7 @@ where
 
 impl Add<ATerm> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn add(self, _: ATerm) -> Self::Output {
         ATerm
     }
@@ -88,6 +91,7 @@ where
     Vl: Add<Vr>,
 {
     type Output = TArr<Sum<Vl, Vr>, Sum<Al, Ar>>;
+    #[inline]
     fn add(self, _: TArr<Vr, Ar>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -99,6 +103,7 @@ where
 
 impl Sub<ATerm> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn sub(self, _: ATerm) -> Self::Output {
         ATerm
     }
@@ -110,6 +115,7 @@ where
     Al: Sub<Ar>,
 {
     type Output = TArr<Diff<Vl, Vr>, Diff<Al, Ar>>;
+    #[inline]
     fn sub(self, _: TArr<Vr, Ar>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -120,6 +126,7 @@ where
 
 impl<Rhs> Mul<Rhs> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn mul(self, _: Rhs) -> Self::Output {
         ATerm
     }
@@ -131,6 +138,7 @@ where
     A: Mul<Rhs>,
 {
     type Output = TArr<Prod<V, Rhs>, Prod<A, Rhs>>;
+    #[inline]
     fn mul(self, _: Rhs) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -138,6 +146,7 @@ where
 
 impl Mul<ATerm> for Z0 {
     type Output = ATerm;
+    #[inline]
     fn mul(self, _: ATerm) -> Self::Output {
         ATerm
     }
@@ -148,6 +157,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = ATerm;
+    #[inline]
     fn mul(self, _: ATerm) -> Self::Output {
         ATerm
     }
@@ -158,6 +168,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = ATerm;
+    #[inline]
     fn mul(self, _: ATerm) -> Self::Output {
         ATerm
     }
@@ -168,6 +179,7 @@ where
     Z0: Mul<A>,
 {
     type Output = TArr<Z0, Prod<Z0, A>>;
+    #[inline]
     fn mul(self, _: TArr<V, A>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -179,6 +191,7 @@ where
     PInt<U>: Mul<A> + Mul<V>,
 {
     type Output = TArr<Prod<PInt<U>, V>, Prod<PInt<U>, A>>;
+    #[inline]
     fn mul(self, _: TArr<V, A>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -190,6 +203,7 @@ where
     NInt<U>: Mul<A> + Mul<V>,
 {
     type Output = TArr<Prod<NInt<U>, V>, Prod<NInt<U>, A>>;
+    #[inline]
     fn mul(self, _: TArr<V, A>) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -200,6 +214,7 @@ where
 
 impl<Rhs> Div<Rhs> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn div(self, _: Rhs) -> Self::Output {
         ATerm
     }
@@ -211,6 +226,7 @@ where
     A: Div<Rhs>,
 {
     type Output = TArr<Quot<V, Rhs>, Quot<A, Rhs>>;
+    #[inline]
     fn div(self, _: Rhs) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -221,6 +237,7 @@ where
 
 impl<Rhs> PartialDiv<Rhs> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn partial_div(self, _: Rhs) -> Self::Output {
         ATerm
     }
@@ -232,6 +249,7 @@ where
     A: PartialDiv<Rhs>,
 {
     type Output = TArr<PartialQuot<V, Rhs>, PartialQuot<A, Rhs>>;
+    #[inline]
     fn partial_div(self, _: Rhs) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -243,6 +261,7 @@ use core::ops::Rem;
 
 impl<Rhs> Rem<Rhs> for ATerm {
     type Output = ATerm;
+    #[inline]
     fn rem(self, _: Rhs) -> Self::Output {
         ATerm
     }
@@ -254,6 +273,7 @@ where
     A: Rem<Rhs>,
 {
     type Output = TArr<Mod<V, Rhs>, Mod<A, Rhs>>;
+    #[inline]
     fn rem(self, _: Rhs) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -265,6 +285,7 @@ use core::ops::Neg;
 
 impl Neg for ATerm {
     type Output = ATerm;
+    #[inline]
     fn neg(self) -> Self::Output {
         ATerm
     }
@@ -276,6 +297,7 @@ where
     A: Neg,
 {
     type Output = TArr<Negate<V>, Negate<A>>;
+    #[inline]
     fn neg(self) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
