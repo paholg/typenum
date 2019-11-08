@@ -44,6 +44,6 @@ length you can generically refer to.
 
 
 Typenum's error messages aren't great, and can be difficult to parse. The good news is
-that the fine folks at Auxon have written a tool to help with it. Pleast take a look at
-[tnfilt](https://github.com/auxoncorp/tnfilt)
+that the fine folks at Auxon have written a tool to help with it. Please take a look at
+[tnfilt](https://github.com/auxoncorp/tnfilt).
 
