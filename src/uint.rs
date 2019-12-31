@@ -26,12 +26,11 @@
 //! assert_eq!(<U3 as Div<U2>>::Output::to_u32(), 1);
 //! assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
 //! ```
-//!
 
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 use {
     Cmp, Equal, Gcd, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, Maximum, Minimum, NonZero,
-    Ord, Pow, SquareRoot,
+    Ord, Pow, SquareRoot, Zero,
 };
 
 use bit::{Bit, B0, B1};
@@ -238,6 +237,7 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
+impl Zero for UTerm {}
 
 impl PowerOfTwo for UInt<UTerm, B1> {}
 impl<U: Unsigned + PowerOfTwo> PowerOfTwo for UInt<U, B0> {}

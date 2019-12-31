@@ -12,7 +12,7 @@
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 use private::InternalMarker;
-use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
+use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo, Zero};
 
 pub use marker_traits::Bit;
 
@@ -68,6 +68,8 @@ impl Bit for B1 {
     }
 }
 
+
+impl Zero for B0 {}
 impl NonZero for B1 {}
 impl PowerOfTwo for B1 {}
 

@@ -34,7 +34,7 @@ use consts::{N1, P1, U0, U1};
 use private::{Internal, InternalMarker};
 use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
 use uint::{UInt, Unsigned};
-use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
+use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo, Zero};
 
 pub use marker_traits::Integer;
 
@@ -80,6 +80,7 @@ impl Z0 {
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
+impl Zero for Z0 {}
 
 impl<U: Unsigned + NonZero + PowerOfTwo> PowerOfTwo for PInt<U> {}
 
