@@ -13,6 +13,9 @@
   description = "Typenum is a Rust library for type-level numbers evaluated at compile time. It currently supports bits, unsigned integers, and signed integers. It also provides a type-level array of type-level numbers, but its implementation is incomplete."
   categories = ["no-std"]
 
+[dependencies]
+  typenum-macro = { version = "0.1.0", path = "typenum-macro" }
+
 [lib]
   name = "typenum"
 
