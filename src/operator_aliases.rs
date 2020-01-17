@@ -7,7 +7,6 @@
 //!
 //! ```rust
 //! # #[macro_use] extern crate typenum;
-//! # fn main() {
 //! use std::ops::Mul;
 //! use typenum::{Prod, P5, P7};
 //!
@@ -15,7 +14,6 @@
 //! type Y = Prod<P7, P5>;
 //!
 //! assert_type_eq!(X, Y);
-//! # }
 //! ```
 //!
 //!
