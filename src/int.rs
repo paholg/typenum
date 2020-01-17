@@ -25,18 +25,16 @@
 //! assert_eq!(<N3 as Div<P2>>::Output::to_i32(), -1);
 //! assert_eq!(<N3 as Rem<P2>>::Output::to_i32(), -1);
 //! ```
-//!
 
+pub use crate::marker_traits::Integer;
+use crate::{
+    bit::{Bit, B0, B1},
+    consts::{N1, P1, U0, U1},
+    private::{Internal, InternalMarker, PrivateDivInt, PrivateIntegerAdd, PrivateRem},
+    uint::{UInt, Unsigned},
+    Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo,
+};
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
-
-use bit::{Bit, B0, B1};
-use consts::{N1, P1, U0, U1};
-use private::{Internal, InternalMarker};
-use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
-use uint::{UInt, Unsigned};
-use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
-
-pub use marker_traits::Integer;
 
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
@@ -610,7 +608,7 @@ impl_int_div!(NInt, NInt, PInt);
 // ---------------------------------------------------------------------------------------
 // PartialDiv
 
-use {PartialDiv, Quot};
+use crate::{PartialDiv, Quot};
 
 impl<M, N> PartialDiv<N> for M
 where
@@ -888,7 +886,7 @@ where
 
 // ---------------------------------------------------------------------------------------
 // Gcd
-use {Gcd, Gcf};
+use crate::{Gcd, Gcf};
 
 impl Gcd<Z0> for Z0 {
     type Output = Z0;
@@ -960,7 +958,7 @@ where
 
 // ---------------------------------------------------------------------------------------
 // Min
-use {Max, Maximum, Min, Minimum};
+use crate::{Max, Maximum, Min, Minimum};
 
 impl Min<Z0> for Z0 {
     type Output = Z0;
@@ -1179,8 +1177,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use consts::*;
-    use Integer;
+    use crate::{consts::*, Integer};
 
     #[test]
     fn to_ix_min() {

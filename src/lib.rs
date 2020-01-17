@@ -86,15 +86,16 @@ pub mod uint;
 
 pub mod array;
 
-pub use consts::*;
-pub use generated::consts;
-pub use marker_traits::*;
-pub use operator_aliases::*;
-pub use type_operators::*;
-
-pub use array::{ATerm, TArr};
-pub use int::{NInt, PInt};
-pub use uint::{UInt, UTerm};
+pub use crate::{
+    array::{ATerm, TArr},
+    consts::*,
+    generated::consts,
+    int::{NInt, PInt},
+    marker_traits::*,
+    operator_aliases::*,
+    type_operators::*,
+    uint::{UInt, UTerm},
+};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
