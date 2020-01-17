@@ -22,8 +22,8 @@
 #![doc(hidden)]
 
 // use ::{Sub};
-use bit::{Bit, B0, B1};
-use uint::{UInt, UTerm, Unsigned};
+use crate::bit::{Bit, B0, B1};
+use crate::uint::{UInt, UTerm, Unsigned};
 
 /// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`
 pub trait Trim {
@@ -146,10 +146,10 @@ where
 
 #[test]
 fn test_inversion() {
-    type Test4 = <::consts::U4 as Invert>::Output;
-    type Test5 = <::consts::U5 as Invert>::Output;
-    type Test12 = <::consts::U12 as Invert>::Output;
-    type Test16 = <::consts::U16 as Invert>::Output;
+    type Test4 = <crate::consts::U4 as Invert>::Output;
+    type Test5 = <crate::consts::U5 as Invert>::Output;
+    type Test12 = <crate::consts::U12 as Invert>::Output;
+    type Test16 = <crate::consts::U16 as Invert>::Output;
 
     assert_eq!(1, <Test4 as InvertedUnsigned>::to_u64());
     assert_eq!(5, <Test5 as InvertedUnsigned>::to_u64());
@@ -181,10 +181,10 @@ where
 
 #[test]
 fn test_double_inversion() {
-    type Test4 = <<::consts::U4 as Invert>::Output as Invert>::Output;
-    type Test5 = <<::consts::U5 as Invert>::Output as Invert>::Output;
-    type Test12 = <<::consts::U12 as Invert>::Output as Invert>::Output;
-    type Test16 = <<::consts::U16 as Invert>::Output as Invert>::Output;
+    type Test4 = <<crate::consts::U4 as Invert>::Output as Invert>::Output;
+    type Test5 = <<crate::consts::U5 as Invert>::Output as Invert>::Output;
+    type Test12 = <<crate::consts::U12 as Invert>::Output as Invert>::Output;
+    type Test16 = <<crate::consts::U16 as Invert>::Output as Invert>::Output;
 
     assert_eq!(4, <Test4 as Unsigned>::to_u64());
     assert_eq!(5, <Test5 as Unsigned>::to_u64());
@@ -274,7 +274,7 @@ pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Outpu
 
 // Comparisons
 
-use {Equal, False, Greater, Less, True};
+use crate::{Equal, False, Greater, Less, True};
 
 pub trait IsLessPrivate<Rhs, Cmp> {
     type Output: Bit;

@@ -3,7 +3,7 @@
 //!
 //! **Type operators** implemented:
 //!
-//! From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`,
+//! From `::core::ops`: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`,
 //!                 `Mul`, `Div`, and `Rem`.
 //! From `typenum`: `Same`, `Cmp`, and `Pow`.
 //!
@@ -28,25 +28,27 @@
 //! ```
 //!
 
+use crate::{
+    Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, NonZero, Ord, Pow, SquareRoot,
+};
 use core::marker::PhantomData;
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
-use {Cmp, Equal, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, NonZero, Ord, Pow, SquareRoot};
 
-use bit::{Bit, B0, B1};
+use crate::bit::{Bit, B0, B1};
 
-use private::{
+use crate::private::{
     BitDiff, PrivateAnd, PrivateCmp, PrivateLogarithm2, PrivatePow, PrivateSquareRoot, PrivateSub,
     PrivateXor, Trim,
 };
 
-use private::{
+use crate::private::{
     BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut, PrivateXorOut, TrimOut,
 };
 
-use consts::{U0, U1};
-use {Add1, Double, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
+use crate::consts::{U0, U1};
+use crate::{Add1, Double, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
 
-pub use marker_traits::{PowerOfTwo, Unsigned};
+pub use crate::marker_traits::{PowerOfTwo, Unsigned};
 
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
@@ -257,7 +259,7 @@ where
 {
     type Output = Add1<Length<U>>;
     fn len(&self) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -314,8 +316,8 @@ where
 /// `UTerm + U = U`
 impl<U: Unsigned> Add<U> for UTerm {
     type Output = U;
-    fn add(self, _: U) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn add(self, rhs: U) -> Self::Output {
+        rhs
     }
 }
 
@@ -334,7 +336,9 @@ where
 {
     type Output = UInt<Sum<Ul, Ur>, B0>;
     fn add(self, _: UInt<Ur, B0>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -345,7 +349,9 @@ where
 {
     type Output = UInt<Sum<Ul, Ur>, B1>;
     fn add(self, _: UInt<Ur, B1>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -356,7 +362,9 @@ where
 {
     type Output = UInt<Sum<Ul, Ur>, B1>;
     fn add(self, _: UInt<Ur, B0>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -368,7 +376,9 @@ where
 {
     type Output = UInt<Add1<Sum<Ul, Ur>>, B0>;
     fn add(self, _: UInt<Ur, B1>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -438,7 +448,7 @@ where
 {
     type Output = TrimOut<PrivateSubOut<UInt<Ul, Bl>, Ur>>;
     fn sub(self, _: Ur) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -500,7 +510,7 @@ where
 {
     type Output = TrimOut<PrivateAndOut<UInt<Ul, Bl>, Ur>>;
     fn bitand(self, _: Ur) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -552,8 +562,8 @@ where
 /// `UTerm | X = X`
 impl<U: Unsigned> BitOr<U> for UTerm {
     type Output = U;
-    fn bitor(self, _: U) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn bitor(self, rhs: U) -> Self::Output {
+        rhs
     }
 }
 
@@ -572,7 +582,9 @@ where
 {
     type Output = UInt<<Ul as BitOr<Ur>>::Output, B0>;
     fn bitor(self, _: UInt<Ur, B0>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -583,7 +595,9 @@ where
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B1>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -594,7 +608,9 @@ where
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B0>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -605,7 +621,9 @@ where
 {
     type Output = UInt<Or<Ul, Ur>, B1>;
     fn bitor(self, _: UInt<Ur, B1>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -615,8 +633,8 @@ where
 /// 0 ^ X = X
 impl<Ur: Unsigned> BitXor<Ur> for UTerm {
     type Output = Ur;
-    fn bitxor(self, _: Ur) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn bitxor(self, rhs: Ur) -> Self::Output {
+        rhs
     }
 }
 
@@ -629,7 +647,7 @@ where
 {
     type Output = TrimOut<PrivateXorOut<UInt<Ul, Bl>, Ur>>;
     fn bitxor(self, _: Ur) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -734,7 +752,7 @@ where
 {
     type Output = Shleft<UInt<UInt<U, B>, B0>, Sub1<UInt<Ur, Br>>>;
     fn shl(self, _: UInt<Ur, Br>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -785,7 +803,7 @@ impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
 impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
     type Output = U;
     fn shr(self, _: B1) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -797,7 +815,7 @@ where
 {
     type Output = Shright<U, Sub1<UInt<Ur, Br>>>;
     fn shr(self, _: UInt<Ur, Br>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -859,7 +877,9 @@ where
 {
     type Output = UInt<Prod<Ul, UInt<Ur, B>>, B0>;
     fn mul(self, _: UInt<Ur, B>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        UInt {
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -871,7 +891,7 @@ where
 {
     type Output = Sum<UInt<Prod<Ul, UInt<Ur, B>>, B0>, UInt<Ur, B>>;
     fn mul(self, _: UInt<Ur, B>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -1011,7 +1031,7 @@ where
 
 // ---------------------------------------------------------------------------------------
 // Shifting one number until it's the size of another
-use private::ShiftDiff;
+use crate::private::ShiftDiff;
 impl<Ul: Unsigned, Ur: Unsigned> ShiftDiff<Ur> for Ul
 where
     Ur: BitDiff<Ul>,
@@ -1030,7 +1050,7 @@ where
 {
     type Output = PrivatePowOut<X, U1, N>;
     fn powi(self, _: N) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -1096,8 +1116,8 @@ impl<I> GetBit<I> for UTerm {
 
 #[test]
 fn test_get_bit() {
-    use consts::*;
-    use Same;
+    use crate::consts::*;
+    use crate::Same;
     type T1 = <GetBitOut<U2, U0> as Same<B0>>::Output;
     type T2 = <GetBitOut<U2, U1> as Same<B1>>::Output;
     type T3 = <GetBitOut<U2, U2> as Same<B0>>::Output;
@@ -1119,7 +1139,7 @@ pub trait SetBit<I, B> {
 /// Alias for the result of calling `SetBit`: `SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output`.
 pub type SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output;
 
-use private::{PrivateSetBit, PrivateSetBitOut};
+use crate::private::{PrivateSetBit, PrivateSetBitOut};
 
 // Call private one then trim it
 impl<N, I, B> SetBit<I, B> for N
@@ -1159,8 +1179,8 @@ where
 
 #[test]
 fn test_set_bit() {
-    use consts::*;
-    use Same;
+    use crate::consts::*;
+    use crate::Same;
     type T1 = <SetBitOut<U2, U0, B0> as Same<U2>>::Output;
     type T2 = <SetBitOut<U2, U0, B1> as Same<U3>>::Output;
     type T3 = <SetBitOut<U2, U1, B0> as Same<U0>>::Output;
@@ -1211,8 +1231,8 @@ mod tests {
     }
     #[test]
     fn test_div() {
-        use consts::*;
-        use {Quot, Same};
+        use crate::consts::*;
+        use crate::{Quot, Same};
 
         test_div!(U0 / U1 = U0);
         test_div!(U1 / U1 = U1);
@@ -1234,7 +1254,7 @@ mod tests {
 }
 // -----------------------------------------
 // Div
-use core::ops::Div;
+use ::core::ops::Div;
 
 // 0 // N
 impl<Ur: Unsigned, Br: Bit> Div<UInt<Ur, Br>> for UTerm {
@@ -1253,13 +1273,13 @@ where
 {
     type Output = PrivateDivQuot<UInt<Ul, Bl>, UInt<Ur, Br>, U0, U0, Sub1<Length<UInt<Ul, Bl>>>>;
     fn div(self, _: UInt<Ur, Br>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
 // -----------------------------------------
 // Rem
-use core::ops::Rem;
+use ::core::ops::Rem;
 
 // 0 % N
 impl<Ur: Unsigned, Br: Bit> Rem<UInt<Ur, Br>> for UTerm {
@@ -1278,15 +1298,15 @@ where
 {
     type Output = PrivateDivRem<UInt<Ul, Bl>, UInt<Ur, Br>, U0, U0, Sub1<Length<UInt<Ul, Bl>>>>;
     fn rem(self, _: UInt<Ur, Br>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
 // -----------------------------------------
 // PrivateDiv
-use private::{PrivateDiv, PrivateDivQuot, PrivateDivRem};
+use crate::private::{PrivateDiv, PrivateDivQuot, PrivateDivRem};
 
-use Compare;
+use crate::Compare;
 // R == 0: We set R = UInt<UTerm, N[i]>, then call out to PrivateDivIf for the if statement
 impl<N, D, Q, I> PrivateDiv<N, D, Q, U0, I> for ()
 where
@@ -1355,7 +1375,7 @@ where
 // -----------------------------------------
 // PrivateDivIf
 
-use private::{PrivateDivIf, PrivateDivIfQuot, PrivateDivIfRem};
+use crate::private::{PrivateDivIf, PrivateDivIfQuot, PrivateDivIfRem};
 
 // R < D, I > 0, we do nothing and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Less> for ()
@@ -1378,7 +1398,7 @@ where
     type Remainder = PrivateDivRem<N, D, SetBitOut<Q, UInt<Ui, Bi>, B1>, U0, Sub1<UInt<Ui, Bi>>>;
 }
 
-use Diff;
+use crate::Diff;
 // R > D, I > 0, we set R -= D, Q[I] = 1 and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Greater> for ()
 where
@@ -1420,7 +1440,7 @@ where
 
 // -----------------------------------------
 // PartialDiv
-use {PartialDiv, Quot};
+use crate::{PartialDiv, Quot};
 impl<Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UTerm {
     type Output = UTerm;
     fn partial_div(self, _: UInt<Ur, Br>) -> Self::Output {
@@ -1435,13 +1455,13 @@ where
 {
     type Output = Quot<UInt<Ul, Bl>, UInt<Ur, Br>>;
     fn partial_div(self, _: UInt<Ur, Br>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { ::core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
 // -----------------------------------------
 // PrivateMin
-use private::{PrivateMin, PrivateMinOut};
+use crate::private::{PrivateMin, PrivateMinOut};
 
 impl<U, B, Ur> PrivateMin<Ur, Equal> for UInt<U, B>
 where
@@ -1481,7 +1501,7 @@ where
 
 // -----------------------------------------
 // Min
-use Min;
+use crate::Min;
 
 impl<U> Min<U> for UTerm
 where
@@ -1508,7 +1528,7 @@ where
 
 // -----------------------------------------
 // PrivateMax
-use private::{PrivateMax, PrivateMaxOut};
+use crate::private::{PrivateMax, PrivateMaxOut};
 
 impl<U, B, Ur> PrivateMax<Ur, Equal> for UInt<U, B>
 where
@@ -1548,7 +1568,7 @@ where
 
 // -----------------------------------------
 // Max
-use Max;
+use crate::Max;
 
 impl<U> Max<U> for UTerm
 where
@@ -1621,7 +1641,7 @@ where
 
 #[test]
 fn sqrt_test() {
-    use consts::*;
+    use crate::consts::*;
 
     assert_eq!(0, <Sqrt<U0>>::to_u32());
 
@@ -1685,7 +1705,7 @@ where
 
 #[test]
 fn log2_test() {
-    use consts::*;
+    use crate::consts::*;
 
     assert_eq!(0, <Log2<U1>>::to_u32());
 

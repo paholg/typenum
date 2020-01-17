@@ -67,7 +67,7 @@ where
 {
     type Output = Add1<Length<A>>;
     fn len(&self) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -89,7 +89,7 @@ where
 {
     type Output = TArr<Sum<Vl, Vr>, Sum<Al, Ar>>;
     fn add(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -111,7 +111,7 @@ where
 {
     type Output = TArr<Diff<Vl, Vr>, Diff<Al, Ar>>;
     fn sub(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -132,7 +132,7 @@ where
 {
     type Output = TArr<Prod<V, Rhs>, Prod<A, Rhs>>;
     fn mul(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -169,7 +169,7 @@ where
 {
     type Output = TArr<Z0, Prod<Z0, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -180,7 +180,7 @@ where
 {
     type Output = TArr<Prod<PInt<U>, V>, Prod<PInt<U>, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -191,7 +191,7 @@ where
 {
     type Output = TArr<Prod<NInt<U>, V>, Prod<NInt<U>, A>>;
     fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -212,7 +212,7 @@ where
 {
     type Output = TArr<Quot<V, Rhs>, Quot<A, Rhs>>;
     fn div(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -233,7 +233,7 @@ where
 {
     type Output = TArr<PartialQuot<V, Rhs>, PartialQuot<A, Rhs>>;
     fn partial_div(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -255,7 +255,7 @@ where
 {
     type Output = TArr<Mod<V, Rhs>, Mod<A, Rhs>>;
     fn rem(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -277,6 +277,6 @@ where
 {
     type Output = TArr<Negate<V>, Negate<A>>;
     fn neg(self) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }

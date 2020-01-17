@@ -75,14 +75,14 @@ pub mod uint;
 
 pub mod array;
 
-pub use consts::*;
-pub use marker_traits::*;
-pub use operator_aliases::*;
-pub use type_operators::*;
+pub use crate::consts::*;
+pub use crate::marker_traits::*;
+pub use crate::operator_aliases::*;
+pub use crate::type_operators::*;
 
-pub use array::{ATerm, TArr};
-pub use int::{NInt, PInt};
-pub use uint::{UInt, UTerm};
+pub use crate::array::{ATerm, TArr};
+pub use crate::int::{NInt, PInt};
+pub use crate::uint::{UInt, UTerm};
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.

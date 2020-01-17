@@ -30,13 +30,13 @@
 use core::marker::PhantomData;
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
-use bit::{Bit, B0, B1};
-use consts::{N1, P1, U0, U1};
-use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
-use uint::{UInt, Unsigned};
-use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
+use crate::bit::{Bit, B0, B1};
+use crate::consts::{N1, P1, U0, U1};
+use crate::private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
+use crate::uint::{UInt, Unsigned};
+use crate::{Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
 
-pub use marker_traits::Integer;
+pub use crate::marker_traits::Integer;
 
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
@@ -231,7 +231,7 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 impl<I: Integer> Add<I> for Z0 {
     type Output = I;
     fn add(self, _: I) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -282,7 +282,7 @@ where
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
     fn add(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -294,7 +294,7 @@ where
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
     fn add(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -395,7 +395,7 @@ where
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
     fn sub(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -407,7 +407,7 @@ where
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
     fn sub(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -507,7 +507,7 @@ macro_rules! impl_int_div {
         {
             type Output = <$A<Ul> as PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>>::Output;
             fn div(self, _: $B<Ur>) -> Self::Output {
-                unsafe { ::core::mem::uninitialized() }
+                unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
             }
         }
         impl<Ul, Ur> PrivateDivInt<Less, $B<Ur>> for $A<Ul>
@@ -543,7 +543,7 @@ impl_int_div!(NInt, NInt, PInt);
 // ---------------------------------------------------------------------------------------
 // PartialDiv
 
-use {PartialDiv, Quot};
+use crate::{PartialDiv, Quot};
 
 impl<M, N> PartialDiv<N> for M
 where
@@ -551,7 +551,7 @@ where
 {
     type Output = Quot<M, N>;
     fn partial_div(self, _: N) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -624,7 +624,7 @@ macro_rules! impl_int_rem {
         {
             type Output = <$A<Ul> as PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>>::Output;
             fn rem(self, _: $B<Ur>) -> Self::Output {
-                unsafe { ::core::mem::uninitialized() }
+                unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
             }
         }
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateRem<U0, $B<Ur>> for $A<Ul> {
@@ -752,7 +752,7 @@ where
 
 // ---------------------------------------------------------------------------------------
 // Min
-use {Max, Maximum, Min, Minimum};
+use crate::{Max, Maximum, Min, Minimum};
 
 impl Min<Z0> for Z0 {
     type Output = Z0;
@@ -809,7 +809,7 @@ where
 {
     type Output = PInt<Minimum<Ul, Ur>>;
     fn min(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
     }
 }
 
@@ -843,7 +843,7 @@ where
 {
     type Output = NInt<Maximum<Ul, Ur>>;
     fn min(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        NInt::new()
     }
 }
 
@@ -905,7 +905,7 @@ where
 {
     type Output = PInt<Maximum<Ul, Ur>>;
     fn max(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        PInt::new()
     }
 }
 
@@ -939,14 +939,14 @@ where
 {
     type Output = NInt<Minimum<Ul, Ur>>;
     fn max(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        NInt::new()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use consts::*;
-    use Integer;
+    use crate::consts::*;
+    use crate::Integer;
 
     #[test]
     fn to_ix_min() {
