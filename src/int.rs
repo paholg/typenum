@@ -27,12 +27,12 @@
 //! ```
 //!
 
-use core::marker::PhantomData;
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
 use bit::{Bit, B0, B1};
 use consts::{N1, P1, U0, U1};
 use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
+use private::{Internal, InternalMarker};
 use uint::{UInt, Unsigned};
 use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
 
@@ -41,22 +41,20 @@ pub use marker_traits::Integer;
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct PInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
+    pub(crate) n: U
 }
 
 /// Type-level signed integers with negative sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct NInt<U: Unsigned + NonZero> {
-    _marker: PhantomData<U>,
+    pub(crate) n: U
 }
 
 impl<U: Unsigned + NonZero> PInt<U> {
     /// Instantiates a singleton representing this strictly positive integer.
     #[inline]
     pub fn new() -> PInt<U> {
-        PInt {
-            _marker: PhantomData,
-        }
+        PInt::default()
     }
 }
 
@@ -64,9 +62,7 @@ impl<U: Unsigned + NonZero> NInt<U> {
     /// Instantiates a singleton representing this strictly negative integer.
     #[inline]
     pub fn new() -> NInt<U> {
-        NInt {
-            _marker: PhantomData,
-        }
+        NInt::default()
     }
 }
 
@@ -230,8 +226,8 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 /// `Z0 + I = I`
 impl<I: Integer> Add<I> for Z0 {
     type Output = I;
-    fn add(self, _: I) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn add(self, rhs: I) -> Self::Output {
+        rhs
     }
 }
 
@@ -281,8 +277,11 @@ where
     Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
-    fn add(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn add(self, rhs: NInt<Ur>) -> Self::Output {
+        let lhs = self.n;
+        let rhs = rhs.n;
+        let lhs_cmp_rhs = lhs.compare::<Internal>(&rhs);
+        lhs.private_integer_add(lhs_cmp_rhs, rhs)
     }
 }
 
@@ -293,14 +292,21 @@ where
     Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
-    fn add(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn add(self, rhs: PInt<Ur>) -> Self::Output {
+        let lhs = self.n;
+        let rhs = rhs.n;
+        let rhs_cmp_lhs = rhs.compare::<Internal>(&lhs);
+        rhs.private_integer_add(rhs_cmp_lhs, lhs)
     }
 }
 
 /// `P + N = 0` where `P == N`
 impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Equal, N> for P {
     type Output = Z0;
+
+    fn private_integer_add(self, _: Equal, _: N) -> Self::Output {
+        Z0
+    }
 }
 
 /// `P + N = Positive` where `P > N`
@@ -310,6 +316,10 @@ where
     <P as Sub<N>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<P as Sub<N>>::Output>;
+
+    fn private_integer_add(self, _: Greater, n: N) -> Self::Output {
+        PInt { n: self - n }
+    }
 }
 
 /// `P + N = Negative` where `P < N`
@@ -319,6 +329,10 @@ where
     <N as Sub<P>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<N as Sub<P>>::Output>;
+
+    fn private_integer_add(self, _: Less, n: N) -> Self::Output {
+        NInt { n: n - self }
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -394,8 +408,11 @@ where
     Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
-    fn sub(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn sub(self, rhs: PInt<Ur>) -> Self::Output {
+        let lhs = self.n;
+        let rhs = rhs.n;
+        let lhs_cmp_rhs = lhs.compare::<Internal>(&rhs);
+        lhs.private_integer_add(lhs_cmp_rhs, rhs)
     }
 }
 
@@ -406,8 +423,11 @@ where
     Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
-    fn sub(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn sub(self, rhs: NInt<Ur>) -> Self::Output {
+        let lhs = self.n;
+        let rhs = rhs.n;
+        let rhs_cmp_lhs = rhs.compare::<Internal>(&lhs);
+        rhs.private_integer_add(rhs_cmp_lhs, lhs)
     }
 }
 
@@ -506,8 +526,9 @@ macro_rules! impl_int_div {
             $A<Ul>: PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>,
         {
             type Output = <$A<Ul> as PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>>::Output;
-            fn div(self, _: $B<Ur>) -> Self::Output {
-                unsafe { ::core::mem::uninitialized() }
+            fn div(self, rhs: $B<Ur>) -> Self::Output {
+                let lhs_cmp_rhs = self.n.compare::<Internal>(&rhs.n);
+                self.private_div_int(lhs_cmp_rhs, rhs)
             }
         }
         impl<Ul, Ur> PrivateDivInt<Less, $B<Ur>> for $A<Ul>
@@ -516,6 +537,10 @@ macro_rules! impl_int_div {
             Ur: Unsigned + NonZero,
         {
             type Output = Z0;
+
+            fn private_div_int(self, _: Less, _: $B<Ur>) -> Self::Output {
+                Z0
+            }
         }
         impl<Ul, Ur> PrivateDivInt<Equal, $B<Ur>> for $A<Ul>
         where
@@ -523,6 +548,10 @@ macro_rules! impl_int_div {
             Ur: Unsigned + NonZero,
         {
             type Output = $R<U1>;
+
+            fn private_div_int(self, _: Equal, _: $B<Ur>) -> Self::Output {
+                $R { n: U1::new() }
+            }
         }
         impl<Ul, Ur> PrivateDivInt<Greater, $B<Ur>> for $A<Ul>
         where
@@ -531,6 +560,10 @@ macro_rules! impl_int_div {
             <Ul as Div<Ur>>::Output: Unsigned + NonZero,
         {
             type Output = $R<<Ul as Div<Ur>>::Output>;
+
+            fn private_div_int(self, _: Greater, d: $B<Ur>) -> Self::Output {
+                $R { n: self.n / d.n }
+            }
         }
     };
 }
@@ -550,8 +583,8 @@ where
     M: Integer + Div<N> + Rem<N, Output = Z0>,
 {
     type Output = Quot<M, N>;
-    fn partial_div(self, _: N) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn partial_div(self, rhs: N) -> Self::Output {
+        self / rhs
     }
 }
 
@@ -561,46 +594,82 @@ where
 /// 0 == 0
 impl Cmp<Z0> for Z0 {
     type Output = Equal;
+
+    fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
+        Equal
+    }
 }
 
 /// 0 > -X
 impl<U: Unsigned + NonZero> Cmp<NInt<U>> for Z0 {
     type Output = Greater;
+
+    fn compare<IM: InternalMarker>(&self, _: &NInt<U>) -> Self::Output {
+        Greater
+    }
 }
 
 /// 0 < X
 impl<U: Unsigned + NonZero> Cmp<PInt<U>> for Z0 {
     type Output = Less;
+
+    fn compare<IM: InternalMarker>(&self, _: &PInt<U>) -> Self::Output {
+        Less
+    }
 }
 
 /// X > 0
 impl<U: Unsigned + NonZero> Cmp<Z0> for PInt<U> {
     type Output = Greater;
+
+    fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
+        Greater
+    }
 }
 
 /// -X < 0
 impl<U: Unsigned + NonZero> Cmp<Z0> for NInt<U> {
     type Output = Less;
+
+    fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
+        Less
+    }
 }
 
 /// -X < Y
 impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<PInt<P>> for NInt<N> {
     type Output = Less;
+
+    fn compare<IM: InternalMarker>(&self, _: &PInt<P>) -> Self::Output {
+        Less
+    }
 }
 
 /// X > - Y
 impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<NInt<N>> for PInt<P> {
     type Output = Greater;
+
+    fn compare<IM: InternalMarker>(&self, _: &NInt<N>) -> Self::Output {
+        Greater
+    }
 }
 
 /// X <==> Y
 impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for PInt<Pl> {
     type Output = <Pl as Cmp<Pr>>::Output;
+
+    fn compare<IM: InternalMarker>(&self, rhs: &PInt<Pr>) -> Self::Output {
+        self.n.compare::<Internal>(&rhs.n)
+    }
 }
 
 /// -X <==> -Y
 impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
     type Output = <Nr as Cmp<Nl>>::Output;
+
+    fn compare<IM: InternalMarker>(&self, rhs: &NInt<Nr>) -> Self::Output {
+        rhs.n.compare::<Internal>(&self.n)
+    }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -623,12 +692,16 @@ macro_rules! impl_int_rem {
             $A<Ul>: PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>,
         {
             type Output = <$A<Ul> as PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>>::Output;
-            fn rem(self, _: $B<Ur>) -> Self::Output {
-                unsafe { ::core::mem::uninitialized() }
+            fn rem(self, rhs: $B<Ur>) -> Self::Output {
+                self.private_rem(self.n % rhs.n, rhs)
             }
         }
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateRem<U0, $B<Ur>> for $A<Ul> {
             type Output = Z0;
+
+            fn private_rem(self, _: U0, _: $B<Ur>) -> Self::Output {
+                Z0
+            }
         }
         impl<Ul, Ur, U, B> PrivateRem<UInt<U, B>, $B<Ur>> for $A<Ul>
         where
@@ -638,6 +711,10 @@ macro_rules! impl_int_rem {
             B: Bit,
         {
             type Output = $R<UInt<U, B>>;
+
+            fn private_rem(self, urem: UInt<U, B>, _: $B<Ur>) -> Self::Output {
+                $R { n: urem }
+            }
         }
     };
 }
@@ -808,8 +885,8 @@ where
     Minimum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = PInt<Minimum<Ul, Ur>>;
-    fn min(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn min(self, rhs: PInt<Ur>) -> Self::Output {
+        PInt { n: self.n.min(rhs.n) }
     }
 }
 
@@ -842,8 +919,8 @@ where
     Maximum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = NInt<Maximum<Ul, Ur>>;
-    fn min(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn min(self, rhs: NInt<Ur>) -> Self::Output {
+        NInt { n: self.n.max(rhs.n) }
     }
 }
 
@@ -904,8 +981,8 @@ where
     Maximum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = PInt<Maximum<Ul, Ur>>;
-    fn max(self, _: PInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn max(self, rhs: PInt<Ur>) -> Self::Output {
+        PInt { n: self.n.max(rhs.n) }
     }
 }
 
@@ -938,8 +1015,8 @@ where
     Minimum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = NInt<Minimum<Ul, Ur>>;
-    fn max(self, _: NInt<Ur>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn max(self, rhs: NInt<Ur>) -> Self::Output {
+        NInt { n: self.n.min(rhs.n) }
     }
 }
 

@@ -12,6 +12,7 @@
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
+use private::InternalMarker;
 
 pub use marker_traits::Bit;
 
@@ -201,18 +202,34 @@ mod tests {
 
 impl Cmp<B0> for B0 {
     type Output = Equal;
+
+    fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
+        Equal
+    }
 }
 
 impl Cmp<B1> for B0 {
     type Output = Less;
+
+    fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
+        Less
+    }
 }
 
 impl Cmp<B0> for B1 {
     type Output = Greater;
+
+    fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
+        Greater
+    }
 }
 
 impl Cmp<B1> for B1 {
     type Output = Equal;
+
+    fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
+        Equal
+    }
 }
 
 use Min;

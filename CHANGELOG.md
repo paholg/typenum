@@ -6,6 +6,10 @@ The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested again
 version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
 
 ### Unreleased
+- [changed] Added `Copy` bound to `Rhs` of `Mul<Rhs>` impl for `<TArr<V, A>`.
+- [changed] Added `Copy` bound to `Rhs` of `Div<Rhs>` impl for `<TArr<V, A>`.
+- [changed] Added `Copy` bound to `Rhs` of `PartialDiv<Rhs>` impl for `<TArr<V, A>`.
+- [changed] Added `Copy` bound to `Rhs` of `Rem<Rhs>` impl for `<TArr<V, A>`.
 
 ### 1.11.2 (2019-08-26)
 - [fixed] Cross compilation from Linux to Windows.

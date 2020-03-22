@@ -2,7 +2,6 @@
 //!
 //! It is not very featureful right now, and should be considered a work in progress.
 
-use core::marker::PhantomData;
 use core::ops::{Add, Div, Mul, Sub};
 
 use super::*;
@@ -21,7 +20,8 @@ impl TypeArray for ATerm {}
 /// may find it lacking functionality.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug)]
 pub struct TArr<V, A> {
-    _marker: PhantomData<(V, A)>,
+    first: V,
+    rest: A,
 }
 
 impl<V, A> TypeArray for TArr<V, A> {}
@@ -67,7 +67,7 @@ where
 {
     type Output = Add1<Length<A>>;
     fn len(&self) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        self.rest.len() + B1
     }
 }
 
@@ -88,8 +88,11 @@ where
     Vl: Add<Vr>,
 {
     type Output = TArr<Sum<Vl, Vr>, Sum<Al, Ar>>;
-    fn add(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn add(self, rhs: TArr<Vr, Ar>) -> Self::Output {
+        TArr {
+            first:  self.first + rhs.first,
+            rest:   self.rest  + rhs.rest,
+        }
     }
 }
 
@@ -110,8 +113,11 @@ where
     Al: Sub<Ar>,
 {
     type Output = TArr<Diff<Vl, Vr>, Diff<Al, Ar>>;
-    fn sub(self, _: TArr<Vr, Ar>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn sub(self, rhs: TArr<Vr, Ar>) -> Self::Output {
+        TArr {
+            first:  self.first - rhs.first,
+            rest:   self.rest  - rhs.rest,
+        }
     }
 }
 
@@ -129,10 +135,14 @@ impl<V, A, Rhs> Mul<Rhs> for TArr<V, A>
 where
     V: Mul<Rhs>,
     A: Mul<Rhs>,
+    Rhs: Copy,
 {
     type Output = TArr<Prod<V, Rhs>, Prod<A, Rhs>>;
-    fn mul(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn mul(self, rhs: Rhs) -> Self::Output {
+        TArr {
+            first:  self.first * rhs,
+            rest:   self.rest  * rhs,
+        }
     }
 }
 
@@ -168,8 +178,11 @@ where
     Z0: Mul<A>,
 {
     type Output = TArr<Z0, Prod<Z0, A>>;
-    fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn mul(self, rhs: TArr<V, A>) -> Self::Output {
+        TArr {
+            first:  Z0,
+            rest:   self * rhs.rest,
+        }
     }
 }
 
@@ -179,8 +192,11 @@ where
     PInt<U>: Mul<A> + Mul<V>,
 {
     type Output = TArr<Prod<PInt<U>, V>, Prod<PInt<U>, A>>;
-    fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn mul(self, rhs: TArr<V, A>) -> Self::Output {
+        TArr {
+            first:  self * rhs.first,
+            rest:   self * rhs.rest,
+        }
     }
 }
 
@@ -190,8 +206,11 @@ where
     NInt<U>: Mul<A> + Mul<V>,
 {
     type Output = TArr<Prod<NInt<U>, V>, Prod<NInt<U>, A>>;
-    fn mul(self, _: TArr<V, A>) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn mul(self, rhs: TArr<V, A>) -> Self::Output {
+        TArr {
+            first:  self * rhs.first,
+            rest:   self * rhs.rest,
+        }
     }
 }
 
@@ -209,10 +228,14 @@ impl<V, A, Rhs> Div<Rhs> for TArr<V, A>
 where
     V: Div<Rhs>,
     A: Div<Rhs>,
+    Rhs: Copy,
 {
     type Output = TArr<Quot<V, Rhs>, Quot<A, Rhs>>;
-    fn div(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn div(self, rhs: Rhs) -> Self::Output {
+        TArr {
+            first:  self.first / rhs,
+            rest:   self.rest  / rhs,
+        }
     }
 }
 
@@ -230,10 +253,14 @@ impl<V, A, Rhs> PartialDiv<Rhs> for TArr<V, A>
 where
     V: PartialDiv<Rhs>,
     A: PartialDiv<Rhs>,
+    Rhs: Copy,
 {
     type Output = TArr<PartialQuot<V, Rhs>, PartialQuot<A, Rhs>>;
-    fn partial_div(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn partial_div(self, rhs: Rhs) -> Self::Output {
+        TArr {
+            first:  self.first.partial_div(rhs),
+            rest:   self.rest.partial_div(rhs),
+        }
     }
 }
 
@@ -252,10 +279,14 @@ impl<V, A, Rhs> Rem<Rhs> for TArr<V, A>
 where
     V: Rem<Rhs>,
     A: Rem<Rhs>,
+    Rhs: Copy,
 {
     type Output = TArr<Mod<V, Rhs>, Mod<A, Rhs>>;
-    fn rem(self, _: Rhs) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn rem(self, rhs: Rhs) -> Self::Output {
+        TArr {
+            first:  self.first % rhs,
+            rest:   self.rest  % rhs,
+        }
     }
 }
 
@@ -277,6 +308,9 @@ where
 {
     type Output = TArr<Negate<V>, Negate<A>>;
     fn neg(self) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+        TArr {
+            first:  -self.first,
+            rest:   -self.rest,
+        }
     }
 }
