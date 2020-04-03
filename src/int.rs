@@ -31,8 +31,8 @@ use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
 use bit::{Bit, B0, B1};
 use consts::{N1, P1, U0, U1};
-use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
 use private::{Internal, InternalMarker};
+use private::{PrivateDivInt, PrivateIntegerAdd, PrivateRem};
 use uint::{UInt, Unsigned};
 use {Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo};
 
@@ -41,13 +41,13 @@ pub use marker_traits::Integer;
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct PInt<U: Unsigned + NonZero> {
-    pub(crate) n: U
+    pub(crate) n: U,
 }
 
 /// Type-level signed integers with negative sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
 pub struct NInt<U: Unsigned + NonZero> {
-    pub(crate) n: U
+    pub(crate) n: U,
 }
 
 impl<U: Unsigned + NonZero> PInt<U> {
@@ -886,7 +886,9 @@ where
 {
     type Output = PInt<Minimum<Ul, Ur>>;
     fn min(self, rhs: PInt<Ur>) -> Self::Output {
-        PInt { n: self.n.min(rhs.n) }
+        PInt {
+            n: self.n.min(rhs.n),
+        }
     }
 }
 
@@ -920,7 +922,9 @@ where
 {
     type Output = NInt<Maximum<Ul, Ur>>;
     fn min(self, rhs: NInt<Ur>) -> Self::Output {
-        NInt { n: self.n.max(rhs.n) }
+        NInt {
+            n: self.n.max(rhs.n),
+        }
     }
 }
 
@@ -982,7 +986,9 @@ where
 {
     type Output = PInt<Maximum<Ul, Ur>>;
     fn max(self, rhs: PInt<Ur>) -> Self::Output {
-        PInt { n: self.n.max(rhs.n) }
+        PInt {
+            n: self.n.max(rhs.n),
+        }
     }
 }
 
@@ -1016,7 +1022,9 @@ where
 {
     type Output = NInt<Minimum<Ul, Ur>>;
     fn max(self, rhs: NInt<Ur>) -> Self::Output {
-        NInt { n: self.n.min(rhs.n) }
+        NInt {
+            n: self.n.min(rhs.n),
+        }
     }
 }
 

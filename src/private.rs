@@ -151,7 +151,7 @@ impl Invert for UTerm {
     type Output = InvertedUTerm;
 
     fn invert(self) -> Self::Output {
-       InvertedUTerm
+        InvertedUTerm
     }
 }
 
@@ -162,7 +162,10 @@ where
     type Output = PrivateInvertOut<U, InvertedUInt<InvertedUTerm, B>>;
 
     fn invert(self) -> Self::Output {
-        self.msb.private_invert(InvertedUInt { msb: InvertedUTerm, lsb: self.lsb })
+        self.msb.private_invert(InvertedUInt {
+            msb: InvertedUTerm,
+            lsb: self.lsb,
+        })
     }
 }
 
@@ -181,7 +184,10 @@ where
     type Output = PrivateInvertOut<U, InvertedUInt<IU, B>>;
 
     fn private_invert(self, rhs: IU) -> Self::Output {
-        self.msb.private_invert(InvertedUInt { msb: rhs, lsb: self.lsb })
+        self.msb.private_invert(InvertedUInt {
+            msb: rhs,
+            lsb: self.lsb,
+        })
     }
 }
 
@@ -213,7 +219,10 @@ where
     type Output = <IU as PrivateInvert<UInt<UTerm, B>>>::Output;
 
     fn invert(self) -> Self::Output {
-        self.msb.private_invert(UInt { msb: UTerm, lsb: self.lsb })
+        self.msb.private_invert(UInt {
+            msb: UTerm,
+            lsb: self.lsb,
+        })
     }
 }
 
@@ -232,7 +241,10 @@ where
     type Output = <IU as PrivateInvert<UInt<U, B>>>::Output;
 
     fn private_invert(self, rhs: U) -> Self::Output {
-        self.msb.private_invert(UInt { msb: rhs, lsb: self.lsb })
+        self.msb.private_invert(UInt {
+            msb: rhs,
+            lsb: self.lsb,
+        })
     }
 }
 

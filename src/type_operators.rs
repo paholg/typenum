@@ -1,8 +1,8 @@
 //! Useful **type operators** that are not defined in `core::ops`.
 //!
 
-use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
 use private::{Internal, InternalMarker};
+use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
 
 /// A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 /// for writing macros that can take arbitrary binary or unary operators.

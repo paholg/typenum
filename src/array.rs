@@ -90,8 +90,8 @@ where
     type Output = TArr<Sum<Vl, Vr>, Sum<Al, Ar>>;
     fn add(self, rhs: TArr<Vr, Ar>) -> Self::Output {
         TArr {
-            first:  self.first + rhs.first,
-            rest:   self.rest  + rhs.rest,
+            first: self.first + rhs.first,
+            rest: self.rest + rhs.rest,
         }
     }
 }
@@ -115,8 +115,8 @@ where
     type Output = TArr<Diff<Vl, Vr>, Diff<Al, Ar>>;
     fn sub(self, rhs: TArr<Vr, Ar>) -> Self::Output {
         TArr {
-            first:  self.first - rhs.first,
-            rest:   self.rest  - rhs.rest,
+            first: self.first - rhs.first,
+            rest: self.rest - rhs.rest,
         }
     }
 }
@@ -140,8 +140,8 @@ where
     type Output = TArr<Prod<V, Rhs>, Prod<A, Rhs>>;
     fn mul(self, rhs: Rhs) -> Self::Output {
         TArr {
-            first:  self.first * rhs,
-            rest:   self.rest  * rhs,
+            first: self.first * rhs,
+            rest: self.rest * rhs,
         }
     }
 }
@@ -180,8 +180,8 @@ where
     type Output = TArr<Z0, Prod<Z0, A>>;
     fn mul(self, rhs: TArr<V, A>) -> Self::Output {
         TArr {
-            first:  Z0,
-            rest:   self * rhs.rest,
+            first: Z0,
+            rest: self * rhs.rest,
         }
     }
 }
@@ -194,8 +194,8 @@ where
     type Output = TArr<Prod<PInt<U>, V>, Prod<PInt<U>, A>>;
     fn mul(self, rhs: TArr<V, A>) -> Self::Output {
         TArr {
-            first:  self * rhs.first,
-            rest:   self * rhs.rest,
+            first: self * rhs.first,
+            rest: self * rhs.rest,
         }
     }
 }
@@ -208,8 +208,8 @@ where
     type Output = TArr<Prod<NInt<U>, V>, Prod<NInt<U>, A>>;
     fn mul(self, rhs: TArr<V, A>) -> Self::Output {
         TArr {
-            first:  self * rhs.first,
-            rest:   self * rhs.rest,
+            first: self * rhs.first,
+            rest: self * rhs.rest,
         }
     }
 }
@@ -233,8 +233,8 @@ where
     type Output = TArr<Quot<V, Rhs>, Quot<A, Rhs>>;
     fn div(self, rhs: Rhs) -> Self::Output {
         TArr {
-            first:  self.first / rhs,
-            rest:   self.rest  / rhs,
+            first: self.first / rhs,
+            rest: self.rest / rhs,
         }
     }
 }
@@ -258,8 +258,8 @@ where
     type Output = TArr<PartialQuot<V, Rhs>, PartialQuot<A, Rhs>>;
     fn partial_div(self, rhs: Rhs) -> Self::Output {
         TArr {
-            first:  self.first.partial_div(rhs),
-            rest:   self.rest.partial_div(rhs),
+            first: self.first.partial_div(rhs),
+            rest: self.rest.partial_div(rhs),
         }
     }
 }
@@ -284,8 +284,8 @@ where
     type Output = TArr<Mod<V, Rhs>, Mod<A, Rhs>>;
     fn rem(self, rhs: Rhs) -> Self::Output {
         TArr {
-            first:  self.first % rhs,
-            rest:   self.rest  % rhs,
+            first: self.first % rhs,
+            rest: self.rest % rhs,
         }
     }
 }
@@ -309,8 +309,8 @@ where
     type Output = TArr<Negate<V>, Negate<A>>;
     fn neg(self) -> Self::Output {
         TArr {
-            first:  -self.first,
-            rest:   -self.rest,
+            first: -self.first,
+            rest: -self.rest,
         }
     }
 }

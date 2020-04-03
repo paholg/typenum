@@ -58,12 +58,12 @@ pub fn gen_uint(u: u64) -> UIntCode {
 }
 
 pub fn gen_int(i: i64) -> IntCode {
-    if i > 0 {
-        IntCode::Pos(Box::new(gen_uint(i as u64)))
-    } else if i < 0 {
-        IntCode::Neg(Box::new(gen_uint(i.abs() as u64)))
-    } else {
-        IntCode::Zero
+    use std::cmp::Ordering::{Equal, Greater, Less};
+
+    match i.cmp(&0) {
+        Greater => IntCode::Pos(Box::new(gen_uint(i as u64))),
+        Less => IntCode::Neg(Box::new(gen_uint(i.abs() as u64))),
+        Equal => IntCode::Zero,
     }
 }
 
@@ -166,12 +166,12 @@ pub mod consts {{
     .unwrap();
 
     for u in uints {
-        write!(f, "    pub type U{} = {};\n", u, gen_uint(u)).unwrap();
+        writeln!(f, "    pub type U{} = {};", u, gen_uint(u)).unwrap();
         if u <= ::std::i64::MAX as u64 && u != 0 {
             let i = u as i64;
-            write!(
+            writeln!(
                 f,
-                "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;\n",
+                "    pub type P{i} = PInt<U{i}>; pub type N{i} = NInt<U{i}>;",
                 i = i
             )
             .unwrap();

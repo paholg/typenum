@@ -11,8 +11,8 @@
 //!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 use private::InternalMarker;
+use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 
 pub use marker_traits::Bit;
 
