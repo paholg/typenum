@@ -13,19 +13,24 @@ matrix:
   allow_failures:
     - rust: nightly
   fast_finish: true
+branches:
+  only:
+    - master
 
 before_script: |
+  set -e
   if [ $TRAVIS_RUST_VERSION == "stable" ]; then
-    rustup component add rustfmt-preview &&
+    rustup component add rustfmt-preview
     rustup component add clippy
   fi
 script: |
+  set -e
   if [ $TRAVIS_RUST_VERSION == "stable" ]; then
-    cargo fmt --all -- --check &&
-    cargo clippy -- -D warnings &&
-    cargo clippy --all-features -- -D warnings
+    cargo fmt --all -- --check
+    cargo clippy -- -D warnings
+    cargo clippy --all-features -- -D warnings -A deprecated
   fi
-  cargo test --verbose --features "strict" &&
+  cargo test --verbose --features "strict"
   cargo doc --features "strict"
 
 env:

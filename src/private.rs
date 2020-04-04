@@ -152,6 +152,7 @@ impl<IU: InvertedUnsigned, B: Bit> InvertedUnsigned for InvertedUInt<IU, B> {
 impl Invert for UTerm {
     type Output = InvertedUTerm;
 
+    #[inline]
     fn invert(self) -> Self::Output {
         InvertedUTerm
     }
@@ -163,6 +164,7 @@ where
 {
     type Output = PrivateInvertOut<U, InvertedUInt<InvertedUTerm, B>>;
 
+    #[inline]
     fn invert(self) -> Self::Output {
         self.msb.private_invert(InvertedUInt {
             msb: InvertedUTerm,
@@ -174,6 +176,7 @@ where
 impl<IU: InvertedUnsigned> PrivateInvert<IU> for UTerm {
     type Output = IU;
 
+    #[inline]
     fn private_invert(self, rhs: IU) -> Self::Output {
         rhs
     }
@@ -185,6 +188,7 @@ where
 {
     type Output = PrivateInvertOut<U, InvertedUInt<IU, B>>;
 
+    #[inline]
     fn private_invert(self, rhs: IU) -> Self::Output {
         self.msb.private_invert(InvertedUInt {
             msb: rhs,
@@ -209,6 +213,7 @@ fn test_inversion() {
 impl Invert for InvertedUTerm {
     type Output = UTerm;
 
+    #[inline]
     fn invert(self) -> Self::Output {
         UTerm
     }
@@ -220,6 +225,7 @@ where
 {
     type Output = <IU as PrivateInvert<UInt<UTerm, B>>>::Output;
 
+    #[inline]
     fn invert(self) -> Self::Output {
         self.msb.private_invert(UInt {
             msb: UTerm,
@@ -231,6 +237,7 @@ where
 impl<U: Unsigned> PrivateInvert<U> for InvertedUTerm {
     type Output = U;
 
+    #[inline]
     fn private_invert(self, rhs: U) -> Self::Output {
         rhs
     }
@@ -242,6 +249,7 @@ where
 {
     type Output = <IU as PrivateInvert<UInt<U, B>>>::Output;
 
+    #[inline]
     fn private_invert(self, rhs: U) -> Self::Output {
         self.msb.private_invert(UInt {
             msb: rhs,
@@ -266,6 +274,7 @@ fn test_double_inversion() {
 impl TrimTrailingZeros for InvertedUTerm {
     type Output = InvertedUTerm;
 
+    #[inline]
     fn trim_trailing_zeros(self) -> Self::Output {
         InvertedUTerm
     }
@@ -274,6 +283,7 @@ impl TrimTrailingZeros for InvertedUTerm {
 impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
     type Output = Self;
 
+    #[inline]
     fn trim_trailing_zeros(self) -> Self::Output {
         self
     }
@@ -285,6 +295,7 @@ where
 {
     type Output = <IU as TrimTrailingZeros>::Output;
 
+    #[inline]
     fn trim_trailing_zeros(self) -> Self::Output {
         self.msb.trim_trailing_zeros()
     }
@@ -298,6 +309,7 @@ where
 {
     type Output = <<<U as Invert>::Output as TrimTrailingZeros>::Output as Invert>::Output;
 
+    #[inline]
     fn trim(self) -> Self::Output {
         self.invert().trim_trailing_zeros().invert()
     }
@@ -388,6 +400,7 @@ pub trait IsLessPrivate<Rhs, Cmp> {
 impl<A, B> IsLessPrivate<B, Less> for A {
     type Output = True;
 
+    #[inline]
     fn is_less_private(self, _: B, _: Less) -> Self::Output {
         B1
     }
@@ -395,6 +408,7 @@ impl<A, B> IsLessPrivate<B, Less> for A {
 impl<A, B> IsLessPrivate<B, Equal> for A {
     type Output = False;
 
+    #[inline]
     fn is_less_private(self, _: B, _: Equal) -> Self::Output {
         B0
     }
@@ -402,6 +416,7 @@ impl<A, B> IsLessPrivate<B, Equal> for A {
 impl<A, B> IsLessPrivate<B, Greater> for A {
     type Output = False;
 
+    #[inline]
     fn is_less_private(self, _: B, _: Greater) -> Self::Output {
         B0
     }
@@ -416,6 +431,7 @@ pub trait IsEqualPrivate<Rhs, Cmp> {
 impl<A, B> IsEqualPrivate<B, Less> for A {
     type Output = False;
 
+    #[inline]
     fn is_equal_private(self, _: B, _: Less) -> Self::Output {
         B0
     }
@@ -423,6 +439,7 @@ impl<A, B> IsEqualPrivate<B, Less> for A {
 impl<A, B> IsEqualPrivate<B, Equal> for A {
     type Output = True;
 
+    #[inline]
     fn is_equal_private(self, _: B, _: Equal) -> Self::Output {
         B1
     }
@@ -430,6 +447,7 @@ impl<A, B> IsEqualPrivate<B, Equal> for A {
 impl<A, B> IsEqualPrivate<B, Greater> for A {
     type Output = False;
 
+    #[inline]
     fn is_equal_private(self, _: B, _: Greater) -> Self::Output {
         B0
     }
@@ -444,6 +462,7 @@ pub trait IsGreaterPrivate<Rhs, Cmp> {
 impl<A, B> IsGreaterPrivate<B, Less> for A {
     type Output = False;
 
+    #[inline]
     fn is_greater_private(self, _: B, _: Less) -> Self::Output {
         B0
     }
@@ -451,6 +470,7 @@ impl<A, B> IsGreaterPrivate<B, Less> for A {
 impl<A, B> IsGreaterPrivate<B, Equal> for A {
     type Output = False;
 
+    #[inline]
     fn is_greater_private(self, _: B, _: Equal) -> Self::Output {
         B0
     }
@@ -458,6 +478,7 @@ impl<A, B> IsGreaterPrivate<B, Equal> for A {
 impl<A, B> IsGreaterPrivate<B, Greater> for A {
     type Output = True;
 
+    #[inline]
     fn is_greater_private(self, _: B, _: Greater) -> Self::Output {
         B1
     }
@@ -472,6 +493,7 @@ pub trait IsLessOrEqualPrivate<Rhs, Cmp> {
 impl<A, B> IsLessOrEqualPrivate<B, Less> for A {
     type Output = True;
 
+    #[inline]
     fn is_less_or_equal_private(self, _: B, _: Less) -> Self::Output {
         B1
     }
@@ -479,6 +501,7 @@ impl<A, B> IsLessOrEqualPrivate<B, Less> for A {
 impl<A, B> IsLessOrEqualPrivate<B, Equal> for A {
     type Output = True;
 
+    #[inline]
     fn is_less_or_equal_private(self, _: B, _: Equal) -> Self::Output {
         B1
     }
@@ -486,6 +509,7 @@ impl<A, B> IsLessOrEqualPrivate<B, Equal> for A {
 impl<A, B> IsLessOrEqualPrivate<B, Greater> for A {
     type Output = False;
 
+    #[inline]
     fn is_less_or_equal_private(self, _: B, _: Greater) -> Self::Output {
         B0
     }
@@ -500,6 +524,7 @@ pub trait IsNotEqualPrivate<Rhs, Cmp> {
 impl<A, B> IsNotEqualPrivate<B, Less> for A {
     type Output = True;
 
+    #[inline]
     fn is_not_equal_private(self, _: B, _: Less) -> Self::Output {
         B1
     }
@@ -507,6 +532,7 @@ impl<A, B> IsNotEqualPrivate<B, Less> for A {
 impl<A, B> IsNotEqualPrivate<B, Equal> for A {
     type Output = False;
 
+    #[inline]
     fn is_not_equal_private(self, _: B, _: Equal) -> Self::Output {
         B0
     }
@@ -514,6 +540,7 @@ impl<A, B> IsNotEqualPrivate<B, Equal> for A {
 impl<A, B> IsNotEqualPrivate<B, Greater> for A {
     type Output = True;
 
+    #[inline]
     fn is_not_equal_private(self, _: B, _: Greater) -> Self::Output {
         B1
     }
@@ -528,6 +555,7 @@ pub trait IsGreaterOrEqualPrivate<Rhs, Cmp> {
 impl<A, B> IsGreaterOrEqualPrivate<B, Less> for A {
     type Output = False;
 
+    #[inline]
     fn is_greater_or_equal_private(self, _: B, _: Less) -> Self::Output {
         B0
     }
@@ -535,6 +563,7 @@ impl<A, B> IsGreaterOrEqualPrivate<B, Less> for A {
 impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
     type Output = True;
 
+    #[inline]
     fn is_greater_or_equal_private(self, _: B, _: Equal) -> Self::Output {
         B1
     }
@@ -542,6 +571,7 @@ impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
 impl<A, B> IsGreaterOrEqualPrivate<B, Greater> for A {
     type Output = True;
 
+    #[inline]
     fn is_greater_or_equal_private(self, _: B, _: Greater) -> Self::Output {
         B1
     }

@@ -314,6 +314,7 @@ where
 impl<N: Unsigned, P: Unsigned> PrivateIntegerAdd<Equal, N> for P {
     type Output = Z0;
 
+    #[inline]
     fn private_integer_add(self, _: Equal, _: N) -> Self::Output {
         Z0
     }
@@ -327,6 +328,7 @@ where
 {
     type Output = PInt<<P as Sub<N>>::Output>;
 
+    #[inline]
     fn private_integer_add(self, _: Greater, n: N) -> Self::Output {
         PInt { n: self - n }
     }
@@ -340,6 +342,7 @@ where
 {
     type Output = NInt<<N as Sub<P>>::Output>;
 
+    #[inline]
     fn private_integer_add(self, _: Less, n: N) -> Self::Output {
         NInt { n: n - self }
     }
@@ -566,6 +569,7 @@ macro_rules! impl_int_div {
         {
             type Output = Z0;
 
+            #[inline]
             fn private_div_int(self, _: Less, _: $B<Ur>) -> Self::Output {
                 Z0
             }
@@ -577,6 +581,7 @@ macro_rules! impl_int_div {
         {
             type Output = $R<U1>;
 
+            #[inline]
             fn private_div_int(self, _: Equal, _: $B<Ur>) -> Self::Output {
                 $R { n: U1::new() }
             }
@@ -589,6 +594,7 @@ macro_rules! impl_int_div {
         {
             type Output = $R<<Ul as Div<Ur>>::Output>;
 
+            #[inline]
             fn private_div_int(self, _: Greater, d: $B<Ur>) -> Self::Output {
                 $R { n: self.n / d.n }
             }
@@ -624,6 +630,7 @@ where
 impl Cmp<Z0> for Z0 {
     type Output = Equal;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
         Equal
     }
@@ -633,6 +640,7 @@ impl Cmp<Z0> for Z0 {
 impl<U: Unsigned + NonZero> Cmp<NInt<U>> for Z0 {
     type Output = Greater;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &NInt<U>) -> Self::Output {
         Greater
     }
@@ -642,6 +650,7 @@ impl<U: Unsigned + NonZero> Cmp<NInt<U>> for Z0 {
 impl<U: Unsigned + NonZero> Cmp<PInt<U>> for Z0 {
     type Output = Less;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &PInt<U>) -> Self::Output {
         Less
     }
@@ -651,6 +660,7 @@ impl<U: Unsigned + NonZero> Cmp<PInt<U>> for Z0 {
 impl<U: Unsigned + NonZero> Cmp<Z0> for PInt<U> {
     type Output = Greater;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
         Greater
     }
@@ -660,6 +670,7 @@ impl<U: Unsigned + NonZero> Cmp<Z0> for PInt<U> {
 impl<U: Unsigned + NonZero> Cmp<Z0> for NInt<U> {
     type Output = Less;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &Z0) -> Self::Output {
         Less
     }
@@ -669,6 +680,7 @@ impl<U: Unsigned + NonZero> Cmp<Z0> for NInt<U> {
 impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<PInt<P>> for NInt<N> {
     type Output = Less;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &PInt<P>) -> Self::Output {
         Less
     }
@@ -678,6 +690,7 @@ impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<PInt<P>> for NInt<N> {
 impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<NInt<N>> for PInt<P> {
     type Output = Greater;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, _: &NInt<N>) -> Self::Output {
         Greater
     }
@@ -687,6 +700,7 @@ impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<NInt<N>> for PInt<P> {
 impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for PInt<Pl> {
     type Output = <Pl as Cmp<Pr>>::Output;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, rhs: &PInt<Pr>) -> Self::Output {
         self.n.compare::<Internal>(&rhs.n)
     }
@@ -696,6 +710,7 @@ impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for
 impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
     type Output = <Nr as Cmp<Nl>>::Output;
 
+    #[inline]
     fn compare<IM: InternalMarker>(&self, rhs: &NInt<Nr>) -> Self::Output {
         rhs.n.compare::<Internal>(&self.n)
     }
@@ -730,6 +745,7 @@ macro_rules! impl_int_rem {
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> PrivateRem<U0, $B<Ur>> for $A<Ul> {
             type Output = Z0;
 
+            #[inline]
             fn private_rem(self, _: U0, _: $B<Ur>) -> Self::Output {
                 Z0
             }
@@ -743,6 +759,7 @@ macro_rules! impl_int_rem {
         {
             type Output = $R<UInt<U, B>>;
 
+            #[inline]
             fn private_rem(self, urem: UInt<U, B>, _: $B<Ur>) -> Self::Output {
                 $R { n: urem }
             }
