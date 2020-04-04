@@ -55,6 +55,12 @@
         clippy::new_without_default
     )
 )]
+#![cfg_attr(
+    feature = "cargo-clippy",
+    deny(
+        clippy::missing_inline_in_public_items
+    )
+)]
 
 // For debugging macros:
 // #![feature(trace_macros)]

@@ -73,6 +73,7 @@ impl PowerOfTwo for B1 {}
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
     type Output = B1;
+    #[inline]
     fn not(self) -> Self::Output {
         B1
     }
@@ -80,6 +81,7 @@ impl Not for B0 {
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
     type Output = B0;
+    #[inline]
     fn not(self) -> Self::Output {
         B0
     }
@@ -88,6 +90,7 @@ impl Not for B1 {
 /// And with 0 ( 0 & B = 0)
 impl<Rhs: Bit> BitAnd<Rhs> for B0 {
     type Output = B0;
+    #[inline]
     fn bitand(self, _: Rhs) -> Self::Output {
         B0
     }
@@ -96,6 +99,7 @@ impl<Rhs: Bit> BitAnd<Rhs> for B0 {
 /// And with 1 ( 1 & 0 = 0)
 impl BitAnd<B0> for B1 {
     type Output = B0;
+    #[inline]
     fn bitand(self, _: B0) -> Self::Output {
         B0
     }
@@ -104,6 +108,7 @@ impl BitAnd<B0> for B1 {
 /// And with 1 ( 1 & 1 = 1)
 impl BitAnd<B1> for B1 {
     type Output = B1;
+    #[inline]
     fn bitand(self, _: B1) -> Self::Output {
         B1
     }
@@ -112,6 +117,7 @@ impl BitAnd<B1> for B1 {
 /// Or with 0 ( 0 | 0 = 0)
 impl BitOr<B0> for B0 {
     type Output = B0;
+    #[inline]
     fn bitor(self, _: B0) -> Self::Output {
         B0
     }
@@ -120,6 +126,7 @@ impl BitOr<B0> for B0 {
 /// Or with 0 ( 0 | 1 = 1)
 impl BitOr<B1> for B0 {
     type Output = B1;
+    #[inline]
     fn bitor(self, _: B1) -> Self::Output {
         B1
     }
@@ -128,6 +135,7 @@ impl BitOr<B1> for B0 {
 /// Or with 1 ( 1 | B = 1)
 impl<Rhs: Bit> BitOr<Rhs> for B1 {
     type Output = B1;
+    #[inline]
     fn bitor(self, _: Rhs) -> Self::Output {
         B1
     }
@@ -136,6 +144,7 @@ impl<Rhs: Bit> BitOr<Rhs> for B1 {
 /// Xor between 0 and 0 ( 0 ^ 0 = 0)
 impl BitXor<B0> for B0 {
     type Output = B0;
+    #[inline]
     fn bitxor(self, _: B0) -> Self::Output {
         B0
     }
@@ -143,6 +152,7 @@ impl BitXor<B0> for B0 {
 /// Xor between 1 and 0 ( 1 ^ 0 = 1)
 impl BitXor<B0> for B1 {
     type Output = B1;
+    #[inline]
     fn bitxor(self, _: B0) -> Self::Output {
         B1
     }
@@ -150,6 +160,7 @@ impl BitXor<B0> for B1 {
 /// Xor between 0 and 1 ( 0 ^ 1 = 1)
 impl BitXor<B1> for B0 {
     type Output = B1;
+    #[inline]
     fn bitxor(self, _: B1) -> Self::Output {
         B1
     }
@@ -157,6 +168,7 @@ impl BitXor<B1> for B0 {
 /// Xor between 1 and 1 ( 1 ^ 1 = 0)
 impl BitXor<B1> for B1 {
     type Output = B0;
+    #[inline]
     fn bitxor(self, _: B1) -> Self::Output {
         B0
     }
@@ -218,24 +230,28 @@ impl Cmp<B1> for B1 {
 use Min;
 impl Min<B0> for B0 {
     type Output = B0;
+    #[inline]
     fn min(self, _: B0) -> B0 {
         self
     }
 }
 impl Min<B1> for B0 {
     type Output = B0;
+    #[inline]
     fn min(self, _: B1) -> B0 {
         self
     }
 }
 impl Min<B0> for B1 {
     type Output = B0;
+    #[inline]
     fn min(self, rhs: B0) -> B0 {
         rhs
     }
 }
 impl Min<B1> for B1 {
     type Output = B1;
+    #[inline]
     fn min(self, _: B1) -> B1 {
         self
     }
@@ -244,24 +260,28 @@ impl Min<B1> for B1 {
 use Max;
 impl Max<B0> for B0 {
     type Output = B0;
+    #[inline]
     fn max(self, _: B0) -> B0 {
         self
     }
 }
 impl Max<B1> for B0 {
     type Output = B1;
+    #[inline]
     fn max(self, rhs: B1) -> B1 {
         rhs
     }
 }
 impl Max<B0> for B1 {
     type Output = B1;
+    #[inline]
     fn max(self, _: B0) -> B1 {
         self
     }
 }
 impl Max<B1> for B1 {
     type Output = B1;
+    #[inline]
     fn max(self, _: B1) -> B1 {
         self
     }

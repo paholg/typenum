@@ -333,6 +333,7 @@ where
 {
     type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_less(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -353,6 +354,7 @@ where
 {
     type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -373,6 +375,7 @@ where
 {
     type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_greater(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -393,6 +396,7 @@ where
 {
     type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_less_or_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -413,6 +417,7 @@ where
 {
     type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_not_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }
@@ -433,6 +438,7 @@ where
 {
     type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_greater_or_equal(self, _: B) -> Self::Output {
         unsafe { ::core::mem::uninitialized() }
     }

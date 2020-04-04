@@ -6,6 +6,7 @@ The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested again
 version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
 
 ### Unreleased
+- [fixed] Make all functions #[inline].
 
 ### 1.11.2 (2019-08-26)
 - [fixed] Cross compilation from Linux to Windows.
