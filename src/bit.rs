@@ -215,6 +215,7 @@ mod tests {
 impl Cmp<B0> for B0 {
     type Output = Equal;
 
+    #[inline]
     fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
         Equal
     }
@@ -223,6 +224,7 @@ impl Cmp<B0> for B0 {
 impl Cmp<B1> for B0 {
     type Output = Less;
 
+    #[inline]
     fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
         Less
     }
@@ -231,6 +233,7 @@ impl Cmp<B1> for B0 {
 impl Cmp<B0> for B1 {
     type Output = Greater;
 
+    #[inline]
     fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
         Greater
     }
@@ -239,6 +242,7 @@ impl Cmp<B0> for B1 {
 impl Cmp<B1> for B1 {
     type Output = Equal;
 
+    #[inline]
     fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
         Equal
     }

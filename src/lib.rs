@@ -52,15 +52,11 @@
     allow(
         clippy::type_complexity,
         clippy::len_without_is_empty,
-        clippy::new_without_default
+        clippy::new_without_default,
+        clippy::many_single_char_names
     )
 )]
-#![cfg_attr(
-    feature = "cargo-clippy",
-    deny(
-        clippy::missing_inline_in_public_items
-    )
-)]
+#![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
 
 // For debugging macros:
 // #![feature(trace_macros)]
