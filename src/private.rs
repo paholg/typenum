@@ -21,13 +21,21 @@
 
 #![doc(hidden)]
 
-// use ::{Sub};
 use bit::{Bit, B0, B1};
 use uint::{UInt, UTerm, Unsigned};
+
+/// A marker for restricting a method on a public trait to internal use only.
+pub(crate) enum Internal {}
+
+pub trait InternalMarker {}
+
+impl InternalMarker for Internal {}
 
 /// Convenience trait. Calls `Invert` -> `TrimTrailingZeros` -> `Invert`
 pub trait Trim {
     type Output;
+
+    fn trim(self) -> Self::Output;
 }
 pub type TrimOut<A> = <A as Trim>::Output;
 
@@ -36,6 +44,8 @@ pub type TrimOut<A> = <A as Trim>::Output;
 // ONLY IMPLEMENT FOR INVERTED NUMBERS!
 pub trait TrimTrailingZeros {
     type Output;
+
+    fn trim_trailing_zeros(self) -> Self::Output;
 }
 pub type TrimTrailingZerosOut<A> = <A as TrimTrailingZeros>::Output;
 
@@ -43,6 +53,8 @@ pub type TrimTrailingZerosOut<A> = <A as TrimTrailingZeros>::Output;
 /// digit on the outside.
 pub trait Invert {
     type Output;
+
+    fn invert(self) -> Self::Output;
 }
 pub type InvertOut<A> = <A as Invert>::Output;
 
@@ -50,32 +62,41 @@ pub type InvertOut<A> = <A as Invert>::Output;
 /// The Rhs is what we've got so far.
 pub trait PrivateInvert<Rhs> {
     type Output;
+
+    fn private_invert(self, Rhs) -> Self::Output;
 }
 pub type PrivateInvertOut<A, Rhs> = <A as PrivateInvert<Rhs>>::Output;
 
 /// Terminating character for `InvertedUInt`s
-pub enum InvertedUTerm {}
+pub struct InvertedUTerm;
 
 /// Inverted `UInt` (has most significant digit on the outside)
 pub struct InvertedUInt<IU: InvertedUnsigned, B: Bit> {
-    _marker: (IU, B),
+    msb: IU,
+    lsb: B,
 }
 
 /// Does the real anding for `UInt`s; `And` just calls this and then `Trim`.
 pub trait PrivateAnd<Rhs = Self> {
     type Output;
+
+    fn private_and(self, Rhs) -> Self::Output;
 }
 pub type PrivateAndOut<A, Rhs> = <A as PrivateAnd<Rhs>>::Output;
 
 /// Does the real xoring for `UInt`s; `Xor` just calls this and then `Trim`.
 pub trait PrivateXor<Rhs = Self> {
     type Output;
+
+    fn private_xor(self, Rhs) -> Self::Output;
 }
 pub type PrivateXorOut<A, Rhs> = <A as PrivateXor<Rhs>>::Output;
 
 /// Does the real subtraction for `UInt`s; `Sub` just calls this and then `Trim`.
 pub trait PrivateSub<Rhs = Self> {
     type Output;
+
+    fn private_sub(self, Rhs) -> Self::Output;
 }
 pub type PrivateSubOut<A, Rhs> = <A as PrivateSub<Rhs>>::Output;
 
@@ -84,11 +105,15 @@ pub type PrivateSubOut<A, Rhs> = <A as PrivateSub<Rhs>>::Output;
 /// where `P` and `N` are both passed as unsigned integers
 pub trait PrivateIntegerAdd<C, N> {
     type Output;
+
+    fn private_integer_add(self, C, N) -> Self::Output;
 }
 pub type PrivateIntegerAddOut<P, C, N> = <P as PrivateIntegerAdd<C, N>>::Output;
 
 pub trait PrivatePow<Y, N> {
     type Output;
+
+    fn private_pow(self, Y, N) -> Self::Output;
 }
 pub type PrivatePowOut<A, Y, N> = <A as PrivatePow<Y, N>>::Output;
 
@@ -126,6 +151,10 @@ impl<IU: InvertedUnsigned, B: Bit> InvertedUnsigned for InvertedUInt<IU, B> {
 
 impl Invert for UTerm {
     type Output = InvertedUTerm;
+
+    fn invert(self) -> Self::Output {
+        InvertedUTerm
+    }
 }
 
 impl<U: Unsigned, B: Bit> Invert for UInt<U, B>
@@ -133,10 +162,21 @@ where
     U: PrivateInvert<InvertedUInt<InvertedUTerm, B>>,
 {
     type Output = PrivateInvertOut<U, InvertedUInt<InvertedUTerm, B>>;
+
+    fn invert(self) -> Self::Output {
+        self.msb.private_invert(InvertedUInt {
+            msb: InvertedUTerm,
+            lsb: self.lsb,
+        })
+    }
 }
 
 impl<IU: InvertedUnsigned> PrivateInvert<IU> for UTerm {
     type Output = IU;
+
+    fn private_invert(self, rhs: IU) -> Self::Output {
+        rhs
+    }
 }
 
 impl<IU: InvertedUnsigned, U: Unsigned, B: Bit> PrivateInvert<IU> for UInt<U, B>
@@ -144,6 +184,13 @@ where
     U: PrivateInvert<InvertedUInt<IU, B>>,
 {
     type Output = PrivateInvertOut<U, InvertedUInt<IU, B>>;
+
+    fn private_invert(self, rhs: IU) -> Self::Output {
+        self.msb.private_invert(InvertedUInt {
+            msb: rhs,
+            lsb: self.lsb,
+        })
+    }
 }
 
 #[test]
@@ -161,6 +208,10 @@ fn test_inversion() {
 
 impl Invert for InvertedUTerm {
     type Output = UTerm;
+
+    fn invert(self) -> Self::Output {
+        UTerm
+    }
 }
 
 impl<IU: InvertedUnsigned, B: Bit> Invert for InvertedUInt<IU, B>
@@ -168,10 +219,21 @@ where
     IU: PrivateInvert<UInt<UTerm, B>>,
 {
     type Output = <IU as PrivateInvert<UInt<UTerm, B>>>::Output;
+
+    fn invert(self) -> Self::Output {
+        self.msb.private_invert(UInt {
+            msb: UTerm,
+            lsb: self.lsb,
+        })
+    }
 }
 
 impl<U: Unsigned> PrivateInvert<U> for InvertedUTerm {
     type Output = U;
+
+    fn private_invert(self, rhs: U) -> Self::Output {
+        rhs
+    }
 }
 
 impl<U: Unsigned, IU: InvertedUnsigned, B: Bit> PrivateInvert<U> for InvertedUInt<IU, B>
@@ -179,6 +241,13 @@ where
     IU: PrivateInvert<UInt<U, B>>,
 {
     type Output = <IU as PrivateInvert<UInt<U, B>>>::Output;
+
+    fn private_invert(self, rhs: U) -> Self::Output {
+        self.msb.private_invert(UInt {
+            msb: rhs,
+            lsb: self.lsb,
+        })
+    }
 }
 
 #[test]
@@ -196,10 +265,18 @@ fn test_double_inversion() {
 
 impl TrimTrailingZeros for InvertedUTerm {
     type Output = InvertedUTerm;
+
+    fn trim_trailing_zeros(self) -> Self::Output {
+        InvertedUTerm
+    }
 }
 
 impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B1> {
     type Output = Self;
+
+    fn trim_trailing_zeros(self) -> Self::Output {
+        self
+    }
 }
 
 impl<IU: InvertedUnsigned> TrimTrailingZeros for InvertedUInt<IU, B0>
@@ -207,6 +284,10 @@ where
     IU: TrimTrailingZeros,
 {
     type Output = <IU as TrimTrailingZeros>::Output;
+
+    fn trim_trailing_zeros(self) -> Self::Output {
+        self.msb.trim_trailing_zeros()
+    }
 }
 
 impl<U: Unsigned> Trim for U
@@ -216,18 +297,26 @@ where
     <<U as Invert>::Output as TrimTrailingZeros>::Output: Invert,
 {
     type Output = <<<U as Invert>::Output as TrimTrailingZeros>::Output as Invert>::Output;
+
+    fn trim(self) -> Self::Output {
+        self.invert().trim_trailing_zeros().invert()
+    }
 }
 
 // Note: Trimming is tested when we do subtraction.
 
 pub trait PrivateCmp<Rhs, SoFar> {
     type Output;
+
+    fn private_cmp(&self, &Rhs, SoFar) -> Self::Output;
 }
 pub type PrivateCmpOut<A, Rhs, SoFar> = <A as PrivateCmp<Rhs, SoFar>>::Output;
 
 // Set Bit
 pub trait PrivateSetBit<I, B> {
     type Output;
+
+    fn private_set_bit(self, I, B) -> Self::Output;
 }
 pub type PrivateSetBitOut<N, I, B> = <N as PrivateSetBit<I, B>>::Output;
 
@@ -235,6 +324,10 @@ pub type PrivateSetBitOut<N, I, B> = <N as PrivateSetBit<I, B>>::Output;
 pub trait PrivateDiv<N, D, Q, R, I> {
     type Quotient;
     type Remainder;
+
+    fn private_div_quotient(self, N, D, Q, R, I) -> Self::Quotient;
+
+    fn private_div_remainder(self, N, D, Q, R, I) -> Self::Remainder;
 }
 
 pub type PrivateDivQuot<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Quotient;
@@ -243,6 +336,10 @@ pub type PrivateDivRem<N, D, Q, R, I> = <() as PrivateDiv<N, D, Q, R, I>>::Remai
 pub trait PrivateDivIf<N, D, Q, R, I, RcmpD> {
     type Quotient;
     type Remainder;
+
+    fn private_div_if_quotient(self, N, D, Q, R, I, RcmpD) -> Self::Quotient;
+
+    fn private_div_if_remainder(self, N, D, Q, R, I, RcmpD) -> Self::Remainder;
 }
 
 pub type PrivateDivIfQuot<N, D, Q, R, I, RcmpD> =
@@ -253,24 +350,28 @@ pub type PrivateDivIfRem<N, D, Q, R, I, RcmpD> =
 // Div for signed ints
 pub trait PrivateDivInt<C, Divisor> {
     type Output;
+
+    fn private_div_int(self, C, Divisor) -> Self::Output;
 }
 pub type PrivateDivIntOut<A, C, Divisor> = <A as PrivateDivInt<C, Divisor>>::Output;
 
 pub trait PrivateRem<URem, Divisor> {
     type Output;
+
+    fn private_rem(self, URem, Divisor) -> Self::Output;
 }
 pub type PrivateRemOut<A, URem, Divisor> = <A as PrivateRem<URem, Divisor>>::Output;
 
 // min max
 pub trait PrivateMin<Rhs, CmpResult> {
     type Output;
-    fn private_min(self, rhs: Rhs) -> Self::Output;
+    fn private_min(self, Rhs) -> Self::Output;
 }
 pub type PrivateMinOut<A, B, CmpResult> = <A as PrivateMin<B, CmpResult>>::Output;
 
 pub trait PrivateMax<Rhs, CmpResult> {
     type Output;
-    fn private_max(self, rhs: Rhs) -> Self::Output;
+    fn private_max(self, Rhs) -> Self::Output;
 }
 pub type PrivateMaxOut<A, B, CmpResult> = <A as PrivateMax<B, CmpResult>>::Output;
 
@@ -280,86 +381,170 @@ use {Equal, False, Greater, Less, True};
 
 pub trait IsLessPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_less_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsLessPrivate<B, Less> for A {
     type Output = True;
+
+    fn is_less_private(self, _: B, _: Less) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsLessPrivate<B, Equal> for A {
     type Output = False;
+
+    fn is_less_private(self, _: B, _: Equal) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsLessPrivate<B, Greater> for A {
     type Output = False;
+
+    fn is_less_private(self, _: B, _: Greater) -> Self::Output {
+        B0
+    }
 }
 
 pub trait IsEqualPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_equal_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsEqualPrivate<B, Less> for A {
     type Output = False;
+
+    fn is_equal_private(self, _: B, _: Less) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsEqualPrivate<B, Equal> for A {
     type Output = True;
+
+    fn is_equal_private(self, _: B, _: Equal) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsEqualPrivate<B, Greater> for A {
     type Output = False;
+
+    fn is_equal_private(self, _: B, _: Greater) -> Self::Output {
+        B0
+    }
 }
 
 pub trait IsGreaterPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_greater_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsGreaterPrivate<B, Less> for A {
     type Output = False;
+
+    fn is_greater_private(self, _: B, _: Less) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsGreaterPrivate<B, Equal> for A {
     type Output = False;
+
+    fn is_greater_private(self, _: B, _: Equal) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsGreaterPrivate<B, Greater> for A {
     type Output = True;
+
+    fn is_greater_private(self, _: B, _: Greater) -> Self::Output {
+        B1
+    }
 }
 
 pub trait IsLessOrEqualPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_less_or_equal_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsLessOrEqualPrivate<B, Less> for A {
     type Output = True;
+
+    fn is_less_or_equal_private(self, _: B, _: Less) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsLessOrEqualPrivate<B, Equal> for A {
     type Output = True;
+
+    fn is_less_or_equal_private(self, _: B, _: Equal) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsLessOrEqualPrivate<B, Greater> for A {
     type Output = False;
+
+    fn is_less_or_equal_private(self, _: B, _: Greater) -> Self::Output {
+        B0
+    }
 }
 
 pub trait IsNotEqualPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_not_equal_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsNotEqualPrivate<B, Less> for A {
     type Output = True;
+
+    fn is_not_equal_private(self, _: B, _: Less) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsNotEqualPrivate<B, Equal> for A {
     type Output = False;
+
+    fn is_not_equal_private(self, _: B, _: Equal) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsNotEqualPrivate<B, Greater> for A {
     type Output = True;
+
+    fn is_not_equal_private(self, _: B, _: Greater) -> Self::Output {
+        B1
+    }
 }
 
 pub trait IsGreaterOrEqualPrivate<Rhs, Cmp> {
     type Output: Bit;
+
+    fn is_greater_or_equal_private(self, Rhs, Cmp) -> Self::Output;
 }
 
 impl<A, B> IsGreaterOrEqualPrivate<B, Less> for A {
     type Output = False;
+
+    fn is_greater_or_equal_private(self, _: B, _: Less) -> Self::Output {
+        B0
+    }
 }
 impl<A, B> IsGreaterOrEqualPrivate<B, Equal> for A {
     type Output = True;
+
+    fn is_greater_or_equal_private(self, _: B, _: Equal) -> Self::Output {
+        B1
+    }
 }
 impl<A, B> IsGreaterOrEqualPrivate<B, Greater> for A {
     type Output = True;
+
+    fn is_greater_or_equal_private(self, _: B, _: Greater) -> Self::Output {
+        B1
+    }
 }
 
 pub trait PrivateSquareRoot {

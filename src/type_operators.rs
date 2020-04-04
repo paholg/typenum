@@ -1,6 +1,7 @@
 //! Useful **type operators** that are not defined in `core::ops`.
 //!
 
+use private::{Internal, InternalMarker};
 use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
 
 /// A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
@@ -281,6 +282,9 @@ fn pow_test() {
 pub trait Cmp<Rhs = Self> {
     /// The result of the comparison. It should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;
+
+    #[doc(hidden)]
+    fn compare<IM: InternalMarker>(&self, &Rhs) -> Self::Output;
 }
 
 /// A **type operator** that gives the length of an `Array` or the number of bits in a `UInt`.
@@ -334,8 +338,9 @@ where
     type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_less(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_less(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_less_private(rhs, lhs_cmp_rhs)
     }
 }
 
@@ -355,8 +360,9 @@ where
     type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_equal(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_equal(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_equal_private(rhs, lhs_cmp_rhs)
     }
 }
 
@@ -376,8 +382,9 @@ where
     type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_greater(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_greater(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_greater_private(rhs, lhs_cmp_rhs)
     }
 }
 
@@ -397,8 +404,9 @@ where
     type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_less_or_equal(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_less_or_equal(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_less_or_equal_private(rhs, lhs_cmp_rhs)
     }
 }
 
@@ -418,8 +426,9 @@ where
     type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_not_equal(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_not_equal(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_not_equal_private(rhs, lhs_cmp_rhs)
     }
 }
 
@@ -439,8 +448,9 @@ where
     type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
 
     #[inline]
-    fn is_greater_or_equal(self, _: B) -> Self::Output {
-        unsafe { ::core::mem::uninitialized() }
+    fn is_greater_or_equal(self, rhs: B) -> Self::Output {
+        let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
+        self.is_greater_or_equal_private(rhs, lhs_cmp_rhs)
     }
 }
 
