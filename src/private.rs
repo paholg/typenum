@@ -136,12 +136,14 @@ pub trait InvertedUnsigned {
 }
 
 impl InvertedUnsigned for InvertedUTerm {
+    #[inline]
     fn to_u64() -> u64 {
         0
     }
 }
 
 impl<IU: InvertedUnsigned, B: Bit> InvertedUnsigned for InvertedUInt<IU, B> {
+    #[inline]
     fn to_u64() -> u64 {
         u64::from(B::to_u8()) | IU::to_u64() << 1
     }

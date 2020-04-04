@@ -337,6 +337,7 @@ where
 {
     type Output = <A as IsLessPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_less(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_less_private(rhs, lhs_cmp_rhs)
@@ -358,6 +359,7 @@ where
 {
     type Output = <A as IsEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_equal(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_equal_private(rhs, lhs_cmp_rhs)
@@ -379,6 +381,7 @@ where
 {
     type Output = <A as IsGreaterPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_greater(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_greater_private(rhs, lhs_cmp_rhs)
@@ -400,6 +403,7 @@ where
 {
     type Output = <A as IsLessOrEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_less_or_equal(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_less_or_equal_private(rhs, lhs_cmp_rhs)
@@ -421,6 +425,7 @@ where
 {
     type Output = <A as IsNotEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_not_equal(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_not_equal_private(rhs, lhs_cmp_rhs)
@@ -442,6 +447,7 @@ where
 {
     type Output = <A as IsGreaterOrEqualPrivate<B, Compare<A, B>>>::Output;
 
+    #[inline]
     fn is_greater_or_equal(self, rhs: B) -> Self::Output {
         let lhs_cmp_rhs = self.compare::<Internal>(&rhs);
         self.is_greater_or_equal_private(rhs, lhs_cmp_rhs)

@@ -199,6 +199,7 @@ impl<U: Unsigned + NonZero> Integer for NInt<U> {
 /// `-Z0 = Z0`
 impl Neg for Z0 {
     type Output = Z0;
+    #[inline]
     fn neg(self) -> Self::Output {
         Z0
     }
@@ -207,6 +208,7 @@ impl Neg for Z0 {
 /// `-PInt = NInt`
 impl<U: Unsigned + NonZero> Neg for PInt<U> {
     type Output = NInt<U>;
+    #[inline]
     fn neg(self) -> Self::Output {
         NInt::new()
     }
@@ -215,6 +217,7 @@ impl<U: Unsigned + NonZero> Neg for PInt<U> {
 /// `-NInt = PInt`
 impl<U: Unsigned + NonZero> Neg for NInt<U> {
     type Output = PInt<U>;
+    #[inline]
     fn neg(self) -> Self::Output {
         PInt::new()
     }
@@ -226,6 +229,7 @@ impl<U: Unsigned + NonZero> Neg for NInt<U> {
 /// `Z0 + I = I`
 impl<I: Integer> Add<I> for Z0 {
     type Output = I;
+    #[inline]
     fn add(self, rhs: I) -> Self::Output {
         rhs
     }
@@ -234,6 +238,7 @@ impl<I: Integer> Add<I> for Z0 {
 /// `PInt + Z0 = PInt`
 impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
     type Output = PInt<U>;
+    #[inline]
     fn add(self, _: Z0) -> Self::Output {
         PInt::new()
     }
@@ -242,6 +247,7 @@ impl<U: Unsigned + NonZero> Add<Z0> for PInt<U> {
 /// `NInt + Z0 = NInt`
 impl<U: Unsigned + NonZero> Add<Z0> for NInt<U> {
     type Output = NInt<U>;
+    #[inline]
     fn add(self, _: Z0) -> Self::Output {
         NInt::new()
     }
@@ -254,6 +260,7 @@ where
     <Ul as Add<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
+    #[inline]
     fn add(self, _: PInt<Ur>) -> Self::Output {
         PInt::new()
     }
@@ -266,6 +273,7 @@ where
     <Ul as Add<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
+    #[inline]
     fn add(self, _: NInt<Ur>) -> Self::Output {
         NInt::new()
     }
@@ -277,6 +285,7 @@ where
     Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
+    #[inline]
     fn add(self, rhs: NInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
@@ -292,6 +301,7 @@ where
     Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
+    #[inline]
     fn add(self, rhs: PInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
@@ -341,6 +351,7 @@ where
 /// `Z0 - Z0 = Z0`
 impl Sub<Z0> for Z0 {
     type Output = Z0;
+    #[inline]
     fn sub(self, _: Z0) -> Self::Output {
         Z0
     }
@@ -349,6 +360,7 @@ impl Sub<Z0> for Z0 {
 /// `Z0 - P = N`
 impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
     type Output = NInt<U>;
+    #[inline]
     fn sub(self, _: PInt<U>) -> Self::Output {
         NInt::new()
     }
@@ -357,6 +369,7 @@ impl<U: Unsigned + NonZero> Sub<PInt<U>> for Z0 {
 /// `Z0 - N = P`
 impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
     type Output = PInt<U>;
+    #[inline]
     fn sub(self, _: NInt<U>) -> Self::Output {
         PInt::new()
     }
@@ -365,6 +378,7 @@ impl<U: Unsigned + NonZero> Sub<NInt<U>> for Z0 {
 /// `PInt - Z0 = PInt`
 impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
     type Output = PInt<U>;
+    #[inline]
     fn sub(self, _: Z0) -> Self::Output {
         PInt::new()
     }
@@ -373,6 +387,7 @@ impl<U: Unsigned + NonZero> Sub<Z0> for PInt<U> {
 /// `NInt - Z0 = NInt`
 impl<U: Unsigned + NonZero> Sub<Z0> for NInt<U> {
     type Output = NInt<U>;
+    #[inline]
     fn sub(self, _: Z0) -> Self::Output {
         NInt::new()
     }
@@ -385,6 +400,7 @@ where
     <Ul as Add<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Add<Ur>>::Output>;
+    #[inline]
     fn sub(self, _: NInt<Ur>) -> Self::Output {
         PInt::new()
     }
@@ -397,6 +413,7 @@ where
     <Ul as Add<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<Ul as Add<Ur>>::Output>;
+    #[inline]
     fn sub(self, _: PInt<Ur>) -> Self::Output {
         NInt::new()
     }
@@ -408,6 +425,7 @@ where
     Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
 {
     type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
+    #[inline]
     fn sub(self, rhs: PInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
@@ -423,6 +441,7 @@ where
     Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
 {
     type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
+    #[inline]
     fn sub(self, rhs: NInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
@@ -437,6 +456,7 @@ where
 /// `Z0 * I = Z0`
 impl<I: Integer> Mul<I> for Z0 {
     type Output = Z0;
+    #[inline]
     fn mul(self, _: I) -> Self::Output {
         Z0
     }
@@ -445,6 +465,7 @@ impl<I: Integer> Mul<I> for Z0 {
 /// `P * Z0 = Z0`
 impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
     type Output = Z0;
+    #[inline]
     fn mul(self, _: Z0) -> Self::Output {
         Z0
     }
@@ -453,6 +474,7 @@ impl<U: Unsigned + NonZero> Mul<Z0> for PInt<U> {
 /// `N * Z0 = Z0`
 impl<U: Unsigned + NonZero> Mul<Z0> for NInt<U> {
     type Output = Z0;
+    #[inline]
     fn mul(self, _: Z0) -> Self::Output {
         Z0
     }
@@ -465,6 +487,7 @@ where
     <Ul as Mul<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
+    #[inline]
     fn mul(self, _: PInt<Ur>) -> Self::Output {
         PInt::new()
     }
@@ -477,6 +500,7 @@ where
     <Ul as Mul<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Mul<Ur>>::Output>;
+    #[inline]
     fn mul(self, _: NInt<Ur>) -> Self::Output {
         PInt::new()
     }
@@ -489,6 +513,7 @@ where
     <Ul as Mul<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
+    #[inline]
     fn mul(self, _: NInt<Ur>) -> Self::Output {
         NInt::new()
     }
@@ -501,6 +526,7 @@ where
     <Ul as Mul<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<Ul as Mul<Ur>>::Output>;
+    #[inline]
     fn mul(self, _: PInt<Ur>) -> Self::Output {
         NInt::new()
     }
@@ -512,6 +538,7 @@ where
 /// `Z0 / I = Z0` where `I != 0`
 impl<I: Integer + NonZero> Div<I> for Z0 {
     type Output = Z0;
+    #[inline]
     fn div(self, _: I) -> Self::Output {
         Z0
     }
@@ -526,6 +553,7 @@ macro_rules! impl_int_div {
             $A<Ul>: PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>,
         {
             type Output = <$A<Ul> as PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>>::Output;
+            #[inline]
             fn div(self, rhs: $B<Ur>) -> Self::Output {
                 let lhs_cmp_rhs = self.n.compare::<Internal>(&rhs.n);
                 self.private_div_int(lhs_cmp_rhs, rhs)
@@ -583,6 +611,7 @@ where
     M: Integer + Div<N> + Rem<N, Output = Z0>,
 {
     type Output = Quot<M, N>;
+    #[inline]
     fn partial_div(self, rhs: N) -> Self::Output {
         self / rhs
     }
@@ -678,6 +707,7 @@ impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for
 /// `Z0 % I = Z0` where `I != 0`
 impl<I: Integer + NonZero> Rem<I> for Z0 {
     type Output = Z0;
+    #[inline]
     fn rem(self, _: I) -> Self::Output {
         Z0
     }
@@ -692,6 +722,7 @@ macro_rules! impl_int_rem {
             $A<Ul>: PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>,
         {
             type Output = <$A<Ul> as PrivateRem<<Ul as Rem<Ur>>::Output, $B<Ur>>>::Output;
+            #[inline]
             fn rem(self, rhs: $B<Ur>) -> Self::Output {
                 self.private_rem(self.n % rhs.n, rhs)
             }
@@ -730,6 +761,7 @@ impl_int_rem!(NInt, NInt, NInt);
 /// 0^0 = 1
 impl Pow<Z0> for Z0 {
     type Output = P1;
+    #[inline]
     fn powi(self, _: Z0) -> Self::Output {
         P1::new()
     }
@@ -738,6 +770,7 @@ impl Pow<Z0> for Z0 {
 /// 0^P = 0
 impl<U: Unsigned + NonZero> Pow<PInt<U>> for Z0 {
     type Output = Z0;
+    #[inline]
     fn powi(self, _: PInt<U>) -> Self::Output {
         Z0
     }
@@ -746,6 +779,7 @@ impl<U: Unsigned + NonZero> Pow<PInt<U>> for Z0 {
 /// 0^N = 0
 impl<U: Unsigned + NonZero> Pow<NInt<U>> for Z0 {
     type Output = Z0;
+    #[inline]
     fn powi(self, _: NInt<U>) -> Self::Output {
         Z0
     }
@@ -754,6 +788,7 @@ impl<U: Unsigned + NonZero> Pow<NInt<U>> for Z0 {
 /// 1^N = 1
 impl<U: Unsigned + NonZero> Pow<NInt<U>> for P1 {
     type Output = P1;
+    #[inline]
     fn powi(self, _: NInt<U>) -> Self::Output {
         P1::new()
     }
@@ -762,6 +797,7 @@ impl<U: Unsigned + NonZero> Pow<NInt<U>> for P1 {
 /// (-1)^N = 1 if N is even
 impl<U: Unsigned> Pow<NInt<UInt<U, B0>>> for N1 {
     type Output = P1;
+    #[inline]
     fn powi(self, _: NInt<UInt<U, B0>>) -> Self::Output {
         P1::new()
     }
@@ -770,6 +806,7 @@ impl<U: Unsigned> Pow<NInt<UInt<U, B0>>> for N1 {
 /// (-1)^N = -1 if N is odd
 impl<U: Unsigned> Pow<NInt<UInt<U, B1>>> for N1 {
     type Output = N1;
+    #[inline]
     fn powi(self, _: NInt<UInt<U, B1>>) -> Self::Output {
         N1::new()
     }
@@ -778,6 +815,7 @@ impl<U: Unsigned> Pow<NInt<UInt<U, B1>>> for N1 {
 /// P^0 = 1
 impl<U: Unsigned + NonZero> Pow<Z0> for PInt<U> {
     type Output = P1;
+    #[inline]
     fn powi(self, _: Z0) -> Self::Output {
         P1::new()
     }
@@ -786,6 +824,7 @@ impl<U: Unsigned + NonZero> Pow<Z0> for PInt<U> {
 /// N^0 = 1
 impl<U: Unsigned + NonZero> Pow<Z0> for NInt<U> {
     type Output = P1;
+    #[inline]
     fn powi(self, _: Z0) -> Self::Output {
         P1::new()
     }
@@ -798,6 +837,7 @@ where
     <Ul as Pow<Ur>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Pow<Ur>>::Output>;
+    #[inline]
     fn powi(self, _: PInt<Ur>) -> Self::Output {
         PInt::new()
     }
@@ -810,6 +850,7 @@ where
     <Ul as Pow<UInt<Ur, B0>>>::Output: Unsigned + NonZero,
 {
     type Output = PInt<<Ul as Pow<UInt<Ur, B0>>>::Output>;
+    #[inline]
     fn powi(self, _: PInt<UInt<Ur, B0>>) -> Self::Output {
         PInt::new()
     }
@@ -822,6 +863,7 @@ where
     <Ul as Pow<UInt<Ur, B1>>>::Output: Unsigned + NonZero,
 {
     type Output = NInt<<Ul as Pow<UInt<Ur, B1>>>::Output>;
+    #[inline]
     fn powi(self, _: PInt<UInt<Ur, B1>>) -> Self::Output {
         NInt::new()
     }
@@ -833,6 +875,7 @@ use {Max, Maximum, Min, Minimum};
 
 impl Min<Z0> for Z0 {
     type Output = Z0;
+    #[inline]
     fn min(self, _: Z0) -> Self::Output {
         self
     }
@@ -843,6 +886,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = Z0;
+    #[inline]
     fn min(self, _: PInt<U>) -> Self::Output {
         self
     }
@@ -853,6 +897,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = NInt<U>;
+    #[inline]
     fn min(self, rhs: NInt<U>) -> Self::Output {
         rhs
     }
@@ -863,6 +908,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = Z0;
+    #[inline]
     fn min(self, rhs: Z0) -> Self::Output {
         rhs
     }
@@ -873,6 +919,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = NInt<U>;
+    #[inline]
     fn min(self, _: Z0) -> Self::Output {
         self
     }
@@ -885,6 +932,7 @@ where
     Minimum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = PInt<Minimum<Ul, Ur>>;
+    #[inline]
     fn min(self, rhs: PInt<Ur>) -> Self::Output {
         PInt {
             n: self.n.min(rhs.n),
@@ -898,6 +946,7 @@ where
     Ur: Unsigned + NonZero,
 {
     type Output = NInt<Ul>;
+    #[inline]
     fn min(self, _: PInt<Ur>) -> Self::Output {
         self
     }
@@ -909,6 +958,7 @@ where
     Ur: Unsigned + NonZero,
 {
     type Output = NInt<Ur>;
+    #[inline]
     fn min(self, rhs: NInt<Ur>) -> Self::Output {
         rhs
     }
@@ -921,6 +971,7 @@ where
     Maximum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = NInt<Maximum<Ul, Ur>>;
+    #[inline]
     fn min(self, rhs: NInt<Ur>) -> Self::Output {
         NInt {
             n: self.n.max(rhs.n),
@@ -933,6 +984,7 @@ where
 
 impl Max<Z0> for Z0 {
     type Output = Z0;
+    #[inline]
     fn max(self, _: Z0) -> Self::Output {
         self
     }
@@ -943,6 +995,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = PInt<U>;
+    #[inline]
     fn max(self, rhs: PInt<U>) -> Self::Output {
         rhs
     }
@@ -953,6 +1006,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = Z0;
+    #[inline]
     fn max(self, _: NInt<U>) -> Self::Output {
         self
     }
@@ -963,6 +1017,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = PInt<U>;
+    #[inline]
     fn max(self, _: Z0) -> Self::Output {
         self
     }
@@ -973,6 +1028,7 @@ where
     U: Unsigned + NonZero,
 {
     type Output = Z0;
+    #[inline]
     fn max(self, rhs: Z0) -> Self::Output {
         rhs
     }
@@ -985,6 +1041,7 @@ where
     Maximum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = PInt<Maximum<Ul, Ur>>;
+    #[inline]
     fn max(self, rhs: PInt<Ur>) -> Self::Output {
         PInt {
             n: self.n.max(rhs.n),
@@ -998,6 +1055,7 @@ where
     Ur: Unsigned + NonZero,
 {
     type Output = PInt<Ur>;
+    #[inline]
     fn max(self, rhs: PInt<Ur>) -> Self::Output {
         rhs
     }
@@ -1009,6 +1067,7 @@ where
     Ur: Unsigned + NonZero,
 {
     type Output = PInt<Ul>;
+    #[inline]
     fn max(self, _: NInt<Ur>) -> Self::Output {
         self
     }
@@ -1021,6 +1080,7 @@ where
     Minimum<Ul, Ur>: Unsigned + NonZero,
 {
     type Output = NInt<Minimum<Ul, Ur>>;
+    #[inline]
     fn max(self, rhs: NInt<Ur>) -> Self::Output {
         NInt {
             n: self.n.min(rhs.n),
