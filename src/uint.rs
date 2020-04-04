@@ -1,4 +1,7 @@
-#![allow(clippy::many_single_char_names, clippy::suspicious_arithmetic_impl)]
+#![cfg_attr(
+    feature = "cargo-clippy",
+    allow(clippy::many_single_char_names, clippy::suspicious_arithmetic_impl)
+)]
 
 //! Type-level unsigned integers.
 //!
