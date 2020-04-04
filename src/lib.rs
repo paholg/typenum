@@ -44,6 +44,7 @@
 //!
 
 #![no_std]
+#![forbid(unsafe_code)]
 #![warn(missing_docs)]
 #![cfg_attr(feature = "strict", deny(missing_docs))]
 #![cfg_attr(feature = "strict", deny(warnings))]
