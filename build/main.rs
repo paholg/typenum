@@ -5,7 +5,6 @@ use std::io::Write;
 use std::path::Path;
 
 mod op;
-#[cfg(tests)]
 mod tests;
 
 pub enum UIntCode {
@@ -179,7 +178,6 @@ pub mod consts {{
     }
     write!(f, "}}").unwrap();
 
-    #[cfg(tests)]
     tests::build_tests().unwrap();
 
     op::write_op_macro().unwrap();
