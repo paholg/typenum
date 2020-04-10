@@ -1,10 +1,23 @@
-use std::{env, fmt, fs, io, mem, path};
+use std::{env, fmt, fs, io, path};
 
 use super::{gen_int, gen_uint};
 
 /// Computes the greatest common divisor of two integers.
-fn gcd(mut a: i64, mut b: i64) -> i64 {
-    while (a != 0) {
+fn gcdi(mut a: i64, mut b: i64) -> i64 {
+    a = a.abs();
+    b = b.abs();
+
+    while a != 0 {
+        let tmp = b % a;
+        b = a;
+        a = tmp;
+    }
+
+    b
+}
+
+fn gcdu(mut a: u64, mut b: u64) -> u64 {
+    while a != 0 {
         let tmp = b % a;
         b = a;
         a = tmp;
@@ -184,7 +197,7 @@ fn uint_cmp_test(a: u64, b: u64) -> String {
         "
 #[test]
 #[allow(non_snake_case)]
-fn test_{a}_cmp_{b}() {{
+fn test_{a}_Cmp_{b}() {{
     type A = {gen_a};
     type B = {gen_b};
 
@@ -205,7 +218,7 @@ fn int_cmp_test(a: i64, b: i64) -> String {
         "
 #[test]
 #[allow(non_snake_case)]
-fn test_{sa}{a}_cmp_{sb}{b}() {{
+fn test_{sa}{a}_Cmp_{sb}{b}() {{
     type A = {gen_a};
     type B = {gen_b};
 
@@ -223,7 +236,7 @@ fn test_{sa}{a}_cmp_{sb}{b}() {{
     )
 }
 
-pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
+pub fn build_tests() -> Result<(), Box<dyn std::error::Error>> {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
 
@@ -255,7 +268,7 @@ use typenum::*;
         write!(writer, "{}", uint_binary_test(a, "Add", b, a + b))?;
         write!(writer, "{}", uint_binary_test(a, "Min", b, cmp::min(a, b)))?;
         write!(writer, "{}", uint_binary_test(a, "Max", b, cmp::max(a, b)))?;
-        write!(writer, "{}", uint_binary_test(a, "Gcd", b, gcd(a, b)))?;
+        write!(writer, "{}", uint_binary_test(a, "Gcd", b, gcdu(a, b)))?;
         if a >= b {
             write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b))?;
         }
@@ -277,7 +290,7 @@ use typenum::*;
         write!(writer, "{}", int_binary_test(a, "Mul", b, a * b))?;
         write!(writer, "{}", int_binary_test(a, "Min", b, cmp::min(a, b)))?;
         write!(writer, "{}", int_binary_test(a, "Max", b, cmp::max(a, b)))?;
-        write!(writer, "{}", int_binary_test(a, "Gcd", b, gcd(a, b)))?;
+        write!(writer, "{}", int_binary_test(a, "Gcd", b, gcdi(a, b)))?;
         if b != 0 {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b))?;
             write!(writer, "{}", int_binary_test(a, "Rem", b, a % b))?;
