@@ -6,6 +6,8 @@ The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested again
 version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
 
 ### Unreleased
+- [added] Greatest common divisor operator `Gcd` with alias `Gcf`.
+- [added] `gcd` to the `op!` macro.
 - [changed] Added `Copy` bound to `Rhs` of `Mul<Rhs>` impl for `<TArr<V, A>`.
 - [changed] Added `Copy` bound to `Rhs` of `Div<Rhs>` impl for `<TArr<V, A>`.
 - [changed] Added `Copy` bound to `Rhs` of `PartialDiv<Rhs>` impl for `<TArr<V, A>`.
