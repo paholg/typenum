@@ -27,12 +27,11 @@ fn gcdu(mut a: u64, mut b: u64) -> u64 {
 }
 
 fn sign(i: i64) -> char {
-    if i > 0 {
-        'P'
-    } else if i < 0 {
-        'N'
-    } else {
-        '_'
+    use std::cmp::Ordering::*;
+    match i.cmp(&0) {
+        Greater => 'P',
+        Less => 'N',
+        Equal => '_',
     }
 }
 
@@ -92,11 +91,11 @@ fn test_{a}_{op}() {{
     }
 }
 
-fn uint_binary_test(a: u64, op: &'static str, b: u64, result: u64) -> UIntTest {
+fn uint_binary_test(left: u64, operator: &'static str, right: u64, result: u64) -> UIntTest {
     UIntTest {
-        a: a,
-        op: op,
-        b: Option::Some(b),
+        a: left,
+        op: operator,
+        b: Option::Some(right),
         r: result,
     }
 }
@@ -143,11 +142,11 @@ fn test_{sa}{a}_{op}_{sb}{b}() {{
     }
 }
 
-fn int_binary_test(a: i64, op: &'static str, b: i64, result: i64) -> IntBinaryTest {
+fn int_binary_test(left: i64, operator: &'static str, right: i64, result: i64) -> IntBinaryTest {
     IntBinaryTest {
-        a: a,
-        op: op,
-        b: b,
+        a: left,
+        op: operator,
+        b: right,
         r: result,
     }
 }
@@ -184,10 +183,10 @@ fn test_{sa}{a}_{op}() {{
     }
 }
 
-fn int_unary_test(op: &'static str, a: i64, result: i64) -> IntUnaryTest {
+fn int_unary_test(operator: &'static str, num: i64, result: i64) -> IntUnaryTest {
     IntUnaryTest {
-        op: op,
-        a: a,
+        op: operator,
+        a: num,
         r: result,
     }
 }
@@ -236,7 +235,9 @@ fn test_{sa}{a}_Cmp_{sb}{b}() {{
     )
 }
 
-pub fn build_tests() -> Result<(), Box<dyn std::error::Error>> {
+// Allow for rustc 1.22 compatibility.
+#[allow(bare_trait_objects)]
+pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
 
@@ -248,7 +249,7 @@ pub fn build_tests() -> Result<(), Box<dyn std::error::Error>> {
     let f = fs::File::create(&dest)?;
     let mut writer = io::BufWriter::new(&f);
     use std::io::Write;
-    writer.write(
+    writer.write_all(
         b"
 extern crate typenum;
 
