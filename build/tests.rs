@@ -1,6 +1,17 @@
-use std::{env, fmt, fs, io, path};
+use std::{env, fmt, fs, io, mem, path};
 
 use super::{gen_int, gen_uint};
+
+/// Computes the greatest common divisor of two integers.
+fn gcd(mut a: i64, mut b: i64) -> i64 {
+    while (a != 0) {
+        let tmp = b % a;
+        b = a;
+        a = tmp;
+    }
+
+    b
+}
 
 fn sign(i: i64) -> char {
     if i > 0 {
@@ -244,6 +255,7 @@ use typenum::*;
         write!(writer, "{}", uint_binary_test(a, "Add", b, a + b))?;
         write!(writer, "{}", uint_binary_test(a, "Min", b, cmp::min(a, b)))?;
         write!(writer, "{}", uint_binary_test(a, "Max", b, cmp::max(a, b)))?;
+        write!(writer, "{}", uint_binary_test(a, "Gcd", b, gcd(a, b)))?;
         if a >= b {
             write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b))?;
         }
@@ -265,6 +277,7 @@ use typenum::*;
         write!(writer, "{}", int_binary_test(a, "Mul", b, a * b))?;
         write!(writer, "{}", int_binary_test(a, "Min", b, cmp::min(a, b)))?;
         write!(writer, "{}", int_binary_test(a, "Max", b, cmp::max(a, b)))?;
+        write!(writer, "{}", int_binary_test(a, "Gcd", b, gcd(a, b)))?;
         if b != 0 {
             write!(writer, "{}", int_binary_test(a, "Div", b, a / b))?;
             write!(writer, "{}", int_binary_test(a, "Rem", b, a % b))?;
