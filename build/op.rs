@@ -228,6 +228,14 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
             n_args: 1,
             op_type: Function,
         },
+        Op {
+            token: "gcd",
+            operator: "Gcf",
+            example: ("gcd(U9, U21)", "U3"),
+            precedence: !0,
+            n_args: 2,
+            op_type: Function,
+        },
     ];
 
     use std::io::Write;
