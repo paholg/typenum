@@ -7,7 +7,7 @@ version. Much of typenum should work on as low a version as 1.20.0, but that is 
 
 ### Unreleased
 
-### 1.12.0 (2020-04-03)
+### 1.12.0 (2020-04-13)
 - [added] Feature `force_unix_path_separator` to support building without Cargo.
 - [added] Greatest common divisor operator `Gcd` with alias `Gcf`.
 - [added] `gcd` to the `op!` macro.
