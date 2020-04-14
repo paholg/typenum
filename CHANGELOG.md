@@ -6,6 +6,7 @@ The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested again
 version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
 
 ### Unreleased
+- [added] Feature `force_unix_path_separator` to support building without Cargo.
 - [added] Greatest common divisor operator `Gcd` with alias `Gcf`.
 - [added] `gcd` to the `op!` macro.
 - [changed] Added `Copy` bound to `Rhs` of `Mul<Rhs>` impl for `<TArr<V, A>`.
