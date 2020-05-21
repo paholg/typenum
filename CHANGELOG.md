@@ -7,6 +7,8 @@ version. Much of typenum should work on as low a version as 1.20.0, but that is 
 
 ### Unreleased
 
+- [added] Implementation of `Pow` trait for f32 and f64 with negative exponent
+
 ### 1.12.0 (2020-04-13)
 - [added] Feature `force_unix_path_separator` to support building without Cargo.
 - [added] Greatest common divisor operator `Gcd` with alias `Gcf`.
