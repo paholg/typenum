@@ -140,7 +140,7 @@ impl Ord for Equal {
 #[macro_export]
 macro_rules! assert_type_eq {
     ($a:ty, $b:ty) => {
-        let _: <$a as $crate::Same<$b>>::Output;
+        const _: core::marker::PhantomData<<$a as $crate::Same<$b>>::Output> = core::marker::PhantomData;
     };
 }
 
@@ -148,6 +148,6 @@ macro_rules! assert_type_eq {
 #[macro_export]
 macro_rules! assert_type {
     ($a:ty) => {
-        let _: <$a as $crate::Same<True>>::Output;
+        const _: core::marker::PhantomData<<$a as $crate::Same<True>>::Output> = core::marker::PhantomData;
     };
 }
