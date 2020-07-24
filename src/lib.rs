@@ -8,7 +8,7 @@
 //! example,
 //!
 //! ```rust
-//! use typenum::{N4, Integer};
+//! use typenum::{Integer, N4};
 //!
 //! assert_eq!(N4::to_i32(), -4);
 //! ```
@@ -34,14 +34,13 @@
 //! could be replaced with
 //!
 //! ```rust
-//! use typenum::{Sum, Integer, P3, P4};
+//! use typenum::{Integer, Sum, P3, P4};
 //!
 //! type X = Sum<P3, P4>;
 //! assert_eq!(<X as Integer>::to_i32(), 7);
 //! ```
 //!
 //! Documented in each module is the full list of type operators implemented.
-//!
 
 #![no_std]
 #![forbid(unsafe_code)]

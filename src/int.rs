@@ -16,7 +16,7 @@
 //!
 //! # Example
 //! ```rust
-//! use std::ops::{Add, Sub, Mul, Div, Rem};
+//! use std::ops::{Add, Div, Mul, Rem, Sub};
 //! use typenum::{Integer, N3, P2};
 //!
 //! assert_eq!(<N3 as Add<P2>>::Output::to_i32(), -1);
