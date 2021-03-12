@@ -32,7 +32,7 @@ use crate::{
     consts::{N1, P1, U0, U1},
     private::{Internal, InternalMarker, PrivateDivInt, PrivateIntegerAdd, PrivateRem},
     uint::{UInt, Unsigned},
-    Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo,
+    Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo, Zero,
 };
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
@@ -78,6 +78,7 @@ impl Z0 {
 
 impl<U: Unsigned + NonZero> NonZero for PInt<U> {}
 impl<U: Unsigned + NonZero> NonZero for NInt<U> {}
+impl Zero for Z0 {}
 
 impl<U: Unsigned + NonZero + PowerOfTwo> PowerOfTwo for PInt<U> {}
 

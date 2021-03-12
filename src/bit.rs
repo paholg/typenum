@@ -9,7 +9,7 @@
 //! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 //! - From `typenum`: `Same` and `Cmp`.
 
-use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
+use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, PowerOfTwo, Zero};
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 
 pub use crate::marker_traits::Bit;
@@ -74,6 +74,7 @@ impl Bit for B1 {
     }
 }
 
+impl Zero for B0 {}
 impl NonZero for B1 {}
 impl PowerOfTwo for B1 {}
 

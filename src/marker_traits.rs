@@ -19,6 +19,10 @@
 /// crate implement `NonZero` except `B0`, `U0`, and `Z0`.
 pub trait NonZero {}
 
+/// A **marker trait** to designate that a type is zero. Only `B0`, `U0`, and `Z0`
+/// implement this trait.
+pub trait Zero {}
+
 /// A **Marker trait** for the types `Greater`, `Equal`, and `Less`.
 ///
 /// This trait should not be implemented for anything outside this crate.
