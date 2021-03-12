@@ -12,7 +12,7 @@
 //!
 //! # Example
 //! ```rust
-//! use std::ops::{BitAnd, BitOr, BitXor, Shl, Shr, Add, Sub, Mul, Div, Rem};
+//! use std::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Rem, Shl, Shr, Sub};
 //! use typenum::{Unsigned, U1, U2, U3, U4};
 //!
 //! assert_eq!(<U3 as BitAnd<U2>>::Output::to_u32(), 2);
@@ -146,7 +146,7 @@ impl Unsigned for UTerm {
 ///
 /// # Example
 /// ```rust
-/// use typenum::{B0, B1, UInt, UTerm};
+/// use typenum::{UInt, UTerm, B0, B1};
 ///
 /// # #[allow(dead_code)]
 /// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;

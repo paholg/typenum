@@ -15,7 +15,7 @@ use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
 ///
 /// # Example
 /// ```rust
-/// use typenum::{Same, U4, U5, Unsigned};
+/// use typenum::{Same, Unsigned, U4, U5};
 ///
 /// assert_eq!(<U5 as Same<U5>>::Output::to_u32(), 5);
 ///
@@ -38,7 +38,7 @@ impl<T> Same<T> for T {
 ///
 /// # Example
 /// ```rust
-/// use typenum::{Abs, N5, Integer};
+/// use typenum::{Abs, Integer, N5};
 ///
 /// assert_eq!(<N5 as Abs>::Output::to_i32(), 5);
 /// ```
@@ -63,7 +63,7 @@ impl<U: Unsigned + NonZero> Abs for NInt<U> {
 ///
 /// # Example
 /// ```rust
-/// use typenum::{Pow, N3, P3, Integer};
+/// use typenum::{Integer, Pow, N3, P3};
 ///
 /// assert_eq!(<N3 as Pow<P3>>::Output::to_i32(), -27);
 /// ```
@@ -550,7 +550,7 @@ pub trait Logarithm2 {
 /// # Example
 ///
 /// ```rust
-/// use typenum::{Gcd, U12, U8, Unsigned};
+/// use typenum::{Gcd, Unsigned, U12, U8};
 ///
 /// assert_eq!(<U12 as Gcd<U8>>::Output::to_i32(), 4);
 /// ```
