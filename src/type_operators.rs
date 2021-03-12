@@ -578,3 +578,13 @@ pub trait Gcd<Rhs> {
     /// The greatest common divisor.
     type Output;
 }
+
+/// A **type operator** for taking a concrete integer value from a type.
+///
+/// It returns arbitrary integer value without explicitly specifying the
+/// type. It is useful when you pass the values to methods that accept
+/// distinct types without runtime casting.
+pub trait ToInt<T> {
+    /// Method returning the concrete value for the type.
+    fn to_int() -> T;
+}
