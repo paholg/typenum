@@ -9,16 +9,23 @@ on:
 name: CI
 
 jobs:
-  test:
-    name: tests
-    runs-on: ubuntu-latest
+  test-linux:
+    name: test
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os:
+          - ubuntu-latest
         rust:
           - 1.37.0
           - stable
           - beta
           - nightly
+        include:
+          - os: macos-latest
+            rust: stable
+          - os: windows-latest
+            rust: stable
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -30,9 +37,13 @@ jobs:
         with:
           command: test
           args: --verbose --features "strict"
+      - uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --features "strict"
 
-  fmt:
-    name: fmt
+  clippy:
+    name: clippy + fmt
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -41,23 +52,11 @@ jobs:
           profile: minimal
           toolchain: nightly
           override: true
-      - run: rustup component add rustfmt
+          components: rustfmt, clippy
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
-
-  clippy:
-    name: clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
