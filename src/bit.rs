@@ -9,11 +9,10 @@
 //! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 //! - From `typenum`: `Same` and `Cmp`.
 
+use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 use core::ops::{BitAnd, BitOr, BitXor, Not};
-use private::InternalMarker;
-use {Cmp, Equal, Greater, Less, NonZero, PowerOfTwo};
 
-pub use marker_traits::Bit;
+pub use crate::marker_traits::Bit;
 
 /// The type-level bit 0.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
@@ -255,7 +254,7 @@ impl Cmp<B1> for B1 {
     }
 }
 
-use Min;
+use crate::Min;
 impl Min<B0> for B0 {
     type Output = B0;
     #[inline]
@@ -285,7 +284,7 @@ impl Min<B1> for B1 {
     }
 }
 
-use Max;
+use crate::Max;
 impl Max<B0> for B0 {
     type Output = B0;
     #[inline]

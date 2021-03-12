@@ -3,7 +3,7 @@
 //!
 //! **Type operators** implemented:
 //!
-//! From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`,
+//! From `::core::ops`: `BitAnd`, `BitOr`, `BitXor`, `Shl`, `Shr`, `Add`, `Sub`,
 //!                 `Mul`, `Div`, and `Rem`.
 //! From `typenum`: `Same`, `Cmp`, and `Pow`.
 //!
@@ -26,31 +26,22 @@
 //! assert_eq!(<U3 as Div<U2>>::Output::to_u32(), 1);
 //! assert_eq!(<U3 as Rem<U2>>::Output::to_u32(), 1);
 //! ```
-//!
 
+use crate::{
+    bit::{Bit, B0, B1},
+    consts::{U0, U1},
+    private::{
+        BitDiff, BitDiffOut, Internal, InternalMarker, PrivateAnd, PrivateAndOut, PrivateCmp,
+        PrivateCmpOut, PrivateLogarithm2, PrivatePow, PrivatePowOut, PrivateSquareRoot, PrivateSub,
+        PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
+    },
+    Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
+    Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
+    SquareRoot, Sub1, Sum,
+};
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
-use {
-    Cmp, Equal, Gcd, Greater, IsGreaterOrEqual, Len, Less, Logarithm2, Maximum, Minimum, NonZero,
-    Ord, Pow, SquareRoot,
-};
 
-use bit::{Bit, B0, B1};
-
-use private::{
-    BitDiff, PrivateAnd, PrivateCmp, PrivateLogarithm2, PrivatePow, PrivateSquareRoot, PrivateSub,
-    PrivateXor, Trim,
-};
-
-use private::{
-    BitDiffOut, PrivateAndOut, PrivateCmpOut, PrivatePowOut, PrivateSubOut, PrivateXorOut, TrimOut,
-};
-
-use private::{Internal, InternalMarker};
-
-use consts::{U0, U1};
-use {Add1, Double, Gcf, GrEq, Length, Log2, Or, Prod, Shleft, Shright, Sqrt, Square, Sub1, Sum};
-
-pub use marker_traits::{PowerOfTwo, Unsigned};
+pub use crate::marker_traits::{PowerOfTwo, Unsigned};
 
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
@@ -1289,7 +1280,7 @@ where
 
 // ---------------------------------------------------------------------------------------
 // Shifting one number until it's the size of another
-use private::ShiftDiff;
+use crate::private::ShiftDiff;
 impl<Ul: Unsigned, Ur: Unsigned> ShiftDiff<Ur> for Ul
 where
     Ur: BitDiff<Ul>,
@@ -1439,7 +1430,7 @@ where
 #[cfg(test)]
 mod gcd_tests {
     use super::*;
-    use consts::*;
+    use crate::consts::*;
 
     macro_rules! gcd_test {
         (
@@ -1475,7 +1466,7 @@ pub trait GetBit<I> {
     type Output;
 
     #[doc(hidden)]
-    fn get_bit<IM: InternalMarker>(&self, &I) -> Self::Output;
+    fn get_bit<IM: InternalMarker>(&self, _: &I) -> Self::Output;
 }
 
 #[allow(missing_docs)]
@@ -1520,8 +1511,8 @@ impl<I> GetBit<I> for UTerm {
 
 #[test]
 fn test_get_bit() {
-    use consts::*;
-    use Same;
+    use crate::consts::*;
+    use crate::Same;
     type T1 = <GetBitOut<U2, U0> as Same<B0>>::Output;
     type T2 = <GetBitOut<U2, U1> as Same<B1>>::Output;
     type T3 = <GetBitOut<U2, U2> as Same<B0>>::Output;
@@ -1541,12 +1532,12 @@ pub trait SetBit<I, B> {
     type Output;
 
     #[doc(hidden)]
-    fn set_bit<IM: InternalMarker>(self, I, B) -> Self::Output;
+    fn set_bit<IM: InternalMarker>(self, _: I, _: B) -> Self::Output;
 }
 /// Alias for the result of calling `SetBit`: `SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output`.
 pub type SetBitOut<N, I, B> = <N as SetBit<I, B>>::Output;
 
-use private::{PrivateSetBit, PrivateSetBitOut};
+use crate::private::{PrivateSetBit, PrivateSetBitOut};
 
 // Call private one then trim it
 impl<N, I, B> SetBit<I, B> for N
@@ -1617,8 +1608,8 @@ where
 
 #[test]
 fn test_set_bit() {
-    use consts::*;
-    use Same;
+    use crate::consts::*;
+    use crate::Same;
     type T1 = <SetBitOut<U2, U0, B0> as Same<U2>>::Output;
     type T2 = <SetBitOut<U2, U0, B1> as Same<U3>>::Output;
     type T3 = <SetBitOut<U2, U1, B0> as Same<U0>>::Output;
@@ -1669,8 +1660,8 @@ mod tests {
     }
     #[test]
     fn test_div() {
-        use consts::*;
-        use {Quot, Same};
+        use crate::consts::*;
+        use crate::{Quot, Same};
 
         test_div!(U0 / U1 = U0);
         test_div!(U1 / U1 = U1);
@@ -1747,9 +1738,9 @@ where
 
 // -----------------------------------------
 // PrivateDiv
-use private::{PrivateDiv, PrivateDivQuot, PrivateDivRem};
+use crate::private::{PrivateDiv, PrivateDivQuot, PrivateDivRem};
 
-use Compare;
+use crate::Compare;
 // R == 0: We set R = UInt<UTerm, N[i]>, then call out to PrivateDivIf for the if statement
 impl<N, D, Q, I> PrivateDiv<N, D, Q, U0, I> for ()
 where
@@ -1861,7 +1852,7 @@ where
 // -----------------------------------------
 // PrivateDivIf
 
-use private::{PrivateDivIf, PrivateDivIfQuot, PrivateDivIfRem};
+use crate::private::{PrivateDivIf, PrivateDivIfQuot, PrivateDivIfRem};
 
 // R < D, I > 0, we do nothing and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Less> for ()
@@ -1940,7 +1931,7 @@ where {
     }
 }
 
-use Diff;
+use crate::Diff;
 // R > D, I > 0, we set R -= D, Q[I] = 1 and recurse
 impl<N, D, Q, R, Ui, Bi> PrivateDivIf<N, D, Q, R, UInt<Ui, Bi>, Greater> for ()
 where
@@ -2049,7 +2040,7 @@ where
 
 // -----------------------------------------
 // PartialDiv
-use {PartialDiv, Quot};
+use crate::{PartialDiv, Quot};
 impl<Ur: Unsigned, Br: Bit> PartialDiv<UInt<Ur, Br>> for UTerm {
     type Output = UTerm;
     #[inline]
@@ -2072,7 +2063,7 @@ where
 
 // -----------------------------------------
 // PrivateMin
-use private::{PrivateMin, PrivateMinOut};
+use crate::private::{PrivateMin, PrivateMinOut};
 
 impl<U, B, Ur> PrivateMin<Ur, Equal> for UInt<U, B>
 where
@@ -2115,7 +2106,7 @@ where
 
 // -----------------------------------------
 // Min
-use Min;
+use crate::Min;
 
 impl<U> Min<U> for UTerm
 where
@@ -2144,7 +2135,7 @@ where
 
 // -----------------------------------------
 // PrivateMax
-use private::{PrivateMax, PrivateMaxOut};
+use crate::private::{PrivateMax, PrivateMaxOut};
 
 impl<U, B, Ur> PrivateMax<Ur, Equal> for UInt<U, B>
 where
@@ -2187,7 +2178,7 @@ where
 
 // -----------------------------------------
 // Max
-use Max;
+use crate::Max;
 
 impl<U> Max<U> for UTerm
 where
@@ -2262,7 +2253,7 @@ where
 
 #[test]
 fn sqrt_test() {
-    use consts::*;
+    use crate::consts::*;
 
     assert_eq!(0, <Sqrt<U0>>::to_u32());
 
@@ -2326,7 +2317,7 @@ where
 
 #[test]
 fn log2_test() {
-    use consts::*;
+    use crate::consts::*;
 
     assert_eq!(0, <Log2<U1>>::to_u32());
 

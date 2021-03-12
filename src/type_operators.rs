@@ -1,8 +1,9 @@
 //! Useful **type operators** that are not defined in `core::ops`.
-//!
 
-use private::{Internal, InternalMarker};
-use {Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0};
+use crate::{
+    private::{Internal, InternalMarker},
+    Bit, NInt, NonZero, PInt, UInt, UTerm, Unsigned, Z0,
+};
 
 /// A **type operator** that ensures that `Rhs` is the same as `Self`, it is mainly useful
 /// for writing macros that can take arbitrary binary or unary operators.
@@ -222,7 +223,7 @@ impl_pow_i!(u128, i128);
 
 #[test]
 fn pow_test() {
-    use consts::*;
+    use crate::consts::*;
     let z0 = Z0::new();
     let p3 = P3::new();
 
@@ -284,13 +285,13 @@ pub trait Cmp<Rhs = Self> {
     type Output;
 
     #[doc(hidden)]
-    fn compare<IM: InternalMarker>(&self, &Rhs) -> Self::Output;
+    fn compare<IM: InternalMarker>(&self, _: &Rhs) -> Self::Output;
 }
 
 /// A **type operator** that gives the length of an `Array` or the number of bits in a `UInt`.
 pub trait Len {
     /// The length as a type-level unsigned integer.
-    type Output: ::Unsigned;
+    type Output: crate::Unsigned;
     /// This function isn't used in this crate, but may be useful for others.
     fn len(&self) -> Self::Output;
 }
@@ -320,7 +321,7 @@ pub trait Max<Rhs = Self> {
     fn max(self, rhs: Rhs) -> Self::Output;
 }
 
-use Compare;
+use crate::Compare;
 
 /// A **type operator** that returns `True` if `Self < Rhs`, otherwise returns `False`.
 pub trait IsLess<Rhs = Self> {
@@ -330,7 +331,7 @@ pub trait IsLess<Rhs = Self> {
     fn is_less(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsLessPrivate;
+use crate::private::IsLessPrivate;
 impl<A, B> IsLess<B> for A
 where
     A: Cmp<B> + IsLessPrivate<B, Compare<A, B>>,
@@ -352,7 +353,7 @@ pub trait IsEqual<Rhs = Self> {
     fn is_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsEqualPrivate;
+use crate::private::IsEqualPrivate;
 impl<A, B> IsEqual<B> for A
 where
     A: Cmp<B> + IsEqualPrivate<B, Compare<A, B>>,
@@ -374,7 +375,7 @@ pub trait IsGreater<Rhs = Self> {
     fn is_greater(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsGreaterPrivate;
+use crate::private::IsGreaterPrivate;
 impl<A, B> IsGreater<B> for A
 where
     A: Cmp<B> + IsGreaterPrivate<B, Compare<A, B>>,
@@ -396,7 +397,7 @@ pub trait IsLessOrEqual<Rhs = Self> {
     fn is_less_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsLessOrEqualPrivate;
+use crate::private::IsLessOrEqualPrivate;
 impl<A, B> IsLessOrEqual<B> for A
 where
     A: Cmp<B> + IsLessOrEqualPrivate<B, Compare<A, B>>,
@@ -418,7 +419,7 @@ pub trait IsNotEqual<Rhs = Self> {
     fn is_not_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsNotEqualPrivate;
+use crate::private::IsNotEqualPrivate;
 impl<A, B> IsNotEqual<B> for A
 where
     A: Cmp<B> + IsNotEqualPrivate<B, Compare<A, B>>,
@@ -440,7 +441,7 @@ pub trait IsGreaterOrEqual<Rhs = Self> {
     fn is_greater_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
-use private::IsGreaterOrEqualPrivate;
+use crate::private::IsGreaterOrEqualPrivate;
 impl<A, B> IsGreaterOrEqual<B> for A
 where
     A: Cmp<B> + IsGreaterOrEqualPrivate<B, Compare<A, B>>,
