@@ -176,6 +176,7 @@ macro_rules! impl_pow_f {
         impl<U: Unsigned + NonZero> Pow<NInt<U>> for $t {
             type Output = $t;
 
+            #[inline]
             fn powi(self, _: NInt<U>) -> Self::Output {
                 <$t as Pow<PInt<U>>>::powi(self, PInt::new()).recip()
             }
@@ -257,7 +258,10 @@ fn pow_test() {
             if *$x == 0.0 {
                 assert!(<$f as Pow<N3>>::powi(*$x, n3).is_infinite());
             } else {
-                assert!((<$f as Pow<N3>>::powi(*$x, n3) - 1. / $x / $x / $x).abs() < ::core::$f::EPSILON);
+                assert!(
+                    (<$f as Pow<N3>>::powi(*$x, n3) - 1. / $x / $x / $x).abs()
+                        < ::core::$f::EPSILON
+                );
             }
         };
     }
