@@ -1,5 +1,5 @@
 [![crates.io](https://img.shields.io/crates/v/typenum.svg)](https://crates.io/crates/typenum)
-[![Build Status](https://travis-ci.org/paholg/typenum.svg?branch=master)](https://travis-ci.org/paholg/typenum)
+[![Build Status](https://github.com/paholg/typenum/actions/workflows/check.yml/badge.svg)](https://github.com/paholg/typenum/actions/workflows/check.yml)
 
 Typenum
 =====
