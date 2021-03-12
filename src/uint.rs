@@ -37,7 +37,7 @@ use crate::{
     },
     Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
     Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
-    SquareRoot, Sub1, Sum,
+    SquareRoot, Sub1, Sum, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -229,6 +229,7 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
 }
 
 impl<U: Unsigned, B: Bit> NonZero for UInt<U, B> {}
+impl Zero for UTerm {}
 
 impl PowerOfTwo for UInt<UTerm, B1> {}
 impl<U: Unsigned + PowerOfTwo> PowerOfTwo for UInt<U, B0> {}
