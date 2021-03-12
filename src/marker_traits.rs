@@ -37,6 +37,9 @@ pub trait Bit: Copy + Default {
     #[allow(missing_docs)]
     const BOOL: bool;
 
+    /// Instantiates a singleton representing this bit.
+    fn new() -> Self;
+
     #[allow(missing_docs)]
     fn to_u8() -> u8;
     #[allow(missing_docs)]

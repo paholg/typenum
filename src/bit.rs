@@ -8,7 +8,6 @@
 //!
 //! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 //! - From `typenum`: `Same` and `Cmp`.
-//!
 
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 use private::InternalMarker;
@@ -45,6 +44,10 @@ impl Bit for B0 {
     const BOOL: bool = false;
 
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    #[inline]
     fn to_u8() -> u8 {
         0
     }
@@ -58,6 +61,10 @@ impl Bit for B1 {
     const U8: u8 = 1;
     const BOOL: bool = true;
 
+    #[inline]
+    fn new() -> Self {
+        Self
+    }
     #[inline]
     fn to_u8() -> u8 {
         1
@@ -305,5 +312,24 @@ impl Max<B1> for B1 {
     #[inline]
     fn max(self, _: B1) -> B1 {
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn bit_creation() {
+        {
+            use crate::{B0, B1};
+            let _: B0 = B0::new();
+            let _: B1 = B1::new();
+        }
+
+        {
+            use crate::{Bit, B0, B1};
+
+            let _: B0 = <B0 as Bit>::new();
+            let _: B1 = <B1 as Bit>::new();
+        }
     }
 }
