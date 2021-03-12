@@ -17,6 +17,7 @@ jobs:
         rust:
           - 1.22.0
           - stable
+          - beta
           - nightly
     steps:
       - uses: actions/checkout@v2
