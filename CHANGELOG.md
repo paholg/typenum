@@ -10,6 +10,7 @@ version.
 - [fixed] `op` macro with 2018 edition import.
 - [changed] Allowed calling `assert_type_eq` and `assert_type` at top level.
 - [added] Marker trait `Zero` for `Z0`, `U0`, and `B0`.
+- [added] Implementation of `Pow` trait for f32 and f64 with negative exponent
 
 ### 1.12.0 (2020-04-13)
 - [added] Feature `force_unix_path_separator` to support building without Cargo.
