@@ -51,10 +51,12 @@
 #![cfg_attr(
     feature = "cargo-clippy",
     allow(
-        clippy::type_complexity,
         clippy::len_without_is_empty,
+        clippy::many_single_char_names,
         clippy::new_without_default,
-        clippy::many_single_char_names
+        clippy::suspicious_arithmetic_impl,
+        clippy::type_complexity,
+        clippy::wrong_self_convention,
     )
 )]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
