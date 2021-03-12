@@ -4,8 +4,8 @@
 Typenum
 =====
 
-Typenum is a Rust library for type-level numbers evaluated at compile time. It currently
-supports bits, unsigned integers, and signed integers.
+Typenum is a Rust library for type-level numbers evaluated at compile time. It
+currently supports bits, unsigned integers, and signed integers.
 
 Typenum depends only on libcore, and so is suitable for use on any platform!
 
@@ -13,11 +13,12 @@ For the full documentation, go [here](https://docs.rs/typenum).
 
 ### Importing
 
-While `typenum` is divided into several modules, they are all re-exported through the crate root,
-so you can import anything contained herein with `use typenum::whatever;`, ignoring the
-crate structure.
+While `typenum` is divided into several modules, they are all re-exported
+through the crate root, so you can import anything contained herein with `use
+typenum::whatever;`, ignoring the crate structure.
 
-You may also find it useful to treat the `consts` module as a prelude, perfoming a glob import.
+You may also find it useful to treat the `consts` module as a prelude, perfoming
+a glob import.
 
 ### Example
 
@@ -33,26 +34,27 @@ type Y = Exp<N2, P3>;
 assert_eq!(<Y as Integer>::to_i32(), -8);
 ```
 
-For a non-trivial example of its use, see one of the crates that depends on it. The full
-list is [here](https://crates.io/crates/typenum/reverse_dependencies). Of note are
-[dimensioned](https://crates.io/crates/dimensioned/) which does compile-time type
-checking for arbitrary unit systems and
-[generic-array](https://crates.io/crates/generic-array/) which provides arrays whose
-length you can generically refer to.
+For a non-trivial example of its use, see one of the crates that depends on
+it. The full list is
+[here](https://crates.io/crates/typenum/reverse_dependencies). Of note are
+[dimensioned](https://crates.io/crates/dimensioned/) which does compile-time
+type checking for arbitrary unit systems and
+[generic-array](https://crates.io/crates/generic-array/) which provides arrays
+whose length you can generically refer to.
 
 ### Error messages
 
 
-Typenum's error messages aren't great, and can be difficult to parse. The good news is
-that the fine folks at Auxon have written a tool to help with it. Please take a look at
-[tnfilt](https://github.com/auxoncorp/tnfilt).
+Typenum's error messages aren't great, and can be difficult to parse. The good
+news is that the fine folks at Auxon have written a tool to help with it. Please
+take a look at [tnfilt](https://github.com/auxoncorp/tnfilt).
 
 ### License
 
 Licensed under either of
 
- * Apache License, Version 2.0
-   ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+ * Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+   http://www.apache.org/licenses/LICENSE-2.0)
  * MIT license
    ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
