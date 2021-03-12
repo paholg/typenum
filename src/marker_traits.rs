@@ -14,7 +14,6 @@
 //! assert_eq!(-42, N42::to_i32());
 //! assert_eq!(-42, N42::I32);
 //! ```
-//!
 
 /// A **marker trait** to designate that a type is not zero. All number types in this
 /// crate implement `NonZero` except `B0`, `U0`, and `Z0`.

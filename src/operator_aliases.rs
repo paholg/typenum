@@ -16,7 +16,6 @@
 //! assert_type_eq!(X, Y);
 //! ```
 //!
-//!
 
 // Aliases!!!
 use crate::type_operators::{
