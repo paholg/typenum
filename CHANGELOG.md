@@ -2,11 +2,13 @@
 
 This project follows semantic versioning.
 
-The MSRV (Minimum Supported Rust Version) is 1.22.0, and typenum is tested against this Rust
-version. Much of typenum should work on as low a version as 1.20.0, but that is not guaranteed.
+The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested against this Rust
+version.
 
 ### Unreleased
 - [fixed] `op` macro with 2018 edition
+
+- [changed] Allowed calling `assert_type_eq` and `assert_type` at top level
 
 ### 1.12.0 (2020-04-13)
 - [added] Feature `force_unix_path_separator` to support building without Cargo.
