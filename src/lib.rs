@@ -60,6 +60,8 @@
 )]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
 
+extern crate typenum_macro;
+
 // For debugging macros:
 // #![feature(trace_macros)]
 // trace_macros!(true);
@@ -86,6 +88,8 @@ pub mod private;
 pub mod type_operators;
 pub mod uint;
 
+mod macros;
+
 pub mod array;
 
 pub use crate::{
@@ -98,6 +102,8 @@ pub use crate::{
     type_operators::*,
     uint::{UInt, UTerm},
 };
+
+pub use macros::*;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
