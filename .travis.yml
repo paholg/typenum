@@ -14,7 +14,7 @@ matrix:
   fast_finish: true
 branches:
   only:
-    - master
+    - main
 
 before_script: |
   set -e
