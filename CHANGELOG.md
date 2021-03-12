@@ -6,9 +6,10 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested again
 version.
 
 ### Unreleased
-- [fixed] `op` macro with 2018 edition
-
-- [changed] Allowed calling `assert_type_eq` and `assert_type` at top level
+- [changed] MSRV from 1.22.0 to 1.37.0.
+- [fixed] `op` macro with 2018 edition import.
+- [changed] Allowed calling `assert_type_eq` and `assert_type` at top level.
+- [added] Marker trait `Zero` for `Z0`, `U0`, and `B0`.
 
 ### 1.12.0 (2020-04-13)
 - [added] Feature `force_unix_path_separator` to support building without Cargo.
