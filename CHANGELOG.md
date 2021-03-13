@@ -6,6 +6,8 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested
 against this Rust version.
 
 ### Unreleased
+
+### 1.13.0 (2021-03-12)
 - [changed] MSRV from 1.22.0 to 1.37.0.
 - [fixed] `op` macro with 2018 edition import.
 - [changed] Allowed calling `assert_type_eq` and `assert_type` at top level.
