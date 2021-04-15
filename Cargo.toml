@@ -1,7 +1,7 @@
 [package]
   name = "typenum"
   build = "build/main.rs"
-  version = "1.13.0"
+  version = "1.13.0" # remember to update html_root_url
   authors = [
     "Paho Lurie-Gregg <paho@paholg.com>",
     "Andre Bogus <bogusandre@gmail.com>"
