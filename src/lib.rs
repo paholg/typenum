@@ -59,6 +59,7 @@
     )
 )]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
+#![doc(html_root_url = "https://docs.rs/typenum/1.13.0")]
 
 // For debugging macros:
 // #![feature(trace_macros)]
