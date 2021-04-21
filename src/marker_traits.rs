@@ -34,7 +34,7 @@ pub trait Ord {
 /// The **marker trait** for compile time bits.
 ///
 /// This trait should not be implemented for anything outside this crate.
-pub trait Bit: Copy + Default {
+pub trait Bit: Copy + Default + 'static {
     #[allow(missing_docs)]
     const U8: u8;
     #[allow(missing_docs)]
@@ -60,7 +60,7 @@ pub trait Bit: Copy + Default {
 /// assert_eq!(U3::to_u32(), 3);
 /// assert_eq!(U3::I32, 3);
 /// ```
-pub trait Unsigned: Copy + Default {
+pub trait Unsigned: Copy + Default + 'static {
     #[allow(missing_docs)]
     const U8: u8;
     #[allow(missing_docs)]
@@ -129,7 +129,7 @@ pub trait Unsigned: Copy + Default {
 /// assert_eq!(P3::to_i32(), 3);
 /// assert_eq!(P3::I32, 3);
 /// ```
-pub trait Integer {
+pub trait Integer: 'static {
     #[allow(missing_docs)]
     const I8: i8;
     #[allow(missing_docs)]
