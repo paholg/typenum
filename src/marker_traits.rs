@@ -129,7 +129,7 @@ pub trait Unsigned: Copy + Default + 'static {
 /// assert_eq!(P3::to_i32(), 3);
 /// assert_eq!(P3::I32, 3);
 /// ```
-pub trait Integer: 'static {
+pub trait Integer: Copy + Default + 'static {
     #[allow(missing_docs)]
     const I8: i8;
     #[allow(missing_docs)]
