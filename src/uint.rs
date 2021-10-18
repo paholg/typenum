@@ -143,6 +143,7 @@ impl Unsigned for UTerm {
 /// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 /// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct UInt<U, B> {
     /// The more significant bits of `Self`.
     pub(crate) msb: U,
