@@ -18,7 +18,7 @@
   edition = "2018"
 
 [dependencies]
-scale-info = { version = "1.0", default-features = false }
+scale-info = { version = "1.0", default-features = false, optional=true }
 
 [lib]
   name = "typenum"
