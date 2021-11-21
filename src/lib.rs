@@ -95,13 +95,20 @@ pub mod array;
 
 pub use crate::{
     array::{ATerm, TArr},
-    consts::*,
     generated::consts,
     int::{NInt, PInt},
     marker_traits::*,
     operator_aliases::*,
     type_operators::*,
     uint::{UInt, UTerm},
+};
+
+#[doc(no_inline)]
+#[rustfmt::skip]
+pub use consts::{
+    False, True, B0, B1,
+    U0, U1, U2, *,
+    N1, N2, Z0, P1, P2, *,
 };
 
 #[cfg(feature = "const-generics")]
