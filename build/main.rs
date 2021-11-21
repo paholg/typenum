@@ -89,6 +89,7 @@ fn uints() -> impl Iterator<Item = u64> {
 // fixme: get a warning when testing without this
 #[allow(dead_code)]
 fn main() {
+    println!("cargo:rerun-if-changed=build/main.rs"); // Allow caching the generation if `src/*` files change.
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
     println!("cargo:rustc-env=TYPENUM_BUILD_CONSTS={}", dest.display());
