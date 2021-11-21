@@ -25,3 +25,4 @@
   i128 = []
   strict = []
   force_unix_path_separator = []
+  const-generics = []
