@@ -6,6 +6,7 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested
 against this Rust version.
 
 ### Unreleased
+- [fixed] Cross-compilation issue due to doing math in build script.
 
 ### 1.14.0 (2021-09-01)
 - [changed] Sealed all marker traits. Documentation already stated that these
