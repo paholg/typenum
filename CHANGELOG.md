@@ -8,6 +8,10 @@ against this Rust version.
 ### Unreleased
 - [fixed] Cross-compilation issue due to doing math in build script.
 
+### 1.15.0 (2021-12-06)
+- [added] New feauture `scale_info` for using inside [Substrate](https://github.com/paritytech/substrate.git)-based runtimes
+  (PR #175)
+
 ### 1.14.0 (2021-09-01)
 - [changed] Sealed all marker traits. Documentation already stated that these
   should not be implemented outside the crate, so this is not considered a
