@@ -86,7 +86,9 @@ fn main() {
     let first10: u32 = 4; // (highest as f64).log(10.0) as u32 + 1;
     let uints = (0..(highest + 1))
         .chain((first2..64).map(|i| 2u64.pow(i)))
-        .chain((first10..20).map(|i| 10u64.pow(i)));
+        .chain((first2..64).map(|i| 2u64.pow(i) - 1))
+        .chain((first10..20).map(|i| 10u64.pow(i)))
+        .chain((first10..20).map(|i| 10u64.pow(i) - 1));
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
