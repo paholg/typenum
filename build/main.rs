@@ -90,6 +90,7 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
+    #[cfg(not(feature = "force_unix_path_separator"))]
     println!("cargo:rustc-env=TYPENUM_BUILD_CONSTS={}", dest.display());
 
     let mut f = File::create(&dest).unwrap();
