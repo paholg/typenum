@@ -1163,7 +1163,7 @@ where
 }
 
 /// Comparing non-terimal bits, with both having bit `B0`.
-/// These are `Equal`, so we propogate `SoFar`.
+/// These are `Equal`, so we propagate `SoFar`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B0>
 where
     Ul: Unsigned,
@@ -1180,7 +1180,7 @@ where
 }
 
 /// Comparing non-terimal bits, with both having bit `B1`.
-/// These are `Equal`, so we propogate `SoFar`.
+/// These are `Equal`, so we propagate `SoFar`.
 impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B1>
 where
     Ul: Unsigned,
