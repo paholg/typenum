@@ -21,6 +21,12 @@ jobs:
           - stable
           - beta
           - nightly
+        mb_const_generics:
+          - ""
+          - "--features const-generics"
+        exclude:
+          - mb_const_generics: "--features const-generics"
+            rust: 1.37.0
         include:
           - os: macos-latest
             rust: stable
@@ -36,11 +42,11 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --verbose --features "strict"
+          args: --verbose --features "strict" ${{ matrix.mb_const_generics }}
       - uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --features "strict"
+          args: --features "strict" ${{ matrix.mb_const_generics }}
 
   clippy:
     name: clippy + fmt

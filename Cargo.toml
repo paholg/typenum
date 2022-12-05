@@ -28,4 +28,5 @@ scale-info = { version = "1.0", default-features = false, optional = true }
   i128 = []
   strict = []
   force_unix_path_separator = []
+  const-generics = []
   scale_info = ["scale-info/derive"]
