@@ -9,7 +9,7 @@ against this Rust version.
 
 ### 1.16.0 (2022-12-05)
 - [added] `const INT` field to the `ToInt` trait.
-- [added] `const-generics` field with `U<N>` mapping wher `N` is a const generic.
+- [added] `const-generics` field with `U<N>` mapping where `N` is a const generic.
 
 ### 1.15.0 (2021-12-25)
 - [fixed] Cross-compilation issue due to doing math in build script. (PR #177)
@@ -62,7 +62,7 @@ against this Rust version.
 - [added] Associated constants for `Bit`, `Unsigned`, and `Integer`.
 
 ### 1.9.0 (2017-05-14)
-- [added] The `Abs` type operater and corresponding `AbsVal` alias.
+- [added] The `Abs` type operator and corresponding `AbsVal` alias.
 - [added] The feature `i128` that enables creating 128-bit integers from
   typenums.
 - [added] The `assert_type!` and `assert_type_eq!` macros.
