@@ -16,6 +16,7 @@
     implementation is incomplete."""
   categories = ["no-std"]
   edition = "2018"
+  rust-version = "1.37.0"
 
 [dependencies]
 scale-info = { version = "1.0", default-features = false, optional = true }
