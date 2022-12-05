@@ -92,7 +92,7 @@ fn uints() -> impl Iterator<Item = u64> {
 #[allow(dead_code)]
 fn main() {
     println!("cargo:rerun-if-changed=build/main.rs"); // Allow caching the generation if `src/*` files change.
-    
+
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
     #[cfg(not(feature = "force_unix_path_separator"))]
