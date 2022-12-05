@@ -121,16 +121,19 @@ pub use generic_const_mappings::{Const, ToUInt, U};
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Greater`.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct Greater;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Less`.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct Less;
 
 /// A potential output from `Cmp`, this is the type equivalent to the enum variant
 /// `core::cmp::Ordering::Equal`.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct Equal;
 
 /// Returns `core::cmp::Ordering::Greater`

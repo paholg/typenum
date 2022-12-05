@@ -38,12 +38,14 @@ use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
 /// Type-level signed integers with positive sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct PInt<U: Unsigned + NonZero> {
     pub(crate) n: U,
 }
 
 /// Type-level signed integers with negative sign.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct NInt<U: Unsigned + NonZero> {
     pub(crate) n: U,
 }
@@ -66,6 +68,7 @@ impl<U: Unsigned + NonZero> NInt<U> {
 
 /// The type-level signed integer 0.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct Z0;
 
 impl Z0 {
@@ -1184,6 +1187,7 @@ impl ToInt<i8> for Z0 {
     fn to_int() -> i8 {
         Self::I8
     }
+    const INT: i8 = Self::I8;
 }
 
 impl ToInt<i16> for Z0 {
@@ -1191,6 +1195,7 @@ impl ToInt<i16> for Z0 {
     fn to_int() -> i16 {
         Self::I16
     }
+    const INT: i16 = Self::I16;
 }
 
 impl ToInt<i32> for Z0 {
@@ -1198,6 +1203,7 @@ impl ToInt<i32> for Z0 {
     fn to_int() -> i32 {
         Self::I32
     }
+    const INT: i32 = Self::I32;
 }
 
 impl ToInt<i64> for Z0 {
@@ -1205,6 +1211,7 @@ impl ToInt<i64> for Z0 {
     fn to_int() -> i64 {
         Self::I64
     }
+    const INT: i64 = Self::I64;
 }
 
 // negative numbers
@@ -1217,6 +1224,7 @@ where
     fn to_int() -> i8 {
         Self::I8
     }
+    const INT: i8 = Self::I8;
 }
 
 impl<U> ToInt<i16> for NInt<U>
@@ -1227,6 +1235,7 @@ where
     fn to_int() -> i16 {
         Self::I16
     }
+    const INT: i16 = Self::I16;
 }
 
 impl<U> ToInt<i32> for NInt<U>
@@ -1237,6 +1246,7 @@ where
     fn to_int() -> i32 {
         Self::I32
     }
+    const INT: i32 = Self::I32;
 }
 
 impl<U> ToInt<i64> for NInt<U>
@@ -1247,6 +1257,7 @@ where
     fn to_int() -> i64 {
         Self::I64
     }
+    const INT: i64 = Self::I64;
 }
 
 // positive numbers
@@ -1259,6 +1270,7 @@ where
     fn to_int() -> i8 {
         Self::I8
     }
+    const INT: i8 = Self::I8;
 }
 
 impl<U> ToInt<i16> for PInt<U>
@@ -1269,6 +1281,7 @@ where
     fn to_int() -> i16 {
         Self::I16
     }
+    const INT: i16 = Self::I16;
 }
 
 impl<U> ToInt<i32> for PInt<U>
@@ -1279,6 +1292,7 @@ where
     fn to_int() -> i32 {
         Self::I32
     }
+    const INT: i32 = Self::I32;
 }
 
 impl<U> ToInt<i64> for PInt<U>
@@ -1289,6 +1303,7 @@ where
     fn to_int() -> i64 {
         Self::I64
     }
+    const INT: i64 = Self::I64;
 }
 
 #[cfg(test)]
@@ -1313,6 +1328,15 @@ mod tests {
         assert_eq!(-2_i8, N2::to_int());
         assert_eq!(-3_i8, N3::to_int());
         assert_eq!(-4_i8, N4::to_int());
+        assert_eq!(0_i8, Z0::INT);
+        assert_eq!(1_i8, P1::INT);
+        assert_eq!(2_i8, P2::INT);
+        assert_eq!(3_i8, P3::INT);
+        assert_eq!(4_i8, P4::INT);
+        assert_eq!(-1_i8, N1::INT);
+        assert_eq!(-2_i8, N2::INT);
+        assert_eq!(-3_i8, N3::INT);
+        assert_eq!(-4_i8, N4::INT);
 
         // i16
         assert_eq!(0_i16, Z0::to_int());
@@ -1324,6 +1348,15 @@ mod tests {
         assert_eq!(-2_i16, N2::to_int());
         assert_eq!(-3_i16, N3::to_int());
         assert_eq!(-4_i16, N4::to_int());
+        assert_eq!(0_i16, Z0::INT);
+        assert_eq!(1_i16, P1::INT);
+        assert_eq!(2_i16, P2::INT);
+        assert_eq!(3_i16, P3::INT);
+        assert_eq!(4_i16, P4::INT);
+        assert_eq!(-1_i16, N1::INT);
+        assert_eq!(-2_i16, N2::INT);
+        assert_eq!(-3_i16, N3::INT);
+        assert_eq!(-4_i16, N4::INT);
 
         // i32
         assert_eq!(0_i32, Z0::to_int());
@@ -1335,6 +1368,15 @@ mod tests {
         assert_eq!(-2_i32, N2::to_int());
         assert_eq!(-3_i32, N3::to_int());
         assert_eq!(-4_i32, N4::to_int());
+        assert_eq!(0_i32, Z0::INT);
+        assert_eq!(1_i32, P1::INT);
+        assert_eq!(2_i32, P2::INT);
+        assert_eq!(3_i32, P3::INT);
+        assert_eq!(4_i32, P4::INT);
+        assert_eq!(-1_i32, N1::INT);
+        assert_eq!(-2_i32, N2::INT);
+        assert_eq!(-3_i32, N3::INT);
+        assert_eq!(-4_i32, N4::INT);
 
         // i64
         assert_eq!(0_i64, Z0::to_int());
@@ -1346,5 +1388,14 @@ mod tests {
         assert_eq!(-2_i64, N2::to_int());
         assert_eq!(-3_i64, N3::to_int());
         assert_eq!(-4_i64, N4::to_int());
+        assert_eq!(0_i64, Z0::INT);
+        assert_eq!(1_i64, P1::INT);
+        assert_eq!(2_i64, P2::INT);
+        assert_eq!(3_i64, P3::INT);
+        assert_eq!(4_i64, P4::INT);
+        assert_eq!(-1_i64, N1::INT);
+        assert_eq!(-2_i64, N2::INT);
+        assert_eq!(-3_i64, N3::INT);
+        assert_eq!(-4_i64, N4::INT);
     }
 }

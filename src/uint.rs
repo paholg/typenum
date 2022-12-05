@@ -46,6 +46,7 @@ pub use crate::marker_traits::{PowerOfTwo, Unsigned};
 /// The terminating type for `UInt`; it always comes after the most significant
 /// bit. `UTerm` by itself represents zero, which is aliased to `U0`.
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct UTerm;
 
 impl UTerm {
@@ -143,6 +144,7 @@ impl Unsigned for UTerm {
 /// type U6 = UInt<UInt<UInt<UTerm, B1>, B1>, B0>;
 /// ```
 #[derive(Eq, PartialEq, Ord, PartialOrd, Clone, Copy, Hash, Debug, Default)]
+#[cfg_attr(feature = "scale_info", derive(scale_info::TypeInfo))]
 pub struct UInt<U, B> {
     /// The more significant bits of `Self`.
     pub(crate) msb: U,
@@ -2324,6 +2326,7 @@ impl ToInt<i8> for UTerm {
     fn to_int() -> i8 {
         Self::I8
     }
+    const INT: i8 = Self::I8;
 }
 
 impl ToInt<i16> for UTerm {
@@ -2331,6 +2334,7 @@ impl ToInt<i16> for UTerm {
     fn to_int() -> i16 {
         Self::I16
     }
+    const INT: i16 = Self::I16;
 }
 
 impl ToInt<i32> for UTerm {
@@ -2338,6 +2342,7 @@ impl ToInt<i32> for UTerm {
     fn to_int() -> i32 {
         Self::I32
     }
+    const INT: i32 = Self::I32;
 }
 
 impl ToInt<i64> for UTerm {
@@ -2345,6 +2350,7 @@ impl ToInt<i64> for UTerm {
     fn to_int() -> i64 {
         Self::I64
     }
+    const INT: i64 = Self::I64;
 }
 
 impl ToInt<u8> for UTerm {
@@ -2352,6 +2358,7 @@ impl ToInt<u8> for UTerm {
     fn to_int() -> u8 {
         Self::U8
     }
+    const INT: u8 = Self::U8;
 }
 
 impl ToInt<u16> for UTerm {
@@ -2359,6 +2366,7 @@ impl ToInt<u16> for UTerm {
     fn to_int() -> u16 {
         Self::U16
     }
+    const INT: u16 = Self::U16;
 }
 
 impl ToInt<u32> for UTerm {
@@ -2366,6 +2374,7 @@ impl ToInt<u32> for UTerm {
     fn to_int() -> u32 {
         Self::U32
     }
+    const INT: u32 = Self::U32;
 }
 
 impl ToInt<u64> for UTerm {
@@ -2373,6 +2382,7 @@ impl ToInt<u64> for UTerm {
     fn to_int() -> u64 {
         Self::U64
     }
+    const INT: u64 = Self::U64;
 }
 
 impl ToInt<usize> for UTerm {
@@ -2380,6 +2390,7 @@ impl ToInt<usize> for UTerm {
     fn to_int() -> usize {
         Self::USIZE
     }
+    const INT: usize = Self::USIZE;
 }
 
 impl<U, B> ToInt<i8> for UInt<U, B>
@@ -2391,6 +2402,7 @@ where
     fn to_int() -> i8 {
         Self::I8
     }
+    const INT: i8 = Self::I8;
 }
 
 impl<U, B> ToInt<i16> for UInt<U, B>
@@ -2402,6 +2414,7 @@ where
     fn to_int() -> i16 {
         Self::I16
     }
+    const INT: i16 = Self::I16;
 }
 
 impl<U, B> ToInt<i32> for UInt<U, B>
@@ -2413,6 +2426,7 @@ where
     fn to_int() -> i32 {
         Self::I32
     }
+    const INT: i32 = Self::I32;
 }
 
 impl<U, B> ToInt<i64> for UInt<U, B>
@@ -2424,6 +2438,7 @@ where
     fn to_int() -> i64 {
         Self::I64
     }
+    const INT: i64 = Self::I64;
 }
 
 impl<U, B> ToInt<u8> for UInt<U, B>
@@ -2435,6 +2450,7 @@ where
     fn to_int() -> u8 {
         Self::U8
     }
+    const INT: u8 = Self::U8;
 }
 
 impl<U, B> ToInt<u16> for UInt<U, B>
@@ -2446,6 +2462,7 @@ where
     fn to_int() -> u16 {
         Self::U16
     }
+    const INT: u16 = Self::U16;
 }
 
 impl<U, B> ToInt<u32> for UInt<U, B>
@@ -2457,6 +2474,7 @@ where
     fn to_int() -> u32 {
         Self::U32
     }
+    const INT: u32 = Self::U32;
 }
 
 impl<U, B> ToInt<u64> for UInt<U, B>
@@ -2468,6 +2486,7 @@ where
     fn to_int() -> u64 {
         Self::U64
     }
+    const INT: u64 = Self::U64;
 }
 
 impl<U, B> ToInt<usize> for UInt<U, B>
@@ -2479,6 +2498,7 @@ where
     fn to_int() -> usize {
         Self::USIZE
     }
+    const INT: usize = Self::USIZE;
 }
 
 #[cfg(test)]
@@ -2538,6 +2558,11 @@ mod tests {
         assert_eq!(2_i8, U2::to_int());
         assert_eq!(3_i8, U3::to_int());
         assert_eq!(4_i8, U4::to_int());
+        assert_eq!(0_i8, U0::INT);
+        assert_eq!(1_i8, U1::INT);
+        assert_eq!(2_i8, U2::INT);
+        assert_eq!(3_i8, U3::INT);
+        assert_eq!(4_i8, U4::INT);
 
         // i16
         assert_eq!(0_i16, U0::to_int());
@@ -2545,6 +2570,11 @@ mod tests {
         assert_eq!(2_i16, U2::to_int());
         assert_eq!(3_i16, U3::to_int());
         assert_eq!(4_i16, U4::to_int());
+        assert_eq!(0_i16, U0::INT);
+        assert_eq!(1_i16, U1::INT);
+        assert_eq!(2_i16, U2::INT);
+        assert_eq!(3_i16, U3::INT);
+        assert_eq!(4_i16, U4::INT);
 
         // i32
         assert_eq!(0_i32, U0::to_int());
@@ -2552,6 +2582,11 @@ mod tests {
         assert_eq!(2_i32, U2::to_int());
         assert_eq!(3_i32, U3::to_int());
         assert_eq!(4_i32, U4::to_int());
+        assert_eq!(0_i32, U0::INT);
+        assert_eq!(1_i32, U1::INT);
+        assert_eq!(2_i32, U2::INT);
+        assert_eq!(3_i32, U3::INT);
+        assert_eq!(4_i32, U4::INT);
 
         // i64
         assert_eq!(0_i64, U0::to_int());
@@ -2559,6 +2594,11 @@ mod tests {
         assert_eq!(2_i64, U2::to_int());
         assert_eq!(3_i64, U3::to_int());
         assert_eq!(4_i64, U4::to_int());
+        assert_eq!(0_i64, U0::INT);
+        assert_eq!(1_i64, U1::INT);
+        assert_eq!(2_i64, U2::INT);
+        assert_eq!(3_i64, U3::INT);
+        assert_eq!(4_i64, U4::INT);
 
         // u8
         assert_eq!(0_u8, U0::to_int());
@@ -2566,6 +2606,11 @@ mod tests {
         assert_eq!(2_u8, U2::to_int());
         assert_eq!(3_u8, U3::to_int());
         assert_eq!(4_u8, U4::to_int());
+        assert_eq!(0_u8, U0::INT);
+        assert_eq!(1_u8, U1::INT);
+        assert_eq!(2_u8, U2::INT);
+        assert_eq!(3_u8, U3::INT);
+        assert_eq!(4_u8, U4::INT);
 
         // u16
         assert_eq!(0_u16, U0::to_int());
@@ -2573,6 +2618,11 @@ mod tests {
         assert_eq!(2_u16, U2::to_int());
         assert_eq!(3_u16, U3::to_int());
         assert_eq!(4_u16, U4::to_int());
+        assert_eq!(0_u16, U0::INT);
+        assert_eq!(1_u16, U1::INT);
+        assert_eq!(2_u16, U2::INT);
+        assert_eq!(3_u16, U3::INT);
+        assert_eq!(4_u16, U4::INT);
 
         // u32
         assert_eq!(0_u32, U0::to_int());
@@ -2580,6 +2630,11 @@ mod tests {
         assert_eq!(2_u32, U2::to_int());
         assert_eq!(3_u32, U3::to_int());
         assert_eq!(4_u32, U4::to_int());
+        assert_eq!(0_u32, U0::INT);
+        assert_eq!(1_u32, U1::INT);
+        assert_eq!(2_u32, U2::INT);
+        assert_eq!(3_u32, U3::INT);
+        assert_eq!(4_u32, U4::INT);
 
         // u64
         assert_eq!(0_u64, U0::to_int());
@@ -2587,6 +2642,11 @@ mod tests {
         assert_eq!(2_u64, U2::to_int());
         assert_eq!(3_u64, U3::to_int());
         assert_eq!(4_u64, U4::to_int());
+        assert_eq!(0_u64, U0::INT);
+        assert_eq!(1_u64, U1::INT);
+        assert_eq!(2_u64, U2::INT);
+        assert_eq!(3_u64, U3::INT);
+        assert_eq!(4_u64, U4::INT);
 
         // usize
         assert_eq!(0_usize, U0::to_int());
@@ -2594,5 +2654,10 @@ mod tests {
         assert_eq!(2_usize, U2::to_int());
         assert_eq!(3_usize, U3::to_int());
         assert_eq!(4_usize, U4::to_int());
+        assert_eq!(0_usize, U0::INT);
+        assert_eq!(1_usize, U1::INT);
+        assert_eq!(2_usize, U2::INT);
+        assert_eq!(3_usize, U3::INT);
+        assert_eq!(4_usize, U4::INT);
     }
 }
