@@ -58,7 +58,6 @@
         clippy::wrong_self_convention,
     )
 )]
-#![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
 #![doc(html_root_url = "https://docs.rs/typenum/1.16.0")]
 
 // For debugging macros:

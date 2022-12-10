@@ -235,9 +235,7 @@ fn test_{sa}{a}_Cmp_{sb}{b}() {{
     )
 }
 
-// Allow for rustc 1.22 compatibility.
-#[allow(bare_trait_objects)]
-pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
+pub fn build_tests() -> Result<(), Box<dyn ::std::error::Error>> {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
 
@@ -246,7 +244,7 @@ pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
 
     let out_dir = env::var("OUT_DIR")?;
     let dest = path::Path::new(&out_dir).join("tests.rs");
-    let f = fs::File::create(&dest)?;
+    let f = fs::File::create(dest)?;
     let mut writer = io::BufWriter::new(&f);
     use std::io::Write;
     writer.write_all(

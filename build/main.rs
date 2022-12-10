@@ -63,19 +63,10 @@ pub fn gen_int(i: i64) -> IntCode {
 
     match i.cmp(&0) {
         Greater => IntCode::Pos(Box::new(gen_uint(i as u64))),
-        Less => IntCode::Neg(Box::new(gen_uint(i.abs() as u64))),
+        Less => IntCode::Neg(Box::new(gen_uint(i.unsigned_abs()))),
         Equal => IntCode::Zero,
     }
 }
-
-#[cfg_attr(
-    feature = "no_std",
-    deprecated(
-        since = "1.3.0",
-        note = "the `no_std` flag is no longer necessary and will be removed in the future"
-    )
-)]
-pub fn no_std() {}
 
 const HIGHEST: u64 = 1024;
 fn uints() -> impl Iterator<Item = u64> {
@@ -98,9 +89,7 @@ fn main() {
     #[cfg(not(feature = "force_unix_path_separator"))]
     println!("cargo:rustc-env=TYPENUM_BUILD_CONSTS={}", dest.display());
 
-    let mut f = File::create(&dest).unwrap();
-
-    no_std();
+    let mut f = File::create(dest).unwrap();
 
     // Header stuff here!
     write!(

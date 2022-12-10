@@ -20,7 +20,7 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
     let dest = ::std::path::Path::new(&out_dir).join("op.rs");
     #[cfg(not(feature = "force_unix_path_separator"))]
     println!("cargo:rustc-env=TYPENUM_BUILD_OP={}", dest.display());
-    let mut f = ::std::fs::File::create(&dest).unwrap();
+    let mut f = ::std::fs::File::create(dest).unwrap();
 
     // Operator precedence is taken from
     // https://doc.rust-lang.org/reference.html#operator-precedence

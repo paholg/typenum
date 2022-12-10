@@ -15,8 +15,8 @@
     integers. It also provides a type-level array of type-level numbers, but its
     implementation is incomplete."""
   categories = ["no-std"]
-  edition = "2018"
-  rust-version = "1.37.0"
+  edition = "2021"
+  rust-version = "1.60.0"
 
 [dependencies]
 scale-info = { version = "1.0", default-features = false, optional = true }
@@ -25,7 +25,6 @@ scale-info = { version = "1.0", default-features = false, optional = true }
   name = "typenum"
 
 [features]
-  no_std = []
   i128 = []
   strict = []
   force_unix_path_separator = []
