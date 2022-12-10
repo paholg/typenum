@@ -81,8 +81,7 @@ pub mod generic_const_mappings {
         type Output = U{uint};
     }}
 \
-            ",
-            uint = uint,
+            "
         )?;
     }
     write!(f, "}}")?;

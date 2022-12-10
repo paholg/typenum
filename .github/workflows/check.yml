@@ -64,5 +64,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          # Allow deprecated because we test the no_std feature.
           args: --all-features -- -D warnings -A deprecated
