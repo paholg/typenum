@@ -19,7 +19,8 @@
   rust-version = "1.37.0"
 
 [dependencies]
-scale-info = { version = "1.0", default-features = false, optional = true }
+scale-codec = { package = "parity-scale-codec", version = "3.2", default-features = false, features = ["derive", "max-encoded-len"], optional = true }
+scale-info = { version = "2.3", default-features = false, features = ["derive"], optional = true }
 
 [lib]
   name = "typenum"
@@ -30,4 +31,4 @@ scale-info = { version = "1.0", default-features = false, optional = true }
   strict = []
   force_unix_path_separator = []
   const-generics = []
-  scale_info = ["scale-info/derive"]
+  scale = ["scale-codec", "scale-info"]
