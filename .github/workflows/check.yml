@@ -10,7 +10,7 @@ name: CI
 
 jobs:
   test-linux:
-    name: test
+    name: Test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -34,41 +34,21 @@ jobs:
             rust: stable
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@master
         with:
-          profile: minimal
           toolchain: ${{ matrix.rust }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --verbose --features "strict" ${{ matrix.mb_const_generics }}
-      - uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          args: --features "strict" ${{ matrix.mb_const_generics }}
+      - run: cargo test --verbose --features "strict" ${{ matrix.mb_const_generics }}
+      - run: cargo doc --features "strict" ${{ matrix.mb_const_generics }}
 
   clippy:
-    name: clippy + fmt
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          profile: minimal
-          toolchain: nightly
-          override: true
           components: rustfmt, clippy
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          # Allow deprecated because we test the no_std feature.
-          args: --all-features -- -D warnings -A deprecated
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy -- -D warnings
+      # Allow deprecated because we test the no_std feature.
+      - run: cargo clippy --all-features -- -D warnings -A deprecated
