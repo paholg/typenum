@@ -77,6 +77,15 @@ pub fn gen_int(i: i64) -> IntCode {
 )]
 pub fn no_std() {}
 
+#[cfg_attr(
+    feature = "force_unix_path_separator",
+    deprecated(
+        since = "1.17.0",
+        note = "the `force_unix_path_separator` flag is no longer necessary and will be removed in the future"
+    )
+)]
+pub fn force_unix_path_separator() {}
+
 const HIGHEST: u64 = 1024;
 fn uints() -> impl Iterator<Item = u64> {
     // Use hardcoded values to avoid issues with cross-compilation.
@@ -95,12 +104,11 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
-    #[cfg(not(feature = "force_unix_path_separator"))]
-    println!("cargo:rustc-env=TYPENUM_BUILD_CONSTS={}", dest.display());
 
     let mut f = File::create(&dest).unwrap();
 
     no_std();
+    force_unix_path_separator();
 
     // Header stuff here!
     write!(

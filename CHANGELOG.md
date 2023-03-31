@@ -6,6 +6,9 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested
 against this Rust version.
 
 ### Unreleased
+- [removed] Remove `force_unix_path_separator` feature, make it the default
+- [added] docs.rs metadata and cfg options
+- [added] Playground metadata
 
 ### 1.16.0 (2022-12-05)
 - [added] `const INT` field to the `ToInt` trait.
