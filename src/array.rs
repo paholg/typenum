@@ -28,7 +28,7 @@ pub struct TArr<V, A> {
 
 impl<V, A> TypeArray for TArr<V, A> {}
 
-/// Create a new type-level arrray. Only usable on Rust 1.13.0 or newer.
+/// Create a new type-level array. Only usable on Rust 1.13.0 or newer.
 ///
 /// There's not a whole lot you can do with it right now.
 ///
