@@ -77,15 +77,25 @@ pub mod generic_const_mappings {
         write!(
             f,
             "
+    {cfg}
     impl ToUInt for Const<{uint}> {{
         type Output = U{uint};
     }}
 \
             ",
             uint = uint,
+            cfg = feature_gate_to_64_bit(uint),
         )?;
     }
     write!(f, "}}")?;
     f.flush()?;
     Ok(())
+}
+
+const fn feature_gate_to_64_bit(uint: u64) -> &'static str {
+    if uint > u32::MAX as u64 {
+        r#"#[cfg(target_pointer_width = "64")]"#
+    } else {
+        ""
+    }
 }
