@@ -15,15 +15,14 @@ jobs:
     strategy:
       matrix:
         rust:
-          - 1.37.0
           - stable
           - beta
           - nightly
         mb_const_generics:
           - ""
           - "--features const-generics"
-        exclude:
-          - mb_const_generics: "--features const-generics"
+        include:
+          - mb_const_generics: ""
             rust: 1.37.0
     steps:
       - uses: actions/checkout@v3
