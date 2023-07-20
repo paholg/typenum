@@ -10,12 +10,10 @@ name: CI
 
 jobs:
   test-linux:
-    name: Test
-    runs-on: ${{ matrix.os }}
+    name: Test Linux
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
         rust:
           - 1.37.0
           - stable
@@ -27,11 +25,27 @@ jobs:
         exclude:
           - mb_const_generics: "--features const-generics"
             rust: 1.37.0
-        include:
-          - os: macos-latest
-            rust: stable
-          - os: windows-latest
-            rust: stable
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - run: cargo test --verbose --features "strict" ${{ matrix.mb_const_generics }}
+      - run: cargo doc --features "strict" ${{ matrix.mb_const_generics }}
+
+  test-non-linux:
+    name: Test non-Linux
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - windows-latest
+        rust:
+          - stable
+        mb_const_generics:
+          - ""
+          - "--features const-generics"
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
