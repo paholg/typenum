@@ -21,16 +21,29 @@ jobs:
         mb_const_generics:
           - ""
           - "--features const-generics"
+        target:
+          - x86_64
+          - i686
+          - sparc64
         include:
           - mb_const_generics: ""
             rust: 1.37.0
+            target: x86_64
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-      - run: cargo test --verbose --features "strict" ${{ matrix.mb_const_generics }}
-      - run: cargo doc --features "strict" ${{ matrix.mb_const_generics }}
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.target != 'x86_64' }}
+          command: test
+          args: --verbose --features "strict" ${{ matrix.mb_const_generics }} --target ${{ matrix.target }}-unknown-linux-gnu
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.target != 'x86_64' }}
+          command: doc
+          args: --features "strict" ${{ matrix.mb_const_generics }} --target ${{ matrix.target }}-unknown-linux-gnu
 
   test-non-linux:
     name: Test non-Linux
