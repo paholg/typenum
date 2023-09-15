@@ -232,7 +232,11 @@ macro_rules! impl_pow_i {
 
 impl_pow_i!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 #[cfg(feature = "i128")]
-impl_pow_i!(#[cfg_attr(docsrs, doc(cfg(feature = "i128")))] u128, i128);
+impl_pow_i!(
+    #[cfg_attr(docsrs, doc(cfg(feature = "i128")))]
+    u128,
+    i128
+);
 
 #[test]
 fn pow_test() {
