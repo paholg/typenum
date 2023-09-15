@@ -25,9 +25,16 @@ scale-info = { version = "1.0", default-features = false, optional = true }
   name = "typenum"
 
 [features]
-  no_std = []
+  no_std = [] # Deprecated
   i128 = []
   strict = []
-  force_unix_path_separator = []
+  force_unix_path_separator = [] # Deprecated
   const-generics = []
   scale_info = ["scale-info/derive"]
+
+[package.metadata.docs.rs]
+  features = ["i128", "const-generics"]
+  rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+  features = ["i128", "const-generics"]

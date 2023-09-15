@@ -60,6 +60,7 @@
 )]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::missing_inline_in_public_items))]
 #![doc(html_root_url = "https://docs.rs/typenum/1.16.0")]
+#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 
 // For debugging macros:
 // #![feature(trace_macros)]
@@ -67,20 +68,12 @@
 
 use core::cmp::Ordering;
 
-#[cfg(feature = "force_unix_path_separator")]
 mod generated {
     include!(concat!(env!("OUT_DIR"), "/op.rs"));
     include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+
     #[cfg(feature = "const-generics")]
     include!(concat!(env!("OUT_DIR"), "/generic_const_mappings.rs"));
-}
-
-#[cfg(not(feature = "force_unix_path_separator"))]
-mod generated {
-    include!(env!("TYPENUM_BUILD_OP"));
-    include!(env!("TYPENUM_BUILD_CONSTS"));
-    #[cfg(feature = "const-generics")]
-    include!(env!("TYPENUM_BUILD_GENERIC_CONSTS"));
 }
 
 pub mod bit;
