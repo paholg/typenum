@@ -10,28 +10,55 @@ name: CI
 
 jobs:
   test-linux:
-    name: Test
-    runs-on: ${{ matrix.os }}
+    name: Test Linux
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
         rust:
-          - 1.37.0
           - stable
           - beta
           - nightly
         mb_const_generics:
           - ""
           - "--features const-generics"
-        exclude:
-          - mb_const_generics: "--features const-generics"
-            rust: 1.37.0
+        target:
+          - x86_64
+          - i686
+          - sparc64
         include:
-          - os: macos-latest
-            rust: stable
-          - os: windows-latest
-            rust: stable
+          - mb_const_generics: ""
+            rust: 1.37.0
+            target: x86_64
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.target != 'x86_64' }}
+          command: test
+          args: --verbose --features "strict" ${{ matrix.mb_const_generics }} --target ${{ matrix.target }}-unknown-linux-gnu
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.target != 'x86_64' }}
+          command: doc
+          args: --features "strict" ${{ matrix.mb_const_generics }} --target ${{ matrix.target }}-unknown-linux-gnu
+
+  test-non-linux:
+    name: Test non-Linux
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - windows-latest
+        rust:
+          - stable
+        mb_const_generics:
+          - ""
+          - "--features const-generics"
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
