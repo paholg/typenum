@@ -9,6 +9,7 @@ against this Rust version.
 - [removed] Remove `force_unix_path_separator` feature, make it the default
 - [added] docs.rs metadata and cfg options
 - [added] Playground metadata
+- [added] `FoldAdd` and `FoldMul` to get the sum/product of an array
 
 ### 1.16.0 (2022-12-05)
 - [added] `const INT` field to the `ToInt` trait.
