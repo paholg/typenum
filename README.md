@@ -48,6 +48,11 @@ trait NonZero {
   <summary>Unfold here to see a (somwhat contrived) exploitation of type-level integer arithmetic:</summary>
   
   ```rust
+  // Imports to make rust playground happy
+  use core::ops::{Div, Add, Mul};
+  use typenum::{op, *};
+  use generic_array::{GenericArray, ArrayLength};
+
   // Demo-time. A simple "flatten a 2d bool-array to a 1d byte-array"
   // Let's encapsulate a 2d array, similar to `[[bool; WIDTH]; HEIGHT]`
   pub struct FlattenDemo<
