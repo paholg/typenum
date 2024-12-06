@@ -192,6 +192,18 @@ pub mod consts {{
             .unwrap();
         }
     }
+    if HIGHEST < 60 {
+        writeln!(f, "    /// Seconds in a Minute, or Minutes in an Hour").unwrap();
+        writeln!(f, "    pub type U60 = {};", gen_uint(60)).unwrap();
+    }
+    if HIGHEST < 3600 {
+        writeln!(f, "    /// Seconds in an hour").unwrap();
+        writeln!(f, "    pub type U3600 = {};", gen_uint(3600)).unwrap();
+    }
+    if HIGHEST < 86400 {
+        writeln!(f, "    /// Seconds in a day").unwrap();
+        writeln!(f, "    pub type U86400 = {};", gen_uint(86400)).unwrap();
+    }
     write!(f, "}}").unwrap();
 
     tests::build_tests().unwrap();
