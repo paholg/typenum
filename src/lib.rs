@@ -69,11 +69,20 @@
 use core::cmp::Ordering;
 
 mod generated {
+    #[cfg(not(host_os = "windows"))]
     include!(concat!(env!("OUT_DIR"), "/op.rs"));
-    include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+    #[cfg(host_os = "windows")]
+    include!(concat!(env!("OUT_DIR"), "\\op.rs"));
 
-    #[cfg(feature = "const-generics")]
+    #[cfg(not(host_os = "windows"))]
+    include!(concat!(env!("OUT_DIR"), "/consts.rs"));
+    #[cfg(host_os = "windows")]
+    include!(concat!(env!("OUT_DIR"), "\\consts.rs"));
+
+    #[cfg(all(feature = "const-generics", not(host_os = "windows")))]
     include!(concat!(env!("OUT_DIR"), "/generic_const_mappings.rs"));
+    #[cfg(all(feature = "const-generics", host_os = "windows"))]
+    include!(concat!(env!("OUT_DIR"), "\\generic_const_mappings.rs"));
 }
 
 pub mod bit;

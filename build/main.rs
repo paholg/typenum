@@ -102,6 +102,11 @@ fn uints() -> impl Iterator<Item = u64> {
 fn main() {
     println!("cargo:rerun-if-changed=build/main.rs"); // Allow caching the generation if `src/*` files change.
 
+    let host = env::var_os("HOST").unwrap();
+    if let Some("windows") = host.to_str().unwrap().split('-').nth(2) {
+        println!("cargo:rustc-cfg=host_os=\"windows\"");
+    }
+
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest = Path::new(&out_dir).join("consts.rs");
 
