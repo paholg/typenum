@@ -1,6 +1,63 @@
-use std::{env, fmt, fs, io, path};
+use std::{cmp, env, fmt, fs::File, io::Write, path::PathBuf};
 
-use super::{gen_int, gen_uint};
+enum UIntCode {
+    Term,
+    Zero(Box<UIntCode>),
+    One(Box<UIntCode>),
+}
+
+enum IntCode {
+    Zero,
+    Pos(Box<UIntCode>),
+    Neg(Box<UIntCode>),
+}
+
+impl fmt::Display for UIntCode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            UIntCode::Term => write!(f, "UTerm"),
+            UIntCode::Zero(ref inner) => write!(f, "UInt<{}, B0>", inner),
+            UIntCode::One(ref inner) => write!(f, "UInt<{}, B1>", inner),
+        }
+    }
+}
+
+impl fmt::Display for IntCode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            IntCode::Zero => write!(f, "Z0"),
+            IntCode::Pos(ref inner) => write!(f, "PInt<{}>", inner),
+            IntCode::Neg(ref inner) => write!(f, "NInt<{}>", inner),
+        }
+    }
+}
+
+fn gen_uint(u: u64) -> UIntCode {
+    let mut result = UIntCode::Term;
+    let mut x = 1u64 << 63;
+    while x > u {
+        x >>= 1
+    }
+    while x > 0 {
+        result = if x & u > 0 {
+            UIntCode::One(Box::new(result))
+        } else {
+            UIntCode::Zero(Box::new(result))
+        };
+        x >>= 1;
+    }
+    result
+}
+
+fn gen_int(i: i64) -> IntCode {
+    use std::cmp::Ordering::{Equal, Greater, Less};
+
+    match i.cmp(&0) {
+        Greater => IntCode::Pos(Box::new(gen_uint(i as u64))),
+        Less => IntCode::Neg(Box::new(gen_uint(i.abs() as u64))),
+        Equal => IntCode::Zero,
+    }
+}
 
 /// Computes the greatest common divisor of two integers.
 fn gcdi(mut a: i64, mut b: i64) -> i64 {
@@ -99,10 +156,6 @@ fn uint_binary_test(left: u64, operator: &'static str, right: u64, result: u64) 
         r: result,
     }
 }
-
-// fn uint_unary_test(op: &'static str, a: u64, result: u64) -> UIntTest {
-//     UIntTest { a: a, op: op, b: Option::None, r: result }
-// }
 
 struct IntBinaryTest {
     a: i64,
@@ -234,69 +287,69 @@ fn test_{sa}{a}_Cmp_{sb}{b}() {{
         result = a.cmp(&b)
     )
 }
-
-// Allow for rustc 1.22 compatibility.
-#[allow(bare_trait_objects)]
-pub fn build_tests() -> Result<(), Box<::std::error::Error>> {
+pub fn gen_tests() -> String {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
 
     let uints = (0u64..high as u64 + 1).flat_map(|a| (a..a + 1).cycle().zip(0..high as u64 + 1));
     let ints = (-high..high + 1).flat_map(|a| (a..a + 1).cycle().zip(-high..high + 1));
 
-    let out_dir = env::var("OUT_DIR")?;
-    let dest = path::Path::new(&out_dir).join("tests.rs");
-    let f = fs::File::create(&dest)?;
-    let mut writer = io::BufWriter::new(&f);
-    use std::io::Write;
-    writer.write_all(
-        b"
-extern crate typenum;
+    let mut result = String::new();
 
-use std::ops::*;
-use std::cmp::Ordering;
+    result.push_str(
+        "
 use typenum::*;
+use core::ops::*;
+use core::cmp::Ordering;
 ",
-    )?;
-    use std::cmp;
+    );
     // uint operators:
     for (a, b) in uints {
-        write!(writer, "{}", uint_binary_test(a, "BitAnd", b, a & b))?;
-        write!(writer, "{}", uint_binary_test(a, "BitOr", b, a | b))?;
-        write!(writer, "{}", uint_binary_test(a, "BitXor", b, a ^ b))?;
-        write!(writer, "{}", uint_binary_test(a, "Shl", b, a << b))?;
-        write!(writer, "{}", uint_binary_test(a, "Shr", b, a >> b))?;
-        write!(writer, "{}", uint_binary_test(a, "Add", b, a + b))?;
-        write!(writer, "{}", uint_binary_test(a, "Min", b, cmp::min(a, b)))?;
-        write!(writer, "{}", uint_binary_test(a, "Max", b, cmp::max(a, b)))?;
-        write!(writer, "{}", uint_binary_test(a, "Gcd", b, gcdu(a, b)))?;
+        let mut tests = vec![
+            uint_binary_test(a, "BitAnd", b, a & b),
+            uint_binary_test(a, "BitOr", b, a | b),
+            uint_binary_test(a, "BitXor", b, a ^ b),
+            uint_binary_test(a, "Shl", b, a << b),
+            uint_binary_test(a, "Shr", b, a >> b),
+            uint_binary_test(a, "Add", b, a + b),
+            uint_binary_test(a, "Mul", b, a * b),
+            uint_binary_test(a, "Pow", b, a.pow(b as u32)),
+            uint_binary_test(a, "Min", b, cmp::min(a, b)),
+            uint_binary_test(a, "Max", b, cmp::max(a, b)),
+            uint_binary_test(a, "Gcd", b, gcdu(a, b)),
+        ];
         if a >= b {
-            write!(writer, "{}", uint_binary_test(a, "Sub", b, a - b))?;
+            tests.push(uint_binary_test(a, "Sub", b, a - b));
         }
-        write!(writer, "{}", uint_binary_test(a, "Mul", b, a * b))?;
         if b != 0 {
-            write!(writer, "{}", uint_binary_test(a, "Div", b, a / b))?;
-            write!(writer, "{}", uint_binary_test(a, "Rem", b, a % b))?;
+            tests.push(uint_binary_test(a, "Div", b, a / b));
+            tests.push(uint_binary_test(a, "Rem", b, a % b));
             if a % b == 0 {
-                write!(writer, "{}", uint_binary_test(a, "PartialDiv", b, a / b))?;
+                tests.push(uint_binary_test(a, "PartialDiv", b, a / b));
             }
         }
-        write!(writer, "{}", uint_binary_test(a, "Pow", b, a.pow(b as u32)))?;
-        write!(writer, "{}", uint_cmp_test(a, b))?;
+
+        for test in tests {
+            result.push_str(&test.to_string());
+        }
+        result.push_str(&uint_cmp_test(a, b));
     }
+
     // int operators:
     for (a, b) in ints {
-        write!(writer, "{}", int_binary_test(a, "Add", b, a + b))?;
-        write!(writer, "{}", int_binary_test(a, "Sub", b, a - b))?;
-        write!(writer, "{}", int_binary_test(a, "Mul", b, a * b))?;
-        write!(writer, "{}", int_binary_test(a, "Min", b, cmp::min(a, b)))?;
-        write!(writer, "{}", int_binary_test(a, "Max", b, cmp::max(a, b)))?;
-        write!(writer, "{}", int_binary_test(a, "Gcd", b, gcdi(a, b)))?;
+        let mut tests = vec![
+            int_binary_test(a, "Add", b, a + b),
+            int_binary_test(a, "Sub", b, a - b),
+            int_binary_test(a, "Mul", b, a * b),
+            int_binary_test(a, "Min", b, cmp::min(a, b)),
+            int_binary_test(a, "Max", b, cmp::max(a, b)),
+            int_binary_test(a, "Gcd", b, gcdi(a, b)),
+        ];
         if b != 0 {
-            write!(writer, "{}", int_binary_test(a, "Div", b, a / b))?;
-            write!(writer, "{}", int_binary_test(a, "Rem", b, a % b))?;
+            tests.push(int_binary_test(a, "Div", b, a / b));
+            tests.push(int_binary_test(a, "Rem", b, a % b));
             if a % b == 0 {
-                write!(writer, "{}", int_binary_test(a, "PartialDiv", b, a / b))?;
+                tests.push(int_binary_test(a, "PartialDiv", b, a / b));
             }
         }
         if b >= 0 || a.abs() == 1 {
@@ -311,18 +364,54 @@ use typenum::*;
             } else {
                 a.pow(b as u32)
             };
-            write!(writer, "{}", int_binary_test(a, "Pow", b, result))?;
+            tests.push(int_binary_test(a, "Pow", b, result));
         }
-        write!(writer, "{}", int_cmp_test(a, b))?;
+        for test in tests {
+            result.push_str(&test.to_string());
+        }
+        result.push_str(&int_cmp_test(a, b));
     }
 
     // int unary operators:
     for n in -high..high + 1 {
-        write!(writer, "{}", int_unary_test("Neg", n, -n))?;
-        write!(writer, "{}", int_unary_test("Abs", n, n.abs()))?;
+        let tests = vec![
+            int_unary_test("Neg", n, -n),
+            int_unary_test("Abs", n, n.abs()),
+        ];
+        for test in tests {
+            result.push_str(&test.to_string());
+        }
     }
 
-    writer.flush()?;
+    result
+}
 
-    Ok(())
+#[cfg_attr(
+    feature = "no_std",
+    deprecated(
+        since = "1.3.0",
+        note = "the `no_std` flag is no longer necessary and will be removed in the future"
+    )
+)]
+pub fn no_std() {}
+
+#[cfg_attr(
+    feature = "force_unix_path_separator",
+    deprecated(
+        since = "1.17.0",
+        note = "the `force_unix_path_separator` flag is no longer necessary and will be removed in the future"
+    )
+)]
+pub fn force_unix_path_separator() {}
+
+fn main() {
+    no_std();
+    force_unix_path_separator();
+    println!("cargo:rerun-if-changed=tests");
+
+    let tests = gen_tests();
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let dest = PathBuf::from(out_dir).join("tests.rs");
+    let mut f = File::create(&dest).unwrap();
+    f.write_all(tests.as_bytes()).unwrap();
 }

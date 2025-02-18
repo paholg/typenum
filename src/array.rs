@@ -47,6 +47,8 @@ macro_rules! tarr {
     ($n:ty,) => ( $crate::TArr<$n, $crate::ATerm> );
     ($n:ty, $($tail:ty),+) => ( $crate::TArr<$n, tarr![$($tail),+]> );
     ($n:ty, $($tail:ty),+,) => ( $crate::TArr<$n, tarr![$($tail),+]> );
+    ($n:ty | $rest:ty) => ( $crate::TArr<$n, $rest> );
+    ($n:ty, $($tail:ty),+ | $rest:ty) => ( $crate::TArr<$n, ta![$($tail),+ | $rest]> );
 }
 
 // ---------------------------------------------------------------------------------------

@@ -9,6 +9,8 @@ against this Rust version.
 - [removed] Remove `force_unix_path_separator` feature, make it the default
 - [added] docs.rs metadata and cfg options
 - [added] Playground metadata
+- [changed] Remove build scripts; instead check-in the built code
+- [added] Constants for 3600
 - [added] `FoldAdd` and `FoldMul` to get the sum/product of an array
 
 ### 1.16.0 (2022-12-05)

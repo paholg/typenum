@@ -1,11 +1,7 @@
 [package]
 name = "typenum"
-build = "build/main.rs"
 version = "1.17.0" # remember to update html_root_url
-authors = [
-  "Paho Lurie-Gregg <paho@paholg.com>",
-  "Andre Bogus <bogusandre@gmail.com>",
-]
+authors = ["Paho Lurie-Gregg <paho@paholg.com>", "Andre Bogus <bogusandre@gmail.com>"]
 documentation = "https://docs.rs/typenum"
 repository = "https://github.com/paholg/typenum"
 readme = "README.md"
@@ -25,16 +21,19 @@ scale-info = { version = "1.0", default-features = false, optional = true }
 name = "typenum"
 
 [features]
-no_std = [] # Deprecated
-i128 = []
-strict = []
+no_std                    = [] # Deprecated
+i128                      = []
+strict                    = []
 force_unix_path_separator = [] # Deprecated
-const-generics = []
-scale_info = ["scale-info/derive"]
+const-generics            = []
+scale_info                = ["scale-info/derive"]
 
 [package.metadata.docs.rs]
-features = ["i128", "const-generics"]
+features     = ["i128", "const-generics"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [package.metadata.playground]
 features = ["i128", "const-generics"]
+
+[workspace]
+members = ["generate"]
