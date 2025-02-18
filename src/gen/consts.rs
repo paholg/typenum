@@ -5061,6 +5061,24 @@ pub type U1024 = UInt<
 >;
 pub type P1024 = PInt<U1024>;
 pub type N1024 = NInt<U1024>;
+pub type U3600 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>,
+                    B1,
+                >,
+                B0,
+            >,
+            B0,
+        >,
+        B0,
+    >,
+    B0,
+>;
+pub type P3600 = PInt<U3600>;
+pub type N3600 = NInt<U3600>;
 pub type U2048 = UInt<
     UInt<
         UInt<

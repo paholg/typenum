@@ -4155,6 +4155,10 @@ impl ToUInt for Const<1024> {
     type Output = U1024;
 }
 
+impl ToUInt for Const<3600> {
+    type Output = U3600;
+}
+
 impl ToUInt for Const<2048> {
     type Output = U2048;
 }
