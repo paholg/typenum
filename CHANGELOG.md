@@ -10,6 +10,7 @@ against this Rust version.
 - [added] docs.rs metadata and cfg options
 - [added] Playground metadata
 - [changed] Remove build scripts; instead check-in the built code
+- [added] Constants for 3600
 
 ### 1.16.0 (2022-12-05)
 - [added] `const INT` field to the `ToInt` trait.
