@@ -47,6 +47,9 @@ jobs:
             target: x86_64
     steps:
       - uses: actions/checkout@v3
+      - if: matrix.rust == '1.37.0'
+        # Rust 1.37 doesn't like modern lock files :(
+        run: rm Cargo.lock
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
@@ -79,8 +82,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-      - run: cargo test --verbose --features "strict" ${{ matrix.mb_const_generics }}
-      - run: cargo doc --features "strict" ${{ matrix.mb_const_generics }}
+      - uses: extractions/setup-just@v2
+      - run: just test ${{ matrix.mb_const_generics }}
 
   lint:
     name: Lint
@@ -90,7 +93,5 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt, clippy
-      - run: cargo fmt --all -- --check
-      - run: cargo clippy -- -D warnings
-      # Allow deprecated because we test the no_std feature.
-      - run: cargo clippy --all-features -- -D warnings -A deprecated
+      - uses: extractions/setup-just@v2
+      - run: just lint
