@@ -324,6 +324,25 @@ pub trait Len {
     fn len(&self) -> Self::Output;
 }
 
+/// A **type operator** that gives the sum of all elements of an `Array`.
+pub trait FoldAdd {
+    /// The type of the result of the sum
+    type Output;
+}
+
+/// A **type operator** that gives the product of all elements of an `Array`.
+pub trait FoldMul {
+    /// The type of the result of the product
+    type Output;
+}
+
+#[test]
+fn fold_test() {
+    use crate::*;
+    assert_eq!(10, <FoldSum::<tarr![U2, U3, U5]>>::to_u32());
+    assert_eq!(30, <FoldProd::<tarr![U2, U3, U5]>>::to_u32());
+}
+
 /// Division as a partial function. This **type operator** performs division just as `Div`, but is
 /// only defined when the result is an integer (i.e. there is no remainder).
 pub trait PartialDiv<Rhs = Self> {
