@@ -15,11 +15,7 @@ struct Op {
     op_type: OpType,
 }
 
-pub fn write_op_macro() -> ::std::io::Result<()> {
-    let out_dir = ::std::env::var("OUT_DIR").unwrap();
-    let dest = ::std::path::Path::new(&out_dir).join("op.rs");
-    let mut f = ::std::fs::File::create(&dest).unwrap();
-
+pub fn gen_op_macro() -> String {
     // Operator precedence is taken from
     // https://doc.rust-lang.org/reference.html#operator-precedence
     //
@@ -237,9 +233,8 @@ pub fn write_op_macro() -> ::std::io::Result<()> {
         },
     ];
 
-    use std::io::Write;
-    write!(
-        f,
+    let mut result = String::new();
+    result.push_str(&format!(
         "
 /**
 Convenient type operations.
@@ -279,13 +274,12 @@ including examples:
             .map(|op| format!("`{}`", op.token))
             .collect::<Vec<_>>()
             .join(", ")
-    )?;
+    ));
 
     //write!(f, "Token | Alias | Example\n ===|===|===\n")?;
 
     for op in ops.iter() {
-        write!(
-            f,
+        result.push_str(&format!(
             "---\nOperator `{token}`. Expands to `{operator}`.
 
 ```rust
@@ -300,11 +294,10 @@ assert_type_eq!(op!({ex0}), {ex1});
             operator = op.operator,
             ex0 = op.example.0,
             ex1 = op.example.1
-        )?;
+        ));
     }
 
-    write!(
-        f,
+    result.push_str(&format!(
         "*/
 #[macro_export(local_inner_macros)]
 macro_rules! op {{
@@ -315,7 +308,7 @@ macro_rules! op {{
     #[macro_export(local_inner_macros)]
     macro_rules! __op_internal__ {{
 "
-    )?;
+    ));
 
     // We first us the shunting-yard algorithm to produce our tokens in Polish notation.
     // See: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
@@ -329,15 +322,14 @@ macro_rules! op {{
     // -------
     // Case 1: Token is a function => Push it onto the stack:
     for fun in ops.iter().filter(|f| f.op_type == Function) {
-        write!(
-            f,
+        result.push_str(&format!(
             "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {f_token} $($tail:tt)*) => (
     __op_internal__!(@stack[{f_op}, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
 );",
             f_token = fun.token,
             f_op = fun.operator
-        )?;
+        ));
     }
 
     // -------
@@ -345,21 +337,19 @@ macro_rules! op {{
     //                             Pop operators from stack to queue
 
     // Base case: Top of stack is LParen, ditch comma and continue
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[LParen, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
     __op_internal__!(@stack[LParen, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
-);"
-    )?;
+);",
+    );
     // Recursive case: Not LParen, pop from stack to queue
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[$stack_top:ident, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: , $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: , $($tail)*)
-);"
-    )?;
+);",
+    );
 
     // -------
     // Case 3: Token is an operator, o1:
@@ -371,40 +361,37 @@ macro_rules! op {{
             .filter(|op| op.op_type == Operator)
             .filter(|o2| o1.precedence <= o2.precedence)
         {
-            write!(
-                f,
+            result.push_str(&format!(
                 "
 (@stack[{o2_op}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {o1_token} $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[{o2_op}, $($queue,)*] @tail: {o1_token} $($tail)*)
 );",
                 o2_op = o2.operator,
                 o1_token = o1.token
-            )?;
+            ));
         }
         // Base case: push o1 onto stack
-        write!(
-            f,
+        result.push_str(&format!(
             "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: {o1_token} $($tail:tt)*) => (
     __op_internal__!(@stack[{o1_op}, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
 );",
             o1_op = o1.operator,
             o1_token = o1.token
-        )?;
+        ));
     }
 
     // -------
     // Case 4: Token is "(": push it onto stack as "LParen". Also convert the ")" to "RParen" to
     // appease the macro gods:
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: ( $($stuff:tt)* ) $($tail:tt)* )
  => (
     __op_internal__!(@stack[LParen, $($stack,)*] @queue[$($queue,)*]
                      @tail: $($stuff)* RParen $($tail)*)
-);"
-    )?;
+);",
+    );
 
     // -------
     // Case 5: Token is "RParen":
@@ -412,147 +399,132 @@ macro_rules! op {{
     //     2. Kill the "LParen",
     //     3. If the top of the stack is a function, pop it onto the queue
     // 2. Base case:
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[LParen, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: RParen $($tail:tt)*) => (
     __op_internal__!(@rp3 @stack[$($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
-);"
-    )?;
+);",
+    );
     // 1. Recursive case:
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[$stack_top:ident, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: RParen $($tail:tt)*)
  => (
     __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: RParen $($tail)*)
-);"
-    )?;
+);",
+    );
     // 3. Check for function:
     for fun in ops.iter().filter(|f| f.op_type == Function) {
-        write!(
-            f,
+        result.push_str(&format!(
             "
 (@rp3 @stack[{fun_op}, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[{fun_op}, $($queue,)*] @tail: $($tail)*)
 );",
             fun_op = fun.operator
-        )?;
+        ));
     }
     // 3. If no function found:
-    write!(
-        f,
+    result.push_str(
         "
 (@rp3 @stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
-);"
-    )?;
+);",
+    );
 
     // -------
     // Case 6: Token is a number: Push it onto the queue
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: $num:ident $($tail:tt)*) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$num, $($queue,)*] @tail: $($tail)*)
-);"
-    )?;
+);",
+    );
 
     // -------
     // Case 7: Out of tokens:
     // Base case: Stack empty: Start evaluating
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[] @queue[$($queue:ident,)*] @tail: ) => (
     __op_internal__!(@reverse[] @input: $($queue,)*)
-);"
-    )?;
+);",
+    );
     // Recursive case: Pop stack to queue
-    write!(
-        f,
+    result.push_str(
         "
 (@stack[$stack_top:ident, $($stack:ident,)*] @queue[$($queue:ident,)*] @tail:) => (
     __op_internal__!(@stack[$($stack,)*] @queue[$stack_top, $($queue,)*] @tail: )
-);"
-    )?;
+);",
+    );
 
     // -----------------------------------------------------------------------------------------
     // Stage 2: Reverse so we have RPN
-    write!(
-        f,
+    result.push_str(
         "
 (@reverse[$($revved:ident,)*] @input: $head:ident, $($tail:ident,)* ) => (
     __op_internal__!(@reverse[$head, $($revved,)*] @input: $($tail,)*)
-);"
-    )?;
-    write!(
-        f,
+);",
+    );
+    result.push_str(
         "
 (@reverse[$($revved:ident,)*] @input: ) => (
     __op_internal__!(@eval @stack[] @input[$($revved,)*])
-);"
-    )?;
+);",
+    );
 
     // -----------------------------------------------------------------------------------------
     // Stage 3: Evaluate in Reverse Polish Notation
     // Operators / Operators with 2 args:
     for op in ops.iter().filter(|op| op.n_args == 2) {
         // Note: We have to switch $a and $b here, otherwise non-commutative functions are backwards
-        write!(
-            f,
+        result.push_str(&format!(
             "
 (@eval @stack[$a:ty, $b:ty, $($stack:ty,)*] @input[{op}, $($tail:ident,)*]) => (
     __op_internal__!(@eval @stack[$crate::{op}<$b, $a>, $($stack,)*] @input[$($tail,)*])
 );",
             op = op.operator
-        )?;
+        ));
     }
     // Operators with 1 arg:
     for op in ops.iter().filter(|op| op.n_args == 1) {
-        write!(
-            f,
+        result.push_str(&format!(
             "
 (@eval @stack[$a:ty, $($stack:ty,)*] @input[{op}, $($tail:ident,)*]) => (
     __op_internal__!(@eval @stack[$crate::{op}<$a>, $($stack,)*] @input[$($tail,)*])
 );",
             op = op.operator
-        )?;
+        ));
     }
 
     // Wasn't a function or operator, so must be a value => push onto stack
-    write!(
-        f,
+    result.push_str(
         "
 (@eval @stack[$($stack:ty,)*] @input[$head:ident, $($tail:ident,)*]) => (
     __op_internal__!(@eval @stack[$head, $($stack,)*] @input[$($tail,)*])
-);"
-    )?;
+);",
+    );
 
     // No input left:
-    write!(
-        f,
+    result.push_str(
         "
 (@eval @stack[$stack:ty,] @input[]) => (
     $stack
-);"
-    )?;
+);",
+    );
 
     // -----------------------------------------------------------------------------------------
     // Stage 0: Get it started
-    write!(
-        f,
+    result.push_str(
         "
 ($($tail:tt)* ) => (
     __op_internal__!(@stack[] @queue[] @tail: $($tail)*)
-);"
-    )?;
+);",
+    );
 
-    write!(
-        f,
+    result.push_str(
         "
-}}"
-    )?;
+}",
+    );
 
-    Ok(())
+    result
 }

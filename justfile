@@ -1,6 +1,11 @@
-# Run all CI checks except those that require different platforms
-test-local: lint test
+# Generate code and run lints and tests
+test-local: gen lint test
     @just test --features const-generics
+
+# Produce generated code
+gen:
+    cargo run --package generate
+    cargo fmt
 
 # Update lockfiles
 up:
@@ -8,10 +13,10 @@ up:
     cargo update
 
 # Run all lints
-lint: fmt clippy clippy-all
+lint: fmt-check clippy clippy-all
 
 # Check formatting
-fmt:
+fmt-check:
     cargo fmt --all -- --check
 
 # Clippy
