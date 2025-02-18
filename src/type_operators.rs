@@ -316,6 +316,7 @@ pub trait Cmp<Rhs = Self> {
 }
 
 /// A **type operator** that gives the length of an `Array` or the number of bits in a `UInt`.
+#[allow(clippy::len_without_is_empty)]
 pub trait Len {
     /// The length as a type-level unsigned integer.
     type Output: crate::Unsigned;
@@ -355,6 +356,7 @@ pub trait IsLess<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_less(self, rhs: Rhs) -> Self::Output;
 }
 
@@ -377,6 +379,7 @@ pub trait IsEqual<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_equal(self, rhs: Rhs) -> Self::Output;
 }
 
@@ -399,6 +402,7 @@ pub trait IsGreater<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_greater(self, rhs: Rhs) -> Self::Output;
 }
 
@@ -421,6 +425,7 @@ pub trait IsLessOrEqual<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_less_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
@@ -443,6 +448,7 @@ pub trait IsNotEqual<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_not_equal(self, rhs: Rhs) -> Self::Output;
 }
 
@@ -465,6 +471,7 @@ pub trait IsGreaterOrEqual<Rhs = Self> {
     /// The type representing either `True` or `False`
     type Output: Bit;
     /// Method returning `True` or `False`.
+    #[allow(clippy::wrong_self_convention)]
     fn is_greater_or_equal(self, rhs: Rhs) -> Self::Output;
 }
 
