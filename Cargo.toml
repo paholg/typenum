@@ -1,6 +1,6 @@
 [package]
 name = "typenum"
-version = "1.17.0" # remember to update html_root_url
+version = "1.18.0" # remember to update html_root_url
 authors = ["Paho Lurie-Gregg <paho@paholg.com>", "Andre Bogus <bogusandre@gmail.com>"]
 documentation = "https://docs.rs/typenum"
 repository = "https://github.com/paholg/typenum"
