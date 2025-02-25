@@ -13,6 +13,14 @@ description = """Typenum is a Rust library for type-level numbers evaluated at
 categories = ["no-std"]
 edition = "2018"
 rust-version = "1.37.0"
+exclude = [
+    "/.github/",
+    "/clippy.toml",
+    "/flake.lock",
+    "/flake.nix",
+    "/justfile",
+    "/.envrc",
+]
 
 [dependencies]
 scale-info = { version = "1.0", default-features = false, optional = true }
