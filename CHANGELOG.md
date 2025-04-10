@@ -6,6 +6,8 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested
 against this Rust version.
 
 ### Unreleased
+- [fixed] Conflicting trait implementations with the `const-generics` feature
+  on 16-bit targets
 
 ### 1.18.0 (2025-02-17)
 - [changed] Remove build scripts; instead check-in the built code (PR #219)
