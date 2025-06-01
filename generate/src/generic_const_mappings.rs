@@ -70,16 +70,18 @@ pub trait ToUInt {
 \
             ",
             uint = uint,
-            cfg = feature_gate_to_64_bit(uint),
+            cfg = feature_gate_to_pointer_width(uint),
         ));
     }
 
     result
 }
 
-const fn feature_gate_to_64_bit(uint: u64) -> &'static str {
+const fn feature_gate_to_pointer_width(uint: u64) -> &'static str {
     if uint > u32::MAX as u64 {
         r#"#[cfg(target_pointer_width = "64")]"#
+    } else if uint > u16::MAX as u64 {
+        r#"#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]"#
     } else {
         ""
     }

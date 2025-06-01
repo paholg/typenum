@@ -4179,66 +4179,82 @@ impl ToUInt for Const<32768> {
     type Output = U32768;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<65536> {
     type Output = U65536;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<131072> {
     type Output = U131072;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<262144> {
     type Output = U262144;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<524288> {
     type Output = U524288;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<1048576> {
     type Output = U1048576;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<2097152> {
     type Output = U2097152;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<4194304> {
     type Output = U4194304;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<8388608> {
     type Output = U8388608;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<16777216> {
     type Output = U16777216;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<33554432> {
     type Output = U33554432;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<67108864> {
     type Output = U67108864;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<134217728> {
     type Output = U134217728;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<268435456> {
     type Output = U268435456;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<536870912> {
     type Output = U536870912;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<1073741824> {
     type Output = U1073741824;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<2147483648> {
     type Output = U2147483648;
 }
@@ -4407,22 +4423,27 @@ impl ToUInt for Const<10000> {
     type Output = U10000;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<100000> {
     type Output = U100000;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<1000000> {
     type Output = U1000000;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<10000000> {
     type Output = U10000000;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<100000000> {
     type Output = U100000000;
 }
 
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 impl ToUInt for Const<1000000000> {
     type Output = U1000000000;
 }
