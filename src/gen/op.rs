@@ -324,9 +324,9 @@ macro_rules! op {
     ($($tail:tt)*) => ( __op_internal__!($($tail)*) );
 }
 
-    #[doc(hidden)]
-    #[macro_export(local_inner_macros)]
-    macro_rules! __op_internal__ {
+#[doc(hidden)]
+#[macro_export(local_inner_macros)]
+macro_rules! __op_internal__ {
 
 (@stack[$($stack:ident,)*] @queue[$($queue:ident,)*] @tail: cmp $($tail:tt)*) => (
     __op_internal__!(@stack[Compare, $($stack,)*] @queue[$($queue,)*] @tail: $($tail)*)
