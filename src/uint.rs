@@ -2491,6 +2491,23 @@ impl ToInt<i64> for UTerm {
     const INT: i64 = Self::I64;
 }
 
+impl ToInt<isize> for UTerm {
+    #[inline]
+    fn to_int() -> isize {
+        Self::ISIZE
+    }
+    const INT: isize = Self::ISIZE;
+}
+
+#[cfg(feature = "i128")]
+impl ToInt<i128> for UTerm {
+    #[inline]
+    fn to_int() -> i128 {
+        Self::I128
+    }
+    const INT: i128 = Self::I128;
+}
+
 impl ToInt<u8> for UTerm {
     #[inline]
     fn to_int() -> u8 {
@@ -2529,6 +2546,15 @@ impl ToInt<usize> for UTerm {
         Self::USIZE
     }
     const INT: usize = Self::USIZE;
+}
+
+#[cfg(feature = "i128")]
+impl ToInt<u128> for UTerm {
+    #[inline]
+    fn to_int() -> u128 {
+        Self::U128
+    }
+    const INT: u128 = Self::U128;
 }
 
 impl<U, B> ToInt<i8> for UInt<U, B>
@@ -2577,6 +2603,31 @@ where
         Self::I64
     }
     const INT: i64 = Self::I64;
+}
+
+impl<U, B> ToInt<isize> for UInt<U, B>
+where
+    U: Unsigned,
+    B: Bit,
+{
+    #[inline]
+    fn to_int() -> isize {
+        Self::ISIZE
+    }
+    const INT: isize = Self::ISIZE;
+}
+
+#[cfg(feature = "i128")]
+impl<U, B> ToInt<i128> for UInt<U, B>
+where
+    U: Unsigned,
+    B: Bit,
+{
+    #[inline]
+    fn to_int() -> i128 {
+        Self::I128
+    }
+    const INT: i128 = Self::I128;
 }
 
 impl<U, B> ToInt<u8> for UInt<U, B>
@@ -2637,6 +2688,19 @@ where
         Self::USIZE
     }
     const INT: usize = Self::USIZE;
+}
+
+#[cfg(feature = "i128")]
+impl<U, B> ToInt<u128> for UInt<U, B>
+where
+    U: Unsigned,
+    B: Bit,
+{
+    #[inline]
+    fn to_int() -> u128 {
+        Self::U128
+    }
+    const INT: u128 = Self::U128;
 }
 
 #[cfg(test)]
@@ -2738,6 +2802,33 @@ mod tests {
         assert_eq!(3_i64, U3::INT);
         assert_eq!(4_i64, U4::INT);
 
+        // isize
+        assert_eq!(0_isize, U0::to_int());
+        assert_eq!(1_isize, U1::to_int());
+        assert_eq!(2_isize, U2::to_int());
+        assert_eq!(3_isize, U3::to_int());
+        assert_eq!(4_isize, U4::to_int());
+        assert_eq!(0_isize, U0::INT);
+        assert_eq!(1_isize, U1::INT);
+        assert_eq!(2_isize, U2::INT);
+        assert_eq!(3_isize, U3::INT);
+        assert_eq!(4_isize, U4::INT);
+
+        // i128
+        #[cfg(feature = "i128")]
+        {
+            assert_eq!(0_i128, U0::to_int());
+            assert_eq!(1_i128, U1::to_int());
+            assert_eq!(2_i128, U2::to_int());
+            assert_eq!(3_i128, U3::to_int());
+            assert_eq!(4_i128, U4::to_int());
+            assert_eq!(0_i128, U0::INT);
+            assert_eq!(1_i128, U1::INT);
+            assert_eq!(2_i128, U2::INT);
+            assert_eq!(3_i128, U3::INT);
+            assert_eq!(4_i128, U4::INT);
+        }
+
         // u8
         assert_eq!(0_u8, U0::to_int());
         assert_eq!(1_u8, U1::to_int());
@@ -2797,5 +2888,20 @@ mod tests {
         assert_eq!(2_usize, U2::INT);
         assert_eq!(3_usize, U3::INT);
         assert_eq!(4_usize, U4::INT);
+
+        // u128
+        #[cfg(feature = "i128")]
+        {
+            assert_eq!(0_u128, U0::to_int());
+            assert_eq!(1_u128, U1::to_int());
+            assert_eq!(2_u128, U2::to_int());
+            assert_eq!(3_u128, U3::to_int());
+            assert_eq!(4_u128, U4::to_int());
+            assert_eq!(0_u128, U0::INT);
+            assert_eq!(1_u128, U1::INT);
+            assert_eq!(2_u128, U2::INT);
+            assert_eq!(3_u128, U3::INT);
+            assert_eq!(4_u128, U4::INT);
+        }
     }
 }
