@@ -10,6 +10,7 @@ For unsigned integers, the format is `U` followed by the number. We define alias
 
 - Numbers 0 through 1024
 - Powers of 2 below `u64::MAX`
+- Powers of 2 minus 1 below `u64::MAX`
 - Powers of 10 below `u64::MAX`
 
 These alias definitions look like this:
@@ -27,6 +28,7 @@ signed integers it is `N` followed by the number. For the signed integer zero, w
 
 - Numbers -1024 through 1024
 - Powers of 2 between `i64::MIN` and `i64::MAX`
+- Powers of 2 minus 1 between `i64::MIN` and `i64::MAX`
 - Powers of 10 between `i64::MIN` and `i64::MAX`
 
 These alias definitions look like this:
@@ -5079,6 +5081,18 @@ pub type U3600 = UInt<
 >;
 pub type P3600 = PInt<U3600>;
 pub type N3600 = NInt<U3600>;
+pub type U2047 = UInt<
+    UInt<
+        UInt<
+            UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P2047 = PInt<U2047>;
+pub type N2047 = NInt<U2047>;
 pub type U2048 = UInt<
     UInt<
         UInt<
@@ -5097,6 +5111,24 @@ pub type U2048 = UInt<
 >;
 pub type P2048 = PInt<U2048>;
 pub type N2048 = NInt<U2048>;
+pub type U4095 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P4095 = PInt<U4095>;
+pub type N4095 = NInt<U4095>;
 pub type U4096 = UInt<
     UInt<
         UInt<
@@ -5118,6 +5150,27 @@ pub type U4096 = UInt<
 >;
 pub type P4096 = PInt<U4096>;
 pub type N4096 = NInt<U4096>;
+pub type U8191 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P8191 = PInt<U8191>;
+pub type N8191 = NInt<U8191>;
 pub type U8192 = UInt<
     UInt<
         UInt<
@@ -5145,6 +5198,33 @@ pub type U8192 = UInt<
 >;
 pub type P8192 = PInt<U8192>;
 pub type N8192 = NInt<U8192>;
+pub type U16383 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P16383 = PInt<U16383>;
+pub type N16383 = NInt<U16383>;
 pub type U16384 = UInt<
     UInt<
         UInt<
@@ -5178,6 +5258,39 @@ pub type U16384 = UInt<
 >;
 pub type P16384 = PInt<U16384>;
 pub type N16384 = NInt<U16384>;
+pub type U32767 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P32767 = PInt<U32767>;
+pub type N32767 = NInt<U32767>;
 pub type U32768 = UInt<
     UInt<
         UInt<
@@ -5214,6 +5327,42 @@ pub type U32768 = UInt<
 >;
 pub type P32768 = PInt<U32768>;
 pub type N32768 = NInt<U32768>;
+pub type U65535 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P65535 = PInt<U65535>;
+pub type N65535 = NInt<U65535>;
 pub type U65536 = UInt<
     UInt<
         UInt<
@@ -5256,6 +5405,48 @@ pub type U65536 = UInt<
 >;
 pub type P65536 = PInt<U65536>;
 pub type N65536 = NInt<U65536>;
+pub type U131071 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P131071 = PInt<U131071>;
+pub type N131071 = NInt<U131071>;
 pub type U131072 = UInt<
     UInt<
         UInt<
@@ -5304,6 +5495,54 @@ pub type U131072 = UInt<
 >;
 pub type P131072 = PInt<U131072>;
 pub type N131072 = NInt<U131072>;
+pub type U262143 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<UInt<UInt<UTerm, B1>, B1>, B1>,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P262143 = PInt<U262143>;
+pub type N262143 = NInt<U262143>;
 pub type U262144 = UInt<
     UInt<
         UInt<
@@ -5355,6 +5594,57 @@ pub type U262144 = UInt<
 >;
 pub type P262144 = PInt<U262144>;
 pub type N262144 = NInt<U262144>;
+pub type U524287 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<UInt<UInt<UTerm, B1>, B1>, B1>,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P524287 = PInt<U524287>;
+pub type N524287 = NInt<U524287>;
 pub type U524288 = UInt<
     UInt<
         UInt<
@@ -5412,6 +5702,63 @@ pub type U524288 = UInt<
 >;
 pub type P524288 = PInt<U524288>;
 pub type N524288 = NInt<U524288>;
+pub type U1048575 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<
+                                                                    UInt<
+                                                                        UInt<UInt<UTerm, B1>, B1>,
+                                                                        B1,
+                                                                    >,
+                                                                    B1,
+                                                                >,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P1048575 = PInt<U1048575>;
+pub type N1048575 = NInt<U1048575>;
 pub type U1048576 = UInt<
     UInt<
         UInt<
@@ -5475,6 +5822,69 @@ pub type U1048576 = UInt<
 >;
 pub type P1048576 = PInt<U1048576>;
 pub type N1048576 = NInt<U1048576>;
+pub type U2097151 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<
+                                                                    UInt<
+                                                                        UInt<
+                                                                            UInt<
+                                                                                UInt<UTerm, B1>,
+                                                                                B1,
+                                                                            >,
+                                                                            B1,
+                                                                        >,
+                                                                        B1,
+                                                                    >,
+                                                                    B1,
+                                                                >,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P2097151 = PInt<U2097151>;
+pub type N2097151 = NInt<U2097151>;
 pub type U2097152 = UInt<
     UInt<
         UInt<
@@ -5541,6 +5951,72 @@ pub type U2097152 = UInt<
 >;
 pub type P2097152 = PInt<U2097152>;
 pub type N2097152 = NInt<U2097152>;
+pub type U4194303 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<
+                                                                    UInt<
+                                                                        UInt<
+                                                                            UInt<
+                                                                                UInt<
+                                                                                    UInt<UTerm, B1>,
+                                                                                    B1,
+                                                                                >,
+                                                                                B1,
+                                                                            >,
+                                                                            B1,
+                                                                        >,
+                                                                        B1,
+                                                                    >,
+                                                                    B1,
+                                                                >,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P4194303 = PInt<U4194303>;
+pub type N4194303 = NInt<U4194303>;
 pub type U4194304 = UInt<
     UInt<
         UInt<
@@ -5613,126 +6089,318 @@ pub type U4194304 = UInt<
 >;
 pub type P4194304 = PInt<U4194304>;
 pub type N4194304 = NInt<U4194304>;
+pub type U8388607 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<
+                                                                    UInt<
+                                                                        UInt<
+                                                                            UInt<
+                                                                                UInt<
+                                                                                    UInt<
+                                                                                        UInt<
+                                                                                            UTerm,
+                                                                                            B1,
+                                                                                        >,
+                                                                                        B1,
+                                                                                    >,
+                                                                                    B1,
+                                                                                >,
+                                                                                B1,
+                                                                            >,
+                                                                            B1,
+                                                                        >,
+                                                                        B1,
+                                                                    >,
+                                                                    B1,
+                                                                >,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P8388607 = PInt<U8388607>;
+pub type N8388607 = NInt<U8388607>;
 pub type U8388608 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P8388608 = PInt<U8388608>;
 pub type N8388608 = NInt<U8388608>;
+pub type U16777215 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P16777215 = PInt<U16777215>;
+pub type N16777215 = NInt<U16777215>;
 pub type U16777216 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P16777216 = PInt<U16777216>;
 pub type N16777216 = NInt<U16777216>;
+pub type U33554431 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P33554431 = PInt<U33554431>;
+pub type N33554431 = NInt<U33554431>;
 pub type U33554432 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P33554432 = PInt<U33554432>;
 pub type N33554432 = NInt<U33554432>;
+pub type U67108863 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P67108863 = PInt<U67108863>;
+pub type N67108863 = NInt<U67108863>;
 pub type U67108864 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P67108864 = PInt<U67108864>;
 pub type N67108864 = NInt<U67108864>;
+pub type U134217727 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P134217727 = PInt<U134217727>;
+pub type N134217727 = NInt<U134217727>;
 pub type U134217728 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P134217728 = PInt<U134217728>;
 pub type N134217728 = NInt<U134217728>;
+pub type U268435455 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P268435455 = PInt<U268435455>;
+pub type N268435455 = NInt<U268435455>;
 pub type U268435456 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P268435456 = PInt<U268435456>;
 pub type N268435456 = NInt<U268435456>;
+pub type U536870911 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P536870911 = PInt<U536870911>;
+pub type N536870911 = NInt<U536870911>;
 pub type U536870912 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P536870912 = PInt<U536870912>;
 pub type N536870912 = NInt<U536870912>;
+pub type U1073741823 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P1073741823 = PInt<U1073741823>;
+pub type N1073741823 = NInt<U1073741823>;
 pub type U1073741824 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P1073741824 = PInt<U1073741824>;
 pub type N1073741824 = NInt<U1073741824>;
+pub type U2147483647 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P2147483647 = PInt<U2147483647>;
+pub type N2147483647 = NInt<U2147483647>;
 pub type U2147483648 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P2147483648 = PInt<U2147483648>;
 pub type N2147483648 = NInt<U2147483648>;
+pub type U4294967295 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P4294967295 = PInt<U4294967295>;
+pub type N4294967295 = NInt<U4294967295>;
 pub type U4294967296 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P4294967296 = PInt<U4294967296>;
 pub type N4294967296 = NInt<U4294967296>;
+pub type U8589934591 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P8589934591 = PInt<U8589934591>;
+pub type N8589934591 = NInt<U8589934591>;
 pub type U8589934592 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P8589934592 = PInt<U8589934592>;
 pub type N8589934592 = NInt<U8589934592>;
+pub type U17179869183 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P17179869183 = PInt<U17179869183>;
+pub type N17179869183 = NInt<U17179869183>;
 pub type U17179869184 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P17179869184 = PInt<U17179869184>;
 pub type N17179869184 = NInt<U17179869184>;
+pub type U34359738367 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P34359738367 = PInt<U34359738367>;
+pub type N34359738367 = NInt<U34359738367>;
 pub type U34359738368 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P34359738368 = PInt<U34359738368>;
 pub type N34359738368 = NInt<U34359738368>;
+pub type U68719476735 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P68719476735 = PInt<U68719476735>;
+pub type N68719476735 = NInt<U68719476735>;
 pub type U68719476736 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P68719476736 = PInt<U68719476736>;
 pub type N68719476736 = NInt<U68719476736>;
+pub type U137438953471 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P137438953471 = PInt<U137438953471>;
+pub type N137438953471 = NInt<U137438953471>;
 pub type U137438953472 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P137438953472 = PInt<U137438953472>;
 pub type N137438953472 = NInt<U137438953472>;
+pub type U274877906943 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P274877906943 = PInt<U274877906943>;
+pub type N274877906943 = NInt<U274877906943>;
 pub type U274877906944 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P274877906944 = PInt<U274877906944>;
 pub type N274877906944 = NInt<U274877906944>;
+pub type U549755813887 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P549755813887 = PInt<U549755813887>;
+pub type N549755813887 = NInt<U549755813887>;
 pub type U549755813888 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P549755813888 = PInt<U549755813888>;
 pub type N549755813888 = NInt<U549755813888>;
+pub type U1099511627775 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P1099511627775 = PInt<U1099511627775>;
+pub type N1099511627775 = NInt<U1099511627775>;
 pub type U1099511627776 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P1099511627776 = PInt<U1099511627776>;
 pub type N1099511627776 = NInt<U1099511627776>;
+pub type U2199023255551 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P2199023255551 = PInt<U2199023255551>;
+pub type N2199023255551 = NInt<U2199023255551>;
 pub type U2199023255552 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P2199023255552 = PInt<U2199023255552>;
 pub type N2199023255552 = NInt<U2199023255552>;
+pub type U4398046511103 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P4398046511103 = PInt<U4398046511103>;
+pub type N4398046511103 = NInt<U4398046511103>;
 pub type U4398046511104 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P4398046511104 = PInt<U4398046511104>;
 pub type N4398046511104 = NInt<U4398046511104>;
+pub type U8796093022207 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P8796093022207 = PInt<U8796093022207>;
+pub type N8796093022207 = NInt<U8796093022207>;
 pub type U8796093022208 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P8796093022208 = PInt<U8796093022208>;
 pub type N8796093022208 = NInt<U8796093022208>;
+pub type U17592186044415 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P17592186044415 = PInt<U17592186044415>;
+pub type N17592186044415 = NInt<U17592186044415>;
 pub type U17592186044416 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P17592186044416 = PInt<U17592186044416>;
 pub type N17592186044416 = NInt<U17592186044416>;
+pub type U35184372088831 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P35184372088831 = PInt<U35184372088831>;
+pub type N35184372088831 = NInt<U35184372088831>;
 pub type U35184372088832 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P35184372088832 = PInt<U35184372088832>;
 pub type N35184372088832 = NInt<U35184372088832>;
+pub type U70368744177663 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P70368744177663 = PInt<U70368744177663>;
+pub type N70368744177663 = NInt<U70368744177663>;
 pub type U70368744177664 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P70368744177664 = PInt<U70368744177664>;
 pub type N70368744177664 = NInt<U70368744177664>;
+pub type U140737488355327 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P140737488355327 = PInt<U140737488355327>;
+pub type N140737488355327 = NInt<U140737488355327>;
 pub type U140737488355328 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P140737488355328 = PInt<U140737488355328>;
 pub type N140737488355328 = NInt<U140737488355328>;
+pub type U281474976710655 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P281474976710655 = PInt<U281474976710655>;
+pub type N281474976710655 = NInt<U281474976710655>;
 pub type U281474976710656 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P281474976710656 = PInt<U281474976710656>;
 pub type N281474976710656 = NInt<U281474976710656>;
+pub type U562949953421311 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P562949953421311 = PInt<U562949953421311>;
+pub type N562949953421311 = NInt<U562949953421311>;
 pub type U562949953421312 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P562949953421312 = PInt<U562949953421312>;
 pub type N562949953421312 = NInt<U562949953421312>;
+pub type U1125899906842623 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P1125899906842623 = PInt<U1125899906842623>;
+pub type N1125899906842623 = NInt<U1125899906842623>;
 pub type U1125899906842624 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P1125899906842624 = PInt<U1125899906842624>;
 pub type N1125899906842624 = NInt<U1125899906842624>;
+pub type U2251799813685247 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P2251799813685247 = PInt<U2251799813685247>;
+pub type N2251799813685247 = NInt<U2251799813685247>;
 pub type U2251799813685248 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P2251799813685248 = PInt<U2251799813685248>;
 pub type N2251799813685248 = NInt<U2251799813685248>;
+pub type U4503599627370495 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P4503599627370495 = PInt<U4503599627370495>;
+pub type N4503599627370495 = NInt<U4503599627370495>;
 pub type U4503599627370496 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P4503599627370496 = PInt<U4503599627370496>;
 pub type N4503599627370496 = NInt<U4503599627370496>;
+pub type U9007199254740991 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P9007199254740991 = PInt<U9007199254740991>;
+pub type N9007199254740991 = NInt<U9007199254740991>;
 pub type U9007199254740992 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P9007199254740992 = PInt<U9007199254740992>;
 pub type N9007199254740992 = NInt<U9007199254740992>;
+pub type U18014398509481983 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P18014398509481983 = PInt<U18014398509481983>;
+pub type N18014398509481983 = NInt<U18014398509481983>;
 pub type U18014398509481984 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P18014398509481984 = PInt<U18014398509481984>;
 pub type N18014398509481984 = NInt<U18014398509481984>;
+pub type U36028797018963967 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P36028797018963967 = PInt<U36028797018963967>;
+pub type N36028797018963967 = NInt<U36028797018963967>;
 pub type U36028797018963968 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P36028797018963968 = PInt<U36028797018963968>;
 pub type N36028797018963968 = NInt<U36028797018963968>;
+pub type U72057594037927935 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P72057594037927935 = PInt<U72057594037927935>;
+pub type N72057594037927935 = NInt<U72057594037927935>;
 pub type U72057594037927936 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P72057594037927936 = PInt<U72057594037927936>;
 pub type N72057594037927936 = NInt<U72057594037927936>;
+pub type U144115188075855871 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P144115188075855871 = PInt<U144115188075855871>;
+pub type N144115188075855871 = NInt<U144115188075855871>;
 pub type U144115188075855872 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P144115188075855872 = PInt<U144115188075855872>;
 pub type N144115188075855872 = NInt<U144115188075855872>;
+pub type U288230376151711743 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P288230376151711743 = PInt<U288230376151711743>;
+pub type N288230376151711743 = NInt<U288230376151711743>;
 pub type U288230376151711744 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P288230376151711744 = PInt<U288230376151711744>;
 pub type N288230376151711744 = NInt<U288230376151711744>;
+pub type U576460752303423487 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P576460752303423487 = PInt<U576460752303423487>;
+pub type N576460752303423487 = NInt<U576460752303423487>;
 pub type U576460752303423488 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P576460752303423488 = PInt<U576460752303423488>;
 pub type N576460752303423488 = NInt<U576460752303423488>;
+pub type U1152921504606846975 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P1152921504606846975 = PInt<U1152921504606846975>;
+pub type N1152921504606846975 = NInt<U1152921504606846975>;
 pub type U1152921504606846976 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P1152921504606846976 = PInt<U1152921504606846976>;
 pub type N1152921504606846976 = NInt<U1152921504606846976>;
+pub type U2305843009213693951 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P2305843009213693951 = PInt<U2305843009213693951>;
+pub type N2305843009213693951 = NInt<U2305843009213693951>;
 pub type U2305843009213693952 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P2305843009213693952 = PInt<U2305843009213693952>;
 pub type N2305843009213693952 = NInt<U2305843009213693952>;
+pub type U4611686018427387903 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P4611686018427387903 = PInt<U4611686018427387903>;
+pub type N4611686018427387903 = NInt<U4611686018427387903>;
 pub type U4611686018427387904 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type P4611686018427387904 = PInt<U4611686018427387904>;
 pub type N4611686018427387904 = NInt<U4611686018427387904>;
+pub type U9223372036854775807 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
+pub type P9223372036854775807 = PInt<U9223372036854775807>;
+pub type N9223372036854775807 = NInt<U9223372036854775807>;
 pub type U9223372036854775808 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>, B0>;
 pub type U10000 = UInt<
     UInt<

@@ -47,7 +47,7 @@ fn uints() -> impl Iterator<Item = u64> {
     let other_constants = [3600];
     (0..(HIGHEST + 1))
         .chain(other_constants)
-        .chain((first2..64).map(|i| 2u64.pow(i)))
+        .chain((first2..64).flat_map(|i| [2u64.pow(i) - 1, 2u64.pow(i)]))
         .chain((first10..20).map(|i| 10u64.pow(i)))
 }
 
@@ -66,6 +66,7 @@ For unsigned integers, the format is `U` followed by the number. We define alias
 
 - Numbers 0 through {highest}
 - Powers of 2 below `u64::MAX`
+- Powers of 2 minus 1 below `u64::MAX`
 - Powers of 10 below `u64::MAX`
 
 These alias definitions look like this:
@@ -83,6 +84,7 @@ signed integers it is `N` followed by the number. For the signed integer zero, w
 
 - Numbers -{highest} through {highest}
 - Powers of 2 between `i64::MIN` and `i64::MAX`
+- Powers of 2 minus 1 between `i64::MIN` and `i64::MAX`
 - Powers of 10 between `i64::MIN` and `i64::MAX`
 
 These alias definitions look like this:
