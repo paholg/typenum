@@ -35,9 +35,9 @@ use crate::{
         PrivateCmpOut, PrivateLogarithm2, PrivatePow, PrivatePowOut, PrivateSquareRoot, PrivateSub,
         PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
     },
-    Add1, BinaryFmt, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length,
-    Less, Log2, Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt,
-    Square, SquareRoot, Sub1, Sum, ToInt, Zero,
+    Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
+    Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
+    SquareRoot, Sub1, Sum, ToInt, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -301,42 +301,6 @@ where
     }
 }
 
-impl BinaryFmt for UTerm {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl BinaryFmt for UInt<UTerm, B0> {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl BinaryFmt for UInt<UTerm, B1> {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl<U: Unsigned, B: Bit> BinaryFmt for UInt<UInt<U, B>, B0>
-where
-    UInt<U, B>: core::fmt::Binary,
-{
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl<U: Unsigned, B: Bit> BinaryFmt for UInt<UInt<U, B>, B1>
-where
-    UInt<U, B>: core::fmt::Binary,
-{
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
 #[cfg(test)]
 mod fmt_tests {
     use super::*;
@@ -357,7 +321,7 @@ mod fmt_tests {
         }
 
         fn as_str(&self) -> &str {
-            str::from_utf8(&self.buffer[..self.len]).unwrap()
+            core::str::from_utf8(&self.buffer[..self.len]).unwrap()
         }
     }
 
@@ -369,9 +333,9 @@ mod fmt_tests {
         }
     }
 
-    fn assert_binary_fmt<U: Unsigned + BinaryFmt>(expected: &str) {
+    fn assert_binary_fmt<U: Unsigned + core::fmt::Binary>(expected: &str) {
         let mut s = LimitedString::new();
-        write!(&mut s, "{:b}", U::binary_fmt()).unwrap();
+        write!(&mut s, "{:b}", U::default()).unwrap();
         assert_eq!(s.as_str(), expected);
     }
 

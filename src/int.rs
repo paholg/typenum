@@ -32,7 +32,7 @@ use crate::{
     consts::{N1, P1, U0, U1},
     private::{Internal, InternalMarker, PrivateDivInt, PrivateIntegerAdd, PrivateRem},
     uint::{UInt, Unsigned},
-    BinaryFmt, Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo, ToInt, Zero,
+    Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo, ToInt, Zero,
 };
 use core::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
@@ -213,24 +213,6 @@ impl<U: Unsigned + NonZero + core::fmt::Binary> core::fmt::Binary for PInt<U> {
 impl<U: Unsigned + NonZero + core::fmt::Binary> core::fmt::Binary for NInt<U> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "-{:b}", self.n)
-    }
-}
-
-impl BinaryFmt for Z0 {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl<U: Unsigned + NonZero + core::fmt::Binary> BinaryFmt for PInt<U> {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
-    }
-}
-
-impl<U: Unsigned + NonZero + core::fmt::Binary> BinaryFmt for NInt<U> {
-    fn binary_fmt() -> impl core::fmt::Binary {
-        Self::new()
     }
 }
 
