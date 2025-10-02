@@ -1,6 +1,6 @@
 [package]
 name = "typenum"
-version = "1.18.0" # remember to update html_root_url
+version = "1.19.0" # remember to update html_root_url
 authors = ["Paho Lurie-Gregg <paho@paholg.com>", "Andre Bogus <bogusandre@gmail.com>"]
 documentation = "https://docs.rs/typenum"
 repository = "https://github.com/paholg/typenum"
@@ -13,14 +13,7 @@ description = """Typenum is a Rust library for type-level numbers evaluated at
 categories = ["no-std"]
 edition = "2018"
 rust-version = "1.37.0"
-exclude = [
-    "/.github/",
-    "/clippy.toml",
-    "/flake.lock",
-    "/flake.nix",
-    "/justfile",
-    "/.envrc",
-]
+exclude = ["/.github/", "/clippy.toml", "/flake.lock", "/flake.nix", "/justfile", "/.envrc"]
 
 [dependencies]
 scale-info = { version = "1.0", default-features = false, optional = true }

@@ -44,7 +44,7 @@
 #![warn(missing_docs)]
 #![cfg_attr(feature = "strict", deny(missing_docs))]
 #![cfg_attr(feature = "strict", deny(warnings))]
-#![doc(html_root_url = "https://docs.rs/typenum/1.18.0")]
+#![doc(html_root_url = "https://docs.rs/typenum/1.19.0")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 // For debugging macros:
