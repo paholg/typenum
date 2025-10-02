@@ -102,6 +102,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
       - uses: extractions/setup-just@v2
       - run: just gen
       - run: git diff --exit-code

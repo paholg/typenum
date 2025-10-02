@@ -8,6 +8,7 @@ against this Rust version.
 ### Unreleased
 - [fixed] Conflicting trait implementations with the `const-generics` feature
   on 16-bit targets
+- [fixed] Remove deprecated feature flag
 
 ### 1.18.0 (2025-02-17)
 - [changed] Remove build scripts; instead check-in the built code (PR #219)
