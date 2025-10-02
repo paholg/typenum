@@ -624,3 +624,9 @@ pub trait ToInt<T> {
     /// The concrete value for the type. Can be used in `const` contexts.
     const INT: T;
 }
+
+/// A **type operator** for converting an integer to a binary string.
+pub trait BinaryFmt {
+    /// Binary formatter for `T`.
+    fn binary_fmt() -> impl core::fmt::Binary;
+}

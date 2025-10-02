@@ -35,9 +35,9 @@ use crate::{
         PrivateCmpOut, PrivateLogarithm2, PrivatePow, PrivatePowOut, PrivateSquareRoot, PrivateSub,
         PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
     },
-    Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
-    Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
-    SquareRoot, Sub1, Sum, ToInt, Zero,
+    Add1, BinaryFmt, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length,
+    Less, Log2, Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt,
+    Square, SquareRoot, Sub1, Sum, ToInt, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -259,6 +259,137 @@ where
     #[inline]
     fn len(&self) -> Self::Output {
         self.msb.len() + B1
+    }
+}
+
+// ---------------------------------------------------------------------------------------
+// Formatting as binary
+
+impl core::fmt::Binary for UTerm {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "0")
+    }
+}
+
+impl core::fmt::Binary for UInt<UTerm, B0> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "0")
+    }
+}
+
+impl core::fmt::Binary for UInt<UTerm, B1> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "1")
+    }
+}
+
+impl<U: Unsigned, B: Bit> core::fmt::Binary for UInt<UInt<U, B>, B0>
+where
+    UInt<U, B>: core::fmt::Binary,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{:b}0", UInt::<U, B>::new())
+    }
+}
+
+impl<U: Unsigned, B: Bit> core::fmt::Binary for UInt<UInt<U, B>, B1>
+where
+    UInt<U, B>: core::fmt::Binary,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{:b}1", UInt::<U, B>::new())
+    }
+}
+
+impl BinaryFmt for UTerm {
+    fn binary_fmt() -> impl core::fmt::Binary {
+        Self::new()
+    }
+}
+
+impl BinaryFmt for UInt<UTerm, B0> {
+    fn binary_fmt() -> impl core::fmt::Binary {
+        Self::new()
+    }
+}
+
+impl BinaryFmt for UInt<UTerm, B1> {
+    fn binary_fmt() -> impl core::fmt::Binary {
+        Self::new()
+    }
+}
+
+impl<U: Unsigned, B: Bit> BinaryFmt for UInt<UInt<U, B>, B0>
+where
+    UInt<U, B>: core::fmt::Binary,
+{
+    fn binary_fmt() -> impl core::fmt::Binary {
+        Self::new()
+    }
+}
+
+impl<U: Unsigned, B: Bit> BinaryFmt for UInt<UInt<U, B>, B1>
+where
+    UInt<U, B>: core::fmt::Binary,
+{
+    fn binary_fmt() -> impl core::fmt::Binary {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod fmt_tests {
+    use super::*;
+    use crate::consts::*;
+    use core::fmt::Write;
+
+    struct LimitedString {
+        len: usize,
+        buffer: [u8; 64],
+    }
+
+    impl LimitedString {
+        fn new() -> Self {
+            Self {
+                len: 0,
+                buffer: [0u8; 64],
+            }
+        }
+
+        fn as_str(&self) -> &str {
+            str::from_utf8(&self.buffer[..self.len]).unwrap()
+        }
+    }
+
+    impl core::fmt::Write for LimitedString {
+        fn write_str(&mut self, s: &str) -> core::fmt::Result {
+            self.buffer[self.len..self.len + s.len()].copy_from_slice(s.as_bytes());
+            self.len += s.len();
+            Ok(())
+        }
+    }
+
+    fn assert_binary_fmt<U: Unsigned + BinaryFmt>(expected: &str) {
+        let mut s = LimitedString::new();
+        write!(&mut s, "{:b}", U::binary_fmt()).unwrap();
+        assert_eq!(s.as_str(), expected);
+    }
+
+    #[test]
+    fn binary() {
+        assert_binary_fmt::<U0>("0");
+        assert_binary_fmt::<U1>("1");
+        assert_binary_fmt::<U2>("10");
+        assert_binary_fmt::<U3>("11");
+        assert_binary_fmt::<U4>("100");
+        assert_binary_fmt::<U5>("101");
+        assert_binary_fmt::<U6>("110");
+        assert_binary_fmt::<U7>("111");
+        assert_binary_fmt::<U8>("1000");
+        assert_binary_fmt::<U9>("1001");
+        assert_binary_fmt::<U10>("1010");
+
+        assert_binary_fmt::<U2147483648>("10000000000000000000000000000000");
     }
 }
 
