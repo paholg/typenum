@@ -6,6 +6,9 @@ The MSRV (Minimum Supported Rust Version) is 1.37.0, and typenum is tested
 against this Rust version.
 
 ### Unreleased
+- [removed] Removed `no_std` feature flag (deprecated since 1.3.0)
+- [removed] Removed `force_unix_path_separator` feature flag (deprecated since 1.17.0)
+- [changed] Replaced `build.rs` script with pre-generated test files
 
 ### 1.19.0 (2025-10-01)
 - [fixed] Conflicting trait implementations with the `const-generics` feature

@@ -22,10 +22,8 @@ scale-info = { version = "1.0", default-features = false, optional = true }
 name = "typenum"
 
 [features]
-no_std                    = [] # Deprecated
 i128                      = []
 strict                    = []
-force_unix_path_separator = [] # Deprecated
 const-generics            = []
 scale_info                = ["scale-info/derive"]
 

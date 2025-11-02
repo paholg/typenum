@@ -17,6 +17,7 @@ jobs:
     - test-linux
     - test-non-linux
     - lint
+    - test-generated
 
     steps:
       - name: Check if all jubs succeeded
