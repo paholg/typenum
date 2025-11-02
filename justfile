@@ -25,8 +25,7 @@ clippy:
 
 # Clippy with all features
 clippy-all:
-    # Allow deprecated because we test the no_std feature.
-    cargo clippy --all-features -- -D warnings -A deprecated
+    cargo clippy --all-features -- -D warnings
 
 # Run test
 test *args:

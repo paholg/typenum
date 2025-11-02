@@ -1,25 +1,11 @@
-use std::{cmp, env, fmt, fs::File, io::Write, path::PathBuf};
+use std::{cmp, fmt};
 
-enum UIntCode {
-    Term,
-    Zero(Box<UIntCode>),
-    One(Box<UIntCode>),
-}
+use crate::{gen_uint, UIntCode};
 
 enum IntCode {
     Zero,
     Pos(Box<UIntCode>),
     Neg(Box<UIntCode>),
-}
-
-impl fmt::Display for UIntCode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            UIntCode::Term => write!(f, "UTerm"),
-            UIntCode::Zero(ref inner) => write!(f, "UInt<{}, B0>", inner),
-            UIntCode::One(ref inner) => write!(f, "UInt<{}, B1>", inner),
-        }
-    }
 }
 
 impl fmt::Display for IntCode {
@@ -30,23 +16,6 @@ impl fmt::Display for IntCode {
             IntCode::Neg(ref inner) => write!(f, "NInt<{}>", inner),
         }
     }
-}
-
-fn gen_uint(u: u64) -> UIntCode {
-    let mut result = UIntCode::Term;
-    let mut x = 1u64 << 63;
-    while x > u {
-        x >>= 1
-    }
-    while x > 0 {
-        result = if x & u > 0 {
-            UIntCode::One(Box::new(result))
-        } else {
-            UIntCode::Zero(Box::new(result))
-        };
-        x >>= 1;
-    }
-    result
 }
 
 fn gen_int(i: i64) -> IntCode {
@@ -384,34 +353,4 @@ use core::cmp::Ordering;
     }
 
     result
-}
-
-#[cfg_attr(
-    feature = "no_std",
-    deprecated(
-        since = "1.3.0",
-        note = "the `no_std` flag is no longer necessary and will be removed in the future"
-    )
-)]
-pub fn no_std() {}
-
-#[cfg_attr(
-    feature = "force_unix_path_separator",
-    deprecated(
-        since = "1.17.0",
-        note = "the `force_unix_path_separator` flag is no longer necessary and will be removed in the future"
-    )
-)]
-pub fn force_unix_path_separator() {}
-
-fn main() {
-    no_std();
-    force_unix_path_separator();
-    println!("cargo:rerun-if-changed=tests");
-
-    let tests = gen_tests();
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let dest = PathBuf::from(out_dir).join("tests.rs");
-    let mut f = File::create(&dest).unwrap();
-    f.write_all(tests.as_bytes()).unwrap();
 }

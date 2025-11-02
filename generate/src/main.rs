@@ -1,10 +1,11 @@
 use std::fs::File;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::{env, fmt};
 
 mod generic_const_mappings;
 mod op;
+mod tests;
 
 enum UIntCode {
     Term,
@@ -139,19 +140,22 @@ const HEADER: &str = "// THIS IS GENERATED CODE";
 
 fn main() {
     let manifest_dir: PathBuf = env::var("CARGO_MANIFEST_DIR").unwrap().into();
-    let out_dir = manifest_dir.join("../src/gen/");
+    let gen_dir = manifest_dir.join("../src/gen/");
+    let tests_dir = manifest_dir.join("../tests/");
 
     let files = [
-        ("consts.rs", gen_consts()),
-        ("op.rs", op::gen_op_macro()),
+        ("consts.rs", &gen_dir, gen_consts()),
+        ("op.rs", &gen_dir, op::gen_op_macro()),
         (
             "generic_const_mappings.rs",
+            &gen_dir,
             generic_const_mappings::emit_impls(),
         ),
+        ("generated.rs", &tests_dir, tests::gen_tests()),
     ];
 
-    for (fname, contents) in files {
-        let dest = Path::new(&out_dir).join(fname);
+    for (fname, dir, contents) in files {
+        let dest = dir.join(fname);
 
         let mut f = File::create(&dest).unwrap();
         f.write_all(HEADER.as_bytes()).unwrap();
