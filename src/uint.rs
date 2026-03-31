@@ -125,6 +125,42 @@ impl Unsigned for UTerm {
     fn to_isize() -> isize {
         0
     }
+
+    type GetMSB = UTerm;
+    fn get_msb(self) -> Self::GetMSB {
+        UTerm
+    }
+
+    type GetLSB = B0;
+    fn get_lsb(self) -> Self::GetLSB {
+        B0
+    }
+
+    /// `0 + 1 = 1`
+    type Successor = UInt<UTerm, B1>;
+    fn successor(self) -> Self::Successor {
+        U1::new()
+    }
+
+    /// `0 + Rhs = Rhs`
+    type Add<Rhs: Unsigned> = Rhs;
+    fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs> {
+        rhs
+    }
+
+    /// `0 + Rhs + Carry = Rhs + Carry`
+    type AddCarry<Rhs: Unsigned, Carry: Bit> = Carry::IfUnsigned<Rhs::Successor, Rhs>;
+    fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry> {
+        Carry::if_unsigned(rhs.successor(), rhs)
+    }
+    /// `0 + Rhs = Rhs`
+    type AddUInt<Ur: Unsigned, Br: Bit> = UInt<Ur, Br>;
+    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br> {
+        UInt {
+            msb: ur,
+            lsb: Br::new(),
+        }
+    }
 }
 
 /// `UInt` is defined recursively, where `B` is the least significant bit and `U` is the rest
@@ -227,6 +263,49 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     #[inline]
     fn to_isize() -> isize {
         B::to_u8() as isize | U::to_isize() << 1
+    }
+
+    type GetMSB = U;
+    fn get_msb(self) -> Self::GetMSB {
+        self.msb
+    }
+
+    type GetLSB = B;
+    fn get_lsb(self) -> Self::GetLSB {
+        self.lsb
+    }
+
+    /// `Self + 1`
+    type Successor = B::IfUnsigned<UInt<U::Successor, B0>, UInt<U, B1>>;
+    fn successor(self) -> Self::Successor {
+        todo!()
+        // if B::to_bool() {
+        //     UInt {
+        //         msb: todo!(),
+        //         lsb: todo!(),
+        //     }
+        // } else {
+        // }
+    }
+
+    /// `Self + Rhs = Rhs`
+    type Add<Rhs: Unsigned> = Rhs::AddUInt<U, B>;
+    fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs> {
+        rhs.add_uint(self.get_msb())
+    }
+
+    /// `Self + Rhs + Carry = Self + (if Carry { Rhs + 1 } else { Rhs })`
+    type AddCarry<Rhs: Unsigned, Carry: Bit> = Self::Add<Carry::IfUnsigned<Rhs::Successor, Rhs>>;
+    fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry> {
+        <Self as Unsigned>::add(self, Carry::if_unsigned(rhs.successor(), rhs))
+    }
+    /// `UInt<U, B> + UInt<Ur, Br> = UInt<U + Ur + (B & Br), B ^ Br>`
+    type AddUInt<Ur: Unsigned, Br: Bit> = UInt<U::AddCarry<Ur, B::BitAnd<Br>>, B::BitXor<Br>>;
+    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br> {
+        UInt {
+            msb: U::add_carry::<_, B::BitAnd<Br>>(self.get_msb(), ur),
+            lsb: B::BitXor::<Br>::new(),
+        }
     }
 }
 
@@ -414,80 +493,18 @@ where
 
 /// `UTerm + U = U`
 impl<U: Unsigned> Add<U> for UTerm {
-    type Output = U;
+    type Output = <Self as Unsigned>::Add<U>;
     #[inline]
     fn add(self, rhs: U) -> Self::Output {
-        rhs
+        <Self as Unsigned>::add(self, rhs)
     }
 }
 
-/// `UInt<U, B> + UTerm = UInt<U, B>`
-impl<U: Unsigned, B: Bit> Add<UTerm> for UInt<U, B> {
-    type Output = UInt<U, B>;
+impl<Rhs: Unsigned, Ul: Unsigned, Bl: Bit> Add<Rhs> for UInt<Ul, Bl> {
+    type Output = <Self as Unsigned>::Add<Rhs>;
     #[inline]
-    fn add(self, _: UTerm) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UInt<Ul, B0> + UInt<Ur, B0> = UInt<Ul + Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B0>
-where
-    Ul: Add<Ur>,
-{
-    type Output = UInt<Sum<Ul, Ur>, B0>;
-    #[inline]
-    fn add(self, rhs: UInt<Ur, B0>) -> Self::Output {
-        UInt {
-            msb: self.msb + rhs.msb,
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B0> + UInt<Ur, B1> = UInt<Ul + Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B0>
-where
-    Ul: Add<Ur>,
-{
-    type Output = UInt<Sum<Ul, Ur>, B1>;
-    #[inline]
-    fn add(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb + rhs.msb,
-            lsb: B1,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> + UInt<Ur, B0> = UInt<Ul + Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B0>> for UInt<Ul, B1>
-where
-    Ul: Add<Ur>,
-{
-    type Output = UInt<Sum<Ul, Ur>, B1>;
-    #[inline]
-    fn add(self, rhs: UInt<Ur, B0>) -> Self::Output {
-        UInt {
-            msb: self.msb + rhs.msb,
-            lsb: B1,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> + UInt<Ur, B1> = UInt<(Ul + Ur) + B1, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> Add<UInt<Ur, B1>> for UInt<Ul, B1>
-where
-    Ul: Add<Ur>,
-    Sum<Ul, Ur>: Add<B1>,
-{
-    type Output = UInt<Add1<Sum<Ul, Ur>>, B0>;
-    #[inline]
-    fn add(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb + rhs.msb + B1,
-            lsb: B0,
-        }
+    fn add(self, rhs: Rhs) -> Self::Output {
+        <Self as Unsigned>::add(self, rhs)
     }
 }
 

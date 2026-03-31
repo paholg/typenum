@@ -65,6 +65,11 @@ pub trait Bit: Sealed + Copy + Default + 'static {
     /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Cmp`.
     type IfOrd<A: Ord, B: Ord>: Ord;
 
+    /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Unsigned`.
+    type IfUnsigned<A: Unsigned, B: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn if_unsigned<A: Unsigned, B: Unsigned>(a: A, b: B) -> Self::IfUnsigned<A, B>;
+
     /// Instantiates a singleton representing this bit.
     fn new() -> Self;
 
@@ -139,6 +144,35 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     fn to_i128() -> i128;
     #[allow(missing_docs)]
     fn to_isize() -> isize;
+
+    /// Get the Most Significant bits as a type.
+    type GetMSB: Unsigned;
+    #[allow(missing_docs)]
+    fn get_msb(self) -> Self::GetMSB;
+
+    /// Get the Least Significant bit as a type.
+    type GetLSB: Bit;
+    #[allow(missing_docs)]
+    fn get_lsb(self) -> Self::GetLSB;
+
+    /// Successor of `Self`, equal to `Self + 1`
+    type Successor: Unsigned;
+    #[allow(missing_docs)]
+    fn successor(self) -> Self::Successor;
+
+    /// Add `Self` with `Rhs`.
+    type Add<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs>;
+
+    /// Add `Self` with `Rhs`, with an additional carry bit.
+    type AddCarry<Rhs: Unsigned, Carry: Bit>: Unsigned;
+    #[allow(missing_docs)]
+    fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry>;
+    /// Add `Self` with `Rhs`, where `Rhs` is in the form `UInt<Ur, Br>`.
+    type AddUInt<Ur: Unsigned, Br: Bit>: Unsigned;
+    #[allow(missing_docs)]
+    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br>;
 }
 
 /// The **marker trait** for compile time signed integers.

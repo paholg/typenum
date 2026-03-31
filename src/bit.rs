@@ -9,7 +9,9 @@
 //! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 //! - From `typenum`: `Same` and `Cmp`.
 
-use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, Ord, PowerOfTwo, Zero};
+use crate::{
+    private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, Ord, PowerOfTwo, Unsigned, Zero,
+};
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 
 pub use crate::marker_traits::Bit;
@@ -68,6 +70,12 @@ impl Bit for B0 {
     /// If false then B
     type IfOrd<A: Ord, B: Ord> = B;
 
+    /// If false then B
+    type IfUnsigned<A: Unsigned, B: Unsigned> = B;
+    fn if_unsigned<A: Unsigned, B: Unsigned>(_: A, b: B) -> Self::IfUnsigned<A, B> {
+        b
+    }
+
     #[inline]
     fn new() -> Self {
         Self
@@ -109,6 +117,12 @@ impl Bit for B1 {
 
     /// If true then A
     type IfOrd<A: Ord, B: Ord> = A;
+
+    /// If true then A
+    type IfUnsigned<A: Unsigned, B: Unsigned> = A;
+    fn if_unsigned<A: Unsigned, B: Unsigned>(a: A, _: B) -> Self::IfUnsigned<A, B> {
+        a
+    }
 
     #[inline]
     fn new() -> Self {
