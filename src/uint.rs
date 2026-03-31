@@ -36,7 +36,7 @@ use crate::{
         PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
     },
     Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
-    Logarithm2, Maximum, Minimum, NonZero, Or, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
+    Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
     SquareRoot, Sub1, Sum, ToInt, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
@@ -689,66 +689,18 @@ impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
     }
 }
 
-/// `UInt<Ul, B0> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B0>
+/// `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
+impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> PrivateAnd<UInt<Ur, Br>> for UInt<Ul, Bl>
 where
     Ul: PrivateAnd<Ur>,
 {
-    type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
+    type Output = UInt<PrivateAndOut<Ul, Ur>, Bl::BitAnd<Br>>;
 
     #[inline]
-    fn private_and(self, rhs: UInt<Ur, B0>) -> Self::Output {
+    fn private_and(self, rhs: UInt<Ur, Br>) -> Self::Output {
         UInt {
             msb: self.msb.private_and(rhs.msb),
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B0> & UInt<Ur, B1> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B0>
-where
-    Ul: PrivateAnd<Ur>,
-{
-    type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
-
-    #[inline]
-    fn private_and(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_and(rhs.msb),
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> & UInt<Ur, B0> = UInt<Ul & Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B0>> for UInt<Ul, B1>
-where
-    Ul: PrivateAnd<Ur>,
-{
-    type Output = UInt<PrivateAndOut<Ul, Ur>, B0>;
-
-    #[inline]
-    fn private_and(self, rhs: UInt<Ur, B0>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_and(rhs.msb),
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> & UInt<Ur, B1> = UInt<Ul & Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateAnd<UInt<Ur, B1>> for UInt<Ul, B1>
-where
-    Ul: PrivateAnd<Ur>,
-{
-    type Output = UInt<PrivateAndOut<Ul, Ur>, B1>;
-
-    #[inline]
-    fn private_and(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_and(rhs.msb),
-            lsb: B1,
+            lsb: <Bl::BitAnd<Br> as Bit>::new(),
         }
     }
 }
@@ -774,62 +726,17 @@ impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
     }
 }
 
-/// `UInt<Ul, B0> | UInt<Ur, B0> = UInt<Ul | Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B0>
+/// `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
+impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> BitOr<UInt<Ur, Br>> for UInt<Ul, Bl>
 where
     Ul: BitOr<Ur>,
 {
-    type Output = UInt<<Ul as BitOr<Ur>>::Output, B0>;
+    type Output = UInt<<Ul as BitOr<Ur>>::Output, Bl::BitOr<Br>>;
     #[inline]
-    fn bitor(self, rhs: UInt<Ur, B0>) -> Self::Output {
+    fn bitor(self, rhs: UInt<Ur, Br>) -> Self::Output {
         UInt {
             msb: self.msb.bitor(rhs.msb),
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B0> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B0>
-where
-    Ul: BitOr<Ur>,
-{
-    type Output = UInt<Or<Ul, Ur>, B1>;
-    #[inline]
-    fn bitor(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.bitor(rhs.msb),
-            lsb: self.lsb.bitor(rhs.lsb),
-        }
-    }
-}
-
-/// `UInt<Ul, B1> | UInt<Ur, B0> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B0>> for UInt<Ul, B1>
-where
-    Ul: BitOr<Ur>,
-{
-    type Output = UInt<Or<Ul, Ur>, B1>;
-    #[inline]
-    fn bitor(self, rhs: UInt<Ur, B0>) -> Self::Output {
-        UInt {
-            msb: self.msb.bitor(rhs.msb),
-            lsb: self.lsb.bitor(rhs.lsb),
-        }
-    }
-}
-
-/// `UInt<Ul, B1> | UInt<Ur, B1> = UInt<Ul | Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> BitOr<UInt<Ur, B1>> for UInt<Ul, B1>
-where
-    Ul: BitOr<Ur>,
-{
-    type Output = UInt<Or<Ul, Ur>, B1>;
-    #[inline]
-    fn bitor(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.bitor(rhs.msb),
-            lsb: self.lsb.bitor(rhs.lsb),
+            lsb: <Bl::BitOr<Br> as Bit>::new(),
         }
     }
 }
@@ -880,66 +787,18 @@ impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
     }
 }
 
-/// `UInt<Ul, B0> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B0>
+/// `UInt<Ul, Bl> ^ UInt<Ur, Br> = UInt<Ul ^ Ur, Bl ^ Br>`
+impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> PrivateXor<UInt<Ur, Br>> for UInt<Ul, Bl>
 where
     Ul: PrivateXor<Ur>,
 {
-    type Output = UInt<PrivateXorOut<Ul, Ur>, B0>;
+    type Output = UInt<PrivateXorOut<Ul, Ur>, Bl::BitXor<Br>>;
 
     #[inline]
-    fn private_xor(self, rhs: UInt<Ur, B0>) -> Self::Output {
+    fn private_xor(self, rhs: UInt<Ur, Br>) -> Self::Output {
         UInt {
             msb: self.msb.private_xor(rhs.msb),
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B0> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B0>
-where
-    Ul: PrivateXor<Ur>,
-{
-    type Output = UInt<PrivateXorOut<Ul, Ur>, B1>;
-
-    #[inline]
-    fn private_xor(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_xor(rhs.msb),
-            lsb: B1,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> ^ UInt<Ur, B0> = UInt<Ul ^ Ur, B1>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B0>> for UInt<Ul, B1>
-where
-    Ul: PrivateXor<Ur>,
-{
-    type Output = UInt<PrivateXorOut<Ul, Ur>, B1>;
-
-    #[inline]
-    fn private_xor(self, rhs: UInt<Ur, B0>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_xor(rhs.msb),
-            lsb: B1,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> ^ UInt<Ur, B1> = UInt<Ul ^ Ur, B0>`
-impl<Ul: Unsigned, Ur: Unsigned> PrivateXor<UInt<Ur, B1>> for UInt<Ul, B1>
-where
-    Ul: PrivateXor<Ur>,
-{
-    type Output = UInt<PrivateXorOut<Ul, Ur>, B0>;
-
-    #[inline]
-    fn private_xor(self, rhs: UInt<Ur, B1>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_xor(rhs.msb),
-            lsb: B0,
+            lsb: <Bl::BitXor<Br> as Bit>::new(),
         }
     }
 }
@@ -1207,28 +1066,15 @@ impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
     }
 }
 
-/// `UInt<Ul, B0>` cmp with `UInt<Ur, B0>`: `SoFar` is `Equal`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B0>
+/// `UInt<Ul, B>` cmp with `UInt<Ur, B>`: `SoFar` is `Equal`
+impl<Ul: Unsigned, Ur: Unsigned, B> Cmp<UInt<Ur, B>> for UInt<Ul, B>
 where
     Ul: PrivateCmp<Ur, Equal>,
 {
     type Output = PrivateCmpOut<Ul, Ur, Equal>;
 
     #[inline]
-    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B0>) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Equal)
-    }
-}
-
-/// `UInt<Ul, B1>` cmp with `UInt<Ur, B1>`: `SoFar` is `Equal`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B1>
-where
-    Ul: PrivateCmp<Ur, Equal>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Equal>;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B1>) -> Self::Output {
+    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B>) -> Self::Output {
         self.msb.private_cmp(&rhs.msb, Equal)
     }
 }
@@ -1259,9 +1105,9 @@ where
     }
 }
 
-/// Comparing non-terimal bits, with both having bit `B0`.
+/// Comparing non-terimal bits, with both having the same bit.
 /// These are `Equal`, so we propagate `SoFar`.
-impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B0>
+impl<Ul, Ur, SoFar, B> PrivateCmp<UInt<Ur, B>, SoFar> for UInt<Ul, B>
 where
     Ul: Unsigned,
     Ur: Unsigned,
@@ -1271,24 +1117,7 @@ where
     type Output = PrivateCmpOut<Ul, Ur, SoFar>;
 
     #[inline]
-    fn private_cmp(&self, rhs: &UInt<Ur, B0>, so_far: SoFar) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, so_far)
-    }
-}
-
-/// Comparing non-terimal bits, with both having bit `B1`.
-/// These are `Equal`, so we propagate `SoFar`.
-impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B1>
-where
-    Ul: Unsigned,
-    Ur: Unsigned,
-    SoFar: Ord,
-    Ul: PrivateCmp<Ur, SoFar>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, SoFar>;
-
-    #[inline]
-    fn private_cmp(&self, rhs: &UInt<Ur, B1>, so_far: SoFar) -> Self::Output {
+    fn private_cmp(&self, rhs: &UInt<Ur, B>, so_far: SoFar) -> Self::Output {
         self.msb.private_cmp(&rhs.msb, so_far)
     }
 }
