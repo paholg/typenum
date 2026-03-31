@@ -9,7 +9,7 @@
 //! - From `core::ops`: `BitAnd`, `BitOr`, `BitXor`, and `Not`.
 //! - From `typenum`: `Same` and `Cmp`.
 
-use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, PowerOfTwo, Zero};
+use crate::{private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, Ord, PowerOfTwo, Zero};
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 
 pub use crate::marker_traits::Bit;
@@ -44,6 +44,30 @@ impl Bit for B0 {
     const U8: u8 = 0;
     const BOOL: bool = false;
 
+    /// Not of 0 (!0 = 1)
+    type Not = B1;
+
+    /// And with 0 (0 & B = 0)
+    type BitAnd<Rhs: Bit> = B0;
+
+    /// Or with 0 (0 | B = B)
+    type BitOr<Rhs: Bit> = Rhs;
+
+    /// Xor with 0 (0 ^ B = B)
+    type BitXor<Rhs: Bit> = Rhs;
+
+    /// Min with 0 (min(0, B) = 0)
+    type Min<Rhs: Bit> = B0;
+
+    /// Max with 0 (max(0, B) = B)
+    type Max<Rhs: Bit> = Rhs;
+
+    /// Comparison with 0 is Less if Rhs is 1, Equal otherwise
+    type Cmp<Rhs: Bit> = Rhs::IfOrd<Less, Equal>;
+
+    /// If false then B
+    type IfOrd<A: Ord, B: Ord> = B;
+
     #[inline]
     fn new() -> Self {
         Self
@@ -61,6 +85,30 @@ impl Bit for B0 {
 impl Bit for B1 {
     const U8: u8 = 1;
     const BOOL: bool = true;
+
+    /// Not of 1 (!1 = 0)
+    type Not = B0;
+
+    /// And with 1 (1 & B = B)
+    type BitAnd<Rhs: Bit> = Rhs;
+
+    /// Or with 1 (1 | B = 1)
+    type BitOr<Rhs: Bit> = B1;
+
+    /// Xor with 1 (1 ^ B = !B)
+    type BitXor<Rhs: Bit> = Rhs::Not;
+
+    /// Min with 1 (min(1, B) = B)
+    type Min<Rhs: Bit> = Rhs;
+
+    /// Max with 1 (max(1, B) = 1)
+    type Max<Rhs: Bit> = B1;
+
+    /// Comparison with 1 is Equal if Rhs is 1, Greater otherwise
+    type Cmp<Rhs: Bit> = Rhs::IfOrd<Greater, Equal>;
+
+    /// If true then A
+    type IfOrd<A: Ord, B: Ord> = A;
 
     #[inline]
     fn new() -> Self {
@@ -80,107 +128,48 @@ impl Zero for B0 {}
 impl NonZero for B1 {}
 impl PowerOfTwo for B1 {}
 
+macro_rules! delegate_bit_binary_impls {
+    (@inner $type:ident, $fn_name:ident, $target:ty) => {
+        impl<Rhs: Bit> $type<Rhs> for $target {
+            // Delegate the implementation
+            type Output = <Self as Bit>::$type<Rhs>;
+            #[inline]
+            fn $fn_name(self, _: Rhs) -> Self::Output {
+                Self::Output::new()
+            }
+        }
+    };
+    // `type` is the rust operation trait name, and fn_name the name of the function in this trait
+    ($($type:ident, $fn_name:ident,)*) => {
+        $(
+            // Implementation for B0
+            delegate_bit_binary_impls!{@inner $type, $fn_name, B0}
+            // Implementation for B1
+            delegate_bit_binary_impls!{@inner $type, $fn_name, B1}
+        )*
+    };
+}
+
+delegate_bit_binary_impls! {
+    BitAnd, bitand,
+    BitOr, bitor,
+    BitXor, bitxor,
+}
+
 /// Not of 0 (!0 = 1)
 impl Not for B0 {
-    type Output = B1;
+    type Output = <Self as Bit>::Not;
     #[inline]
     fn not(self) -> Self::Output {
-        B1
+        Self::Output::new()
     }
 }
 /// Not of 1 (!1 = 0)
 impl Not for B1 {
-    type Output = B0;
+    type Output = <Self as Bit>::Not;
     #[inline]
     fn not(self) -> Self::Output {
-        B0
-    }
-}
-
-/// And with 0 ( 0 & B = 0)
-impl<Rhs: Bit> BitAnd<Rhs> for B0 {
-    type Output = B0;
-    #[inline]
-    fn bitand(self, _: Rhs) -> Self::Output {
-        B0
-    }
-}
-
-/// And with 1 ( 1 & 0 = 0)
-impl BitAnd<B0> for B1 {
-    type Output = B0;
-    #[inline]
-    fn bitand(self, _: B0) -> Self::Output {
-        B0
-    }
-}
-
-/// And with 1 ( 1 & 1 = 1)
-impl BitAnd<B1> for B1 {
-    type Output = B1;
-    #[inline]
-    fn bitand(self, _: B1) -> Self::Output {
-        B1
-    }
-}
-
-/// Or with 0 ( 0 | 0 = 0)
-impl BitOr<B0> for B0 {
-    type Output = B0;
-    #[inline]
-    fn bitor(self, _: B0) -> Self::Output {
-        B0
-    }
-}
-
-/// Or with 0 ( 0 | 1 = 1)
-impl BitOr<B1> for B0 {
-    type Output = B1;
-    #[inline]
-    fn bitor(self, _: B1) -> Self::Output {
-        B1
-    }
-}
-
-/// Or with 1 ( 1 | B = 1)
-impl<Rhs: Bit> BitOr<Rhs> for B1 {
-    type Output = B1;
-    #[inline]
-    fn bitor(self, _: Rhs) -> Self::Output {
-        B1
-    }
-}
-
-/// Xor between 0 and 0 ( 0 ^ 0 = 0)
-impl BitXor<B0> for B0 {
-    type Output = B0;
-    #[inline]
-    fn bitxor(self, _: B0) -> Self::Output {
-        B0
-    }
-}
-/// Xor between 1 and 0 ( 1 ^ 0 = 1)
-impl BitXor<B0> for B1 {
-    type Output = B1;
-    #[inline]
-    fn bitxor(self, _: B0) -> Self::Output {
-        B1
-    }
-}
-/// Xor between 0 and 1 ( 0 ^ 1 = 1)
-impl BitXor<B1> for B0 {
-    type Output = B1;
-    #[inline]
-    fn bitxor(self, _: B1) -> Self::Output {
-        B1
-    }
-}
-/// Xor between 1 and 1 ( 1 ^ 1 = 0)
-impl BitXor<B1> for B1 {
-    type Output = B0;
-    #[inline]
-    fn bitxor(self, _: B1) -> Self::Output {
-        B0
+        Self::Output::new()
     }
 }
 
@@ -231,100 +220,27 @@ mod bit_op_tests {
     }
 }
 
-impl Cmp<B0> for B0 {
-    type Output = Equal;
-
+impl<Rhs: Bit> Cmp<Rhs> for B0 {
+    type Output = <Self as Bit>::Cmp<Rhs>;
     #[inline]
-    fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
-        Equal
+    fn compare<P: InternalMarker>(&self, _: &Rhs) -> Self::Output {
+        Self::Output::new()
     }
 }
 
-impl Cmp<B1> for B0 {
-    type Output = Less;
-
+impl<Rhs: Bit> Cmp<Rhs> for B1 {
+    type Output = <Self as Bit>::Cmp<Rhs>;
     #[inline]
-    fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
-        Less
-    }
-}
-
-impl Cmp<B0> for B1 {
-    type Output = Greater;
-
-    #[inline]
-    fn compare<P: InternalMarker>(&self, _: &B0) -> Self::Output {
-        Greater
-    }
-}
-
-impl Cmp<B1> for B1 {
-    type Output = Equal;
-
-    #[inline]
-    fn compare<P: InternalMarker>(&self, _: &B1) -> Self::Output {
-        Equal
-    }
-}
-
-use crate::Min;
-impl Min<B0> for B0 {
-    type Output = B0;
-    #[inline]
-    fn min(self, _: B0) -> B0 {
-        self
-    }
-}
-impl Min<B1> for B0 {
-    type Output = B0;
-    #[inline]
-    fn min(self, _: B1) -> B0 {
-        self
-    }
-}
-impl Min<B0> for B1 {
-    type Output = B0;
-    #[inline]
-    fn min(self, rhs: B0) -> B0 {
-        rhs
-    }
-}
-impl Min<B1> for B1 {
-    type Output = B1;
-    #[inline]
-    fn min(self, _: B1) -> B1 {
-        self
+    fn compare<P: InternalMarker>(&self, _: &Rhs) -> Self::Output {
+        Self::Output::new()
     }
 }
 
 use crate::Max;
-impl Max<B0> for B0 {
-    type Output = B0;
-    #[inline]
-    fn max(self, _: B0) -> B0 {
-        self
-    }
-}
-impl Max<B1> for B0 {
-    type Output = B1;
-    #[inline]
-    fn max(self, rhs: B1) -> B1 {
-        rhs
-    }
-}
-impl Max<B0> for B1 {
-    type Output = B1;
-    #[inline]
-    fn max(self, _: B0) -> B1 {
-        self
-    }
-}
-impl Max<B1> for B1 {
-    type Output = B1;
-    #[inline]
-    fn max(self, _: B1) -> B1 {
-        self
-    }
+use crate::Min;
+delegate_bit_binary_impls! {
+    Min, min,
+    Max, max,
 }
 
 #[cfg(test)]

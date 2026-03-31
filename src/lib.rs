@@ -106,6 +106,10 @@ pub struct Equal;
 /// Returns `core::cmp::Ordering::Greater`
 impl Ord for Greater {
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Greater
     }
@@ -114,6 +118,10 @@ impl Ord for Greater {
 /// Returns `core::cmp::Ordering::Less`
 impl Ord for Less {
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Less
     }
@@ -121,6 +129,10 @@ impl Ord for Less {
 
 /// Returns `core::cmp::Ordering::Equal`
 impl Ord for Equal {
+    #[inline]
+    fn new() -> Self {
+        Self
+    }
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Equal

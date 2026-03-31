@@ -27,6 +27,9 @@ pub trait Zero: Sealed {}
 
 /// A **Marker trait** for the types `Greater`, `Equal`, and `Less`.
 pub trait Ord: Sealed {
+    /// Instantiates a singleton representing this ordering.
+    fn new() -> Self;
+
     #[allow(missing_docs)]
     fn to_ordering() -> ::core::cmp::Ordering;
 }
@@ -37,6 +40,30 @@ pub trait Bit: Sealed + Copy + Default + 'static {
     const U8: u8;
     #[allow(missing_docs)]
     const BOOL: bool;
+
+    /// Negation of the current bit.
+    type Not: Bit;
+
+    /// Conjunction of the current bit with `Rhs`.
+    type BitAnd<Rhs: Bit>: Bit;
+
+    /// Disjunction of the current bit with `Rhs`.
+    type BitOr<Rhs: Bit>: Bit;
+
+    /// Exclusive or of the current bit with `Rhs`.
+    type BitXor<Rhs: Bit>: Bit;
+
+    /// Minimum between `Self` and `Rhs`.
+    type Min<Rhs: Bit>: Bit;
+
+    /// Maximum between `Self` and `Rhs`.
+    type Max<Rhs: Bit>: Bit;
+
+    /// Comparison between `Self` and `Rhs`.
+    type Cmp<Rhs: Bit>: Ord;
+
+    /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Cmp`.
+    type IfOrd<A: Ord, B: Ord>: Ord;
 
     /// Instantiates a singleton representing this bit.
     fn new() -> Self;
