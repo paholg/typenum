@@ -60,6 +60,15 @@ impl<U: Unsigned + NonZero> Abs for NInt<U> {
     type Output = PInt<U>;
 }
 
+/// A **type operator** that provides addition.
+pub trait TypeAdd<Rhs> {
+    /// The result of the addition.
+    type Output;
+
+    #[doc(hidden)]
+    fn add(self, rhs: Rhs) -> Self::Output;
+}
+
 /// A **type operator** that provides exponentiation by repeated squaring.
 ///
 /// # Example
@@ -307,6 +316,7 @@ fn pow_test() {
 /// assert_eq!(<P2 as Cmp<N3>>::Output::to_ordering(), Ordering::Greater);
 /// assert_eq!(<P2 as Cmp<P2>>::Output::to_ordering(), Ordering::Equal);
 /// assert_eq!(<P2 as Cmp<P5>>::Output::to_ordering(), Ordering::Less);
+/// ```
 pub trait Cmp<Rhs = Self> {
     /// The result of the comparison. It should only ever be one of `Greater`, `Less`, or `Equal`.
     type Output;

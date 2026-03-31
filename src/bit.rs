@@ -72,6 +72,7 @@ impl Bit for B0 {
 
     /// If false then B
     type IfUnsigned<A: Unsigned, B: Unsigned> = B;
+    #[inline]
     fn if_unsigned<A: Unsigned, B: Unsigned>(_: A, b: B) -> Self::IfUnsigned<A, B> {
         b
     }
@@ -120,6 +121,7 @@ impl Bit for B1 {
 
     /// If true then A
     type IfUnsigned<A: Unsigned, B: Unsigned> = A;
+    #[inline]
     fn if_unsigned<A: Unsigned, B: Unsigned>(a: A, _: B) -> Self::IfUnsigned<A, B> {
         a
     }
