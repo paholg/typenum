@@ -160,6 +160,21 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     #[allow(missing_docs)]
     fn successor(self) -> Self::Successor;
 
+    /// Predecessor of `Self`, equal to `Self - 1`
+    type Predecessor: Unsigned;
+    #[allow(missing_docs)]
+    fn predecessor(self) -> Self::Predecessor;
+
+    /// Trim `Self`, removing leading 0 bits.
+    type Trimmed: Unsigned;
+    #[allow(missing_docs)]
+    fn trimmed(self) -> Self::Trimmed;
+
+    /// Returns `B1` if `Self` is zero.
+    type IsZero: Bit;
+    #[allow(missing_docs)]
+    fn is_zero(self) -> Self::IsZero;
+
     /// Add `Self` with `Rhs`.
     type Add<Rhs: Unsigned>: Unsigned;
     #[allow(missing_docs)]
@@ -173,6 +188,11 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     type AddUInt<Ur: Unsigned, Br: Bit>: Unsigned;
     #[allow(missing_docs)]
     fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br>;
+
+    /// Shift `Self` right left by `Rhs`.
+    type Shr<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn shr<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shr<Rhs>;
 }
 
 /// The **marker trait** for compile time signed integers.

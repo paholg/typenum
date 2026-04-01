@@ -36,8 +36,8 @@ use crate::{
         PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
     },
     Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
-    Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Shright, Sqrt, Square,
-    SquareRoot, Sub1, Sum, ToInt, TypeAdd, Zero,
+    Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Sqrt, Square, SquareRoot, Sub1,
+    Sum, ToInt, TypeAdd, TypeShr, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -145,6 +145,26 @@ impl Unsigned for UTerm {
         U1::new()
     }
 
+    /// `0 - 1`,  SubstractOverflowError
+    type Predecessor = UInt<UTerm, B1>;
+    #[inline]
+    fn predecessor(self) -> Self::Predecessor {
+        U1::new()
+    }
+
+    /// `0` is already trimmed.
+    type Trimmed = UTerm;
+    #[inline]
+    fn trimmed(self) -> Self::Trimmed {
+        UTerm
+    }
+
+    type IsZero = B1;
+    #[inline]
+    fn is_zero(self) -> Self::IsZero {
+        B1
+    }
+
     /// `0 + Rhs = Rhs`
     type Add<Rhs: Unsigned> = Rhs;
     #[inline]
@@ -166,6 +186,12 @@ impl Unsigned for UTerm {
             msb: ur,
             lsb: Br::new(),
         }
+    }
+
+    type Shr<Rhs: Unsigned> = UTerm;
+    #[inline]
+    fn shr<Rhs: Unsigned>(self, _: Rhs) -> Self::Shr<Rhs> {
+        self
     }
 }
 
@@ -299,6 +325,40 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
         )
     }
 
+    /// `Self - 1`
+    type Predecessor = <B::IfUnsigned<UInt<U, B0>, UInt<U::Predecessor, B1>> as Unsigned>::Trimmed; // Trim the output because of leading 0.
+    #[inline]
+    fn predecessor(self) -> Self::Predecessor {
+        B::if_unsigned(
+            UInt {
+                msb: self.get_msb(),
+                lsb: B0,
+            },
+            UInt {
+                msb: self.get_msb().predecessor(),
+                lsb: B1,
+            },
+        )
+        .trimmed()
+    }
+
+    /// Remove leading 0 of `Self`.
+    type Trimmed = <<U::Trimmed as Unsigned>::IsZero as Bit>::IfUnsigned<
+        B::IfUnsigned<UInt<UTerm, B>, UTerm>,
+        UInt<U::Trimmed, B>,
+    >;
+    #[inline]
+    fn trimmed(self) -> Self::Trimmed {
+        todo!()
+    }
+
+    // Self can't be zero if trimmed.
+    type IsZero = B0;
+    #[inline]
+    fn is_zero(self) -> Self::IsZero {
+        B0
+    }
+
     /// `Self + Rhs = Rhs`
     type Add<Rhs: Unsigned> = Rhs::AddUInt<U, B>;
     #[inline]
@@ -320,6 +380,12 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
             msb: U::add_carry(self.get_msb(), ur),
             lsb: B::BitXor::<Br>::new(),
         }
+    }
+
+    type Shr<Rhs: Unsigned> = <Rhs::IsZero as Bit>::IfUnsigned<Self, U::Shr<Rhs::Predecessor>>;
+    #[inline]
+    fn shr<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shr<Rhs> {
+        Rhs::IsZero::if_unsigned(self, self.get_msb().shr(rhs.predecessor()))
     }
 }
 
@@ -345,13 +411,11 @@ impl Len for UTerm {
 impl<U: Unsigned, B: Bit> Len for UInt<U, B>
 where
     U: Len,
-    Length<U>: Add<B1>,
-    Add1<Length<U>>: Unsigned,
 {
-    type Output = Add1<Length<U>>;
+    type Output = <Length<U> as Unsigned>::Successor;
     #[inline]
     fn len(&self) -> Self::Output {
-        self.msb.len() + B1
+        self.msb.len().successor()
     }
 }
 
@@ -971,16 +1035,19 @@ impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
 }
 
 /// Shifting right `UInt` by `UInt`: `UInt(U, B) >> Y` = `U >> (Y - 1)`
-impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shr<UInt<Ur, Br>> for UInt<U, B>
-where
-    UInt<Ur, Br>: Sub<B1>,
-    U: Shr<Sub1<UInt<Ur, Br>>>,
-{
-    type Output = Shright<U, Sub1<UInt<Ur, Br>>>;
+impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shr<UInt<Ur, Br>> for UInt<U, B> {
+    type Output = <Self as Unsigned>::Shr<UInt<Ur, Br>>;
     #[inline]
     fn shr(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        #[allow(clippy::suspicious_arithmetic_impl)]
-        self.msb.shr(rhs - B1)
+        <Self as Unsigned>::shr(self, rhs)
+    }
+}
+
+impl<Rhs: Unsigned, U: Unsigned> TypeShr<Rhs> for U {
+    type Output = <Self as Unsigned>::Shr<Rhs>;
+    #[inline]
+    fn shr(self, rhs: Rhs) -> Self::Output {
+        <Self as Unsigned>::shr(self, rhs)
     }
 }
 

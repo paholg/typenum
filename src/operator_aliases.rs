@@ -17,10 +17,13 @@
 //! ```
 
 // Aliases!!!
-use crate::type_operators::{
-    Abs, Cmp, FoldAdd, FoldMul, Gcd, Len, Logarithm2, Max, Min, PartialDiv, Pow, SquareRoot,
+use crate::{
+    type_operators::{
+        Abs, Cmp, FoldAdd, FoldMul, Gcd, Len, Logarithm2, Max, Min, PartialDiv, Pow, SquareRoot,
+    },
+    TypeShr,
 };
-use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Shr, Sub};
+use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Rem, Shl, Sub};
 
 /// Alias for the associated type of `BitAnd`: `And<A, B> = <A as BitAnd<B>>::Output`
 pub type And<A, B> = <A as BitAnd<B>>::Output;
@@ -32,7 +35,7 @@ pub type Xor<A, B> = <A as BitXor<B>>::Output;
 /// Alias for the associated type of `Shl`: `Shleft<A, B> = <A as Shl<B>>::Output`
 pub type Shleft<A, B> = <A as Shl<B>>::Output;
 /// Alias for the associated type of `Shr`: `Shright<A, B> = <A as Shr<B>>::Output`
-pub type Shright<A, B> = <A as Shr<B>>::Output;
+pub type Shright<A, B> = <A as TypeShr<B>>::Output;
 
 /// Alias for the associated type of `Add`: `Sum<A, B> = <A as Add<B>>::Output`
 pub type Sum<A, B> = <A as Add<B>>::Output;

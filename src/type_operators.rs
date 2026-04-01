@@ -69,6 +69,15 @@ pub trait TypeAdd<Rhs> {
     fn add(self, rhs: Rhs) -> Self::Output;
 }
 
+/// A **type operator** that provides right shift operation.
+pub trait TypeShr<Rhs> {
+    /// The result of the right shift.
+    type Output;
+
+    #[doc(hidden)]
+    fn shr(self, rhs: Rhs) -> Self::Output;
+}
+
 /// A **type operator** that provides exponentiation by repeated squaring.
 ///
 /// # Example
