@@ -32,6 +32,14 @@ pub trait Ord: Sealed {
 
     #[allow(missing_docs)]
     fn to_ordering() -> ::core::cmp::Ordering;
+
+    /// Returns `B1` if `Self` is `Less`, `B0` otherwise.
+    type IsLess: Bit;
+
+    /// Returns `Rhs` if `Self` is `Equal`, `Self` otherwise.
+    type Then<Rhs: Ord>: Ord;
+    #[allow(missing_docs)]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs>;
 }
 
 /// The **marker trait** for compile time bits.
@@ -61,14 +69,23 @@ pub trait Bit: Sealed + Copy + Default + 'static {
 
     /// Comparison between `Self` and `Rhs`.
     type Cmp<Rhs: Bit>: Ord;
+    #[allow(missing_docs)]
+    fn compare<Rhs: Bit>(rhs: Rhs) -> Self::Cmp<Rhs>;
 
-    /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Cmp`.
+    /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Ord`.
     type IfOrd<A: Ord, B: Ord>: Ord;
+    #[allow(missing_docs)]
+    fn if_ord<A: Ord, B: Ord>(a: A, b: B) -> Self::IfOrd<A, B>;
 
     /// Returns `A` if `Self` is `B1`, `B` otherwise. `A`, `B` and the output must implement `Unsigned`.
     type IfUnsigned<A: Unsigned, B: Unsigned>: Unsigned;
     #[allow(missing_docs)]
     fn if_unsigned<A: Unsigned, B: Unsigned>(a: A, b: B) -> Self::IfUnsigned<A, B>;
+
+    /// Returns `S << N` if `Self` is B0, `S` otherwise.
+    type SelectShlUnsigned<S: Unsigned, N: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn select_shl_unsigned<S: Unsigned, N: Unsigned>(s: S, n: N) -> Self::SelectShlUnsigned<S, N>;
 
     /// Instantiates a singleton representing this bit.
     fn new() -> Self;
@@ -145,12 +162,12 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     #[allow(missing_docs)]
     fn to_isize() -> isize;
 
-    /// Get the Most Significant bits as a type.
+    /// Get the Most Significant Bits as a type.
     type GetMSB: Unsigned;
     #[allow(missing_docs)]
     fn get_msb(self) -> Self::GetMSB;
 
-    /// Get the Least Significant bit as a type.
+    /// Get the Least Significant Bit as a type.
     type GetLSB: Bit;
     #[allow(missing_docs)]
     fn get_lsb(self) -> Self::GetLSB;
@@ -175,24 +192,80 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     #[allow(missing_docs)]
     fn is_zero(self) -> Self::IsZero;
 
+    /// Minimum between `Self` and `Rhs`.
+    type Min<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn min<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Min<Rhs>;
+
+    /// Maximum between `Self` and `Rhs`.
+    type Max<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn max<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Max<Rhs>;
+
+    /// Returns `Self & Rhs`.
+    type BitAnd<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn bitand<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitAnd<Rhs>;
+
+    /// Returns `Self | Rhs`.
+    type BitOr<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn bitor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitOr<Rhs>;
+
+    /// Returns `Self ^ Rhs`.
+    type BitXor<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn bitxor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitXor<Rhs>;
+
     /// Add `Self` with `Rhs`.
     type Add<Rhs: Unsigned>: Unsigned;
     #[allow(missing_docs)]
     fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs>;
-
     /// Add `Self` with `Rhs`, with an additional carry bit.
     type AddCarry<Rhs: Unsigned, Carry: Bit>: Unsigned;
     #[allow(missing_docs)]
     fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry>;
-    /// Add `Self` with `Rhs`, where `Rhs` is in the form `UInt<Ur, Br>`.
-    type AddUInt<Ur: Unsigned, Br: Bit>: Unsigned;
-    #[allow(missing_docs)]
-    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br>;
 
-    /// Shift `Self` right left by `Rhs`.
+    /// Multiply `Self` with `Rhs`.
+    type Mul<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn mul<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Mul<Rhs>;
+
+    /// Shift `Self` right by `Rhs`.
     type Shr<Rhs: Unsigned>: Unsigned;
     #[allow(missing_docs)]
     fn shr<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shr<Rhs>;
+
+    /// Shift `Self` left by `Rhs`.
+    type Shl<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn shl<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shl<Rhs>;
+
+    /// Returns `Self * 2 = Self << 1`.
+    type Double: Unsigned;
+    #[allow(missing_docs)]
+    fn double(self) -> Self::Double;
+
+    /// Compare `Self` with `Rhs`.
+    type Cmp<Rhs: Unsigned>: Ord;
+    #[allow(missing_docs)]
+    fn compare<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Cmp<Rhs>;
+}
+
+/// The **marker trait** for converting a type to an unsigned integer at compile time.
+pub trait IntoUnsigned {
+    /// The type converted to an unsigned integer.
+    type IntoUnsigned: Unsigned;
+    #[allow(missing_docs)]
+    fn into_unsigned(self) -> Self::IntoUnsigned;
+}
+impl<U: Unsigned> IntoUnsigned for U {
+    type IntoUnsigned = Self;
+
+    #[inline]
+    fn into_unsigned(self) -> Self::IntoUnsigned {
+        self
+    }
 }
 
 /// The **marker trait** for compile time signed integers.

@@ -60,6 +60,33 @@ impl<U: Unsigned + NonZero> Abs for NInt<U> {
     type Output = PInt<U>;
 }
 
+/// A **type operator** that provides binary and.
+pub trait TypeBitAnd<Rhs> {
+    /// The result of the binary and.
+    type Output;
+
+    #[doc(hidden)]
+    fn bitand(self, rhs: Rhs) -> Self::Output;
+}
+
+/// A **type operator** that provides binary or.
+pub trait TypeBitOr<Rhs> {
+    /// The result of the binary or.
+    type Output;
+
+    #[doc(hidden)]
+    fn bitor(self, rhs: Rhs) -> Self::Output;
+}
+
+/// A **type operator** that provides binary xor.
+pub trait TypeBitXor<Rhs> {
+    /// The result of the binary xor.
+    type Output;
+
+    #[doc(hidden)]
+    fn bitxor(self, rhs: Rhs) -> Self::Output;
+}
+
 /// A **type operator** that provides addition.
 pub trait TypeAdd<Rhs> {
     /// The result of the addition.
@@ -69,6 +96,15 @@ pub trait TypeAdd<Rhs> {
     fn add(self, rhs: Rhs) -> Self::Output;
 }
 
+/// A **type operator** that provides multiplication.
+pub trait TypeMul<Rhs> {
+    /// The result of the multiplication.
+    type Output;
+
+    #[doc(hidden)]
+    fn mul(self, rhs: Rhs) -> Self::Output;
+}
+
 /// A **type operator** that provides right shift operation.
 pub trait TypeShr<Rhs> {
     /// The result of the right shift.
@@ -76,6 +112,15 @@ pub trait TypeShr<Rhs> {
 
     #[doc(hidden)]
     fn shr(self, rhs: Rhs) -> Self::Output;
+}
+
+/// A **type operator** that provides left shift operation.
+pub trait TypeShl<Rhs> {
+    /// The result of the left shift.
+    type Output;
+
+    #[doc(hidden)]
+    fn shl(self, rhs: Rhs) -> Self::Output;
 }
 
 /// A **type operator** that provides exponentiation by repeated squaring.

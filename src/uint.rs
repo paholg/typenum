@@ -31,13 +31,13 @@ use crate::{
     bit::{Bit, B0, B1},
     consts::{U0, U1},
     private::{
-        BitDiff, BitDiffOut, Internal, InternalMarker, PrivateAnd, PrivateAndOut, PrivateCmp,
-        PrivateCmpOut, PrivateLogarithm2, PrivatePow, PrivatePowOut, PrivateSquareRoot, PrivateSub,
-        PrivateSubOut, PrivateXor, PrivateXorOut, Trim, TrimOut,
+        BitDiff, BitDiffOut, Internal, InternalMarker, PrivateLogarithm2, PrivatePow,
+        PrivatePowOut, PrivateSquareRoot, PrivateSub, PrivateSubOut, Trim, TrimOut,
     },
-    Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IsGreaterOrEqual, Len, Length, Less, Log2,
-    Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Sqrt, Square, SquareRoot, Sub1,
-    Sum, ToInt, TypeAdd, TypeShr, Zero,
+    Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IntoUnsigned, IsGreaterOrEqual, Len, Length,
+    Less, Log2, Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Sqrt, Square,
+    SquareRoot, Sub1, Sum, ToInt, TypeAdd, TypeBitAnd, TypeBitOr, TypeBitXor, TypeMul, TypeShl,
+    TypeShr, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -165,6 +165,41 @@ impl Unsigned for UTerm {
         B1
     }
 
+    /// `min(0, Rhs) = 0`
+    type Min<Rhs: Unsigned> = UTerm;
+    #[inline]
+    fn min<Rhs: Unsigned>(self, _: Rhs) -> Self::Min<Rhs> {
+        UTerm
+    }
+
+    /// `max(0, Rhs) = Rhs`
+    type Max<Rhs: Unsigned> = Rhs;
+    #[inline]
+    fn max<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Max<Rhs> {
+        rhs
+    }
+
+    /// `0 & Rhs = 0`
+    type BitAnd<Rhs: Unsigned> = UTerm;
+    #[inline]
+    fn bitand<Rhs: Unsigned>(self, _: Rhs) -> Self::BitAnd<Rhs> {
+        UTerm
+    }
+
+    /// `0 | Rhs = Rhs`
+    type BitOr<Rhs: Unsigned> = Rhs;
+    #[inline]
+    fn bitor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitOr<Rhs> {
+        rhs
+    }
+
+    /// `0 ^ Rhs = Rhs`
+    type BitXor<Rhs: Unsigned> = Rhs;
+    #[inline]
+    fn bitxor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitXor<Rhs> {
+        rhs
+    }
+
     /// `0 + Rhs = Rhs`
     type Add<Rhs: Unsigned> = Rhs;
     #[inline]
@@ -178,20 +213,38 @@ impl Unsigned for UTerm {
     fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry> {
         Carry::if_unsigned(rhs.successor(), rhs)
     }
-    /// `0 + Rhs = Rhs`
-    type AddUInt<Ur: Unsigned, Br: Bit> = UInt<Ur, Br>;
-    #[inline]
-    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br> {
-        UInt {
-            msb: ur,
-            lsb: Br::new(),
-        }
+
+    /// `0 * Rhs = 0`
+    type Mul<Rhs: Unsigned> = UTerm;
+    #[allow(missing_docs)]
+    fn mul<Rhs: Unsigned>(self, _: Rhs) -> Self::Mul<Rhs> {
+        UTerm
     }
 
+    /// `0 >> Rhs = 0`
     type Shr<Rhs: Unsigned> = UTerm;
     #[inline]
     fn shr<Rhs: Unsigned>(self, _: Rhs) -> Self::Shr<Rhs> {
         self
+    }
+
+    /// `0 << Rhs = 0`
+    type Shl<Rhs: Unsigned> = UTerm;
+    #[inline]
+    fn shl<Rhs: Unsigned>(self, _: Rhs) -> Self::Shl<Rhs> {
+        self
+    }
+
+    type Double = UTerm;
+    #[inline]
+    fn double(self) -> Self::Double {
+        self
+    }
+
+    type Cmp<Rhs: Unsigned> = <Rhs::IsZero as Bit>::IfOrd<Equal, Less>;
+    #[inline]
+    fn compare<Rhs: Unsigned>(self, _: Rhs) -> Self::Cmp<Rhs> {
+        Rhs::IsZero::if_ord(Equal, Less)
     }
 }
 
@@ -326,7 +379,7 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     }
 
     /// `Self - 1`
-    type Predecessor = <B::IfUnsigned<UInt<U, B0>, UInt<U::Predecessor, B1>> as Unsigned>::Trimmed; // Trim the output because of leading 0.
+    type Predecessor = <B::IfUnsigned<UInt<U, B0>, UInt<U::Predecessor, B1>> as Unsigned>::Trimmed; // Trim the output because of potential leadings 0.
     #[inline]
     fn predecessor(self) -> Self::Predecessor {
         B::if_unsigned(
@@ -359,33 +412,103 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
         B0
     }
 
-    /// `Self + Rhs = Rhs`
-    type Add<Rhs: Unsigned> = Rhs::AddUInt<U, B>;
+    type Min<Rhs: Unsigned> = <<Self::Cmp<Rhs> as Ord>::IsLess as Bit>::IfUnsigned<Self, Rhs>;
     #[inline]
-    fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs> {
-        rhs.add_uint(self.get_msb())
+    fn min<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Min<Rhs> {
+        <Self::Cmp<Rhs> as Ord>::IsLess::if_unsigned(self, rhs)
     }
 
+    type Max<Rhs: Unsigned> = <<Self::Cmp<Rhs> as Ord>::IsLess as Bit>::IfUnsigned<Rhs, Self>;
+    #[inline]
+    fn max<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Max<Rhs> {
+        <Self::Cmp<Rhs> as Ord>::IsLess::if_unsigned(rhs, self)
+    }
+
+    /// `UInt<U, B> & UInt<Ur, Br> = UInt<U & Ur, B & Br>`
+    type BitAnd<Rhs: Unsigned> =
+        <UInt<U::BitAnd<Rhs::GetMSB>, B::BitAnd<Rhs::GetLSB>> as Unsigned>::Trimmed; // Trim the output because of potential leadings 0.
+    #[inline]
+    fn bitand<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitAnd<Rhs> {
+        UInt {
+            msb: self.get_msb().bitand(rhs.get_msb()),
+            lsb: B::BitAnd::<Rhs::GetLSB>::new(),
+        }
+        .trimmed()
+    }
+
+    /// `UInt<U, B> | UInt<Ur, Br> = UInt<U | Ur, B | Br>`
+    type BitOr<Rhs: Unsigned> = UInt<U::BitOr<Rhs::GetMSB>, B::BitOr<Rhs::GetLSB>>;
+    #[inline]
+    fn bitor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitOr<Rhs> {
+        UInt {
+            msb: self.get_msb().bitor(rhs.get_msb()),
+            lsb: B::BitOr::<Rhs::GetLSB>::new(),
+        }
+    }
+
+    /// `UInt<U, B> ^ UInt<Ur, Br> = UInt<U ^ Ur, B ^ Br>`
+    type BitXor<Rhs: Unsigned> =
+        <UInt<U::BitXor<Rhs::GetMSB>, B::BitXor<Rhs::GetLSB>> as Unsigned>::Trimmed; // Trim the output because of potential leadings 0.
+    #[inline]
+    fn bitxor<Rhs: Unsigned>(self, rhs: Rhs) -> Self::BitXor<Rhs> {
+        UInt {
+            msb: self.get_msb().bitxor(rhs.get_msb()),
+            lsb: B::BitXor::<Rhs::GetLSB>::new(),
+        }
+        .trimmed()
+    }
+
+    /// `UInt<U, B> + UInt<Ur, Br> = UInt<U + Ur + (B & Br), B ^ Br>`
+    type Add<Rhs: Unsigned> =
+        UInt<U::AddCarry<Rhs::GetMSB, B::BitAnd<Rhs::GetLSB>>, B::BitXor<Rhs::GetLSB>>;
+    #[inline]
+    fn add<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Add<Rhs> {
+        UInt {
+            msb: U::add_carry(self.get_msb(), rhs.get_msb()),
+            lsb: B::BitXor::<Rhs::GetLSB>::new(),
+        }
+    }
     /// `Self + Rhs + Carry = Self + (if Carry { Rhs + 1 } else { Rhs })`
     type AddCarry<Rhs: Unsigned, Carry: Bit> = Self::Add<Carry::IfUnsigned<Rhs::Successor, Rhs>>;
     #[inline]
     fn add_carry<Rhs: Unsigned, Carry: Bit>(self, rhs: Rhs) -> Self::AddCarry<Rhs, Carry> {
-        <Self as Unsigned>::add(self, Carry::if_unsigned(rhs.successor(), rhs))
-    }
-    /// `UInt<U, B> + UInt<Ur, Br> = UInt<U + Ur + (B & Br), B ^ Br>`
-    type AddUInt<Ur: Unsigned, Br: Bit> = UInt<U::AddCarry<Ur, B::BitAnd<Br>>, B::BitXor<Br>>;
-    #[inline]
-    fn add_uint<Ur: Unsigned, Br: Bit>(self, ur: Ur) -> Self::AddUInt<Ur, Br> {
-        UInt {
-            msb: U::add_carry(self.get_msb(), ur),
-            lsb: B::BitXor::<Br>::new(),
-        }
+        Unsigned::add(self, Carry::if_unsigned(rhs.successor(), rhs))
     }
 
+    /// `UInt<U, B> * Rhs = if B { Rhs } else { 0 } + U * (Rhs << 1)`
+    type Mul<Rhs: Unsigned> = <B::IfUnsigned<Rhs, UTerm> as Unsigned>::Add<U::Mul<Rhs::Double>>;
+    #[allow(missing_docs)]
+    fn mul<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Mul<Rhs> {
+        Unsigned::add(B::if_unsigned(rhs, UTerm), self.get_msb().mul(rhs.double()))
+    }
+
+    /// `UInt<U, B> >> Rhs = if Rhs == 0 { Self } else { U >> (Rhs - 1) }`
     type Shr<Rhs: Unsigned> = <Rhs::IsZero as Bit>::IfUnsigned<Self, U::Shr<Rhs::Predecessor>>;
     #[inline]
     fn shr<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shr<Rhs> {
         Rhs::IsZero::if_unsigned(self, self.get_msb().shr(rhs.predecessor()))
+    }
+
+    /// `Self << Rhs = if Rhs == 0 { Self } else { UInt<Self, B0> << (Rhs - 1) }`
+    /// The logic is implemented on the `Bit` trait to avoid overflow when the compiler checks types.
+    type Shl<Rhs: Unsigned> = <Rhs::IsZero as Bit>::SelectShlUnsigned<Self, Rhs>;
+    #[inline]
+    fn shl<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Shl<Rhs> {
+        <Rhs::IsZero as Bit>::select_shl_unsigned(self, rhs)
+    }
+
+    /// `Self << 1 = UInt<Self, B0>`
+    type Double = UInt<Self, B0>;
+    #[inline]
+    fn double(self) -> Self::Double {
+        UInt { msb: self, lsb: B0 }
+    }
+
+    /// Compare msb, then if they are equal compare lsb.
+    type Cmp<Rhs: Unsigned> = <U::Cmp<Rhs::GetMSB> as Ord>::Then<B::Cmp<Rhs::GetLSB>>;
+    #[allow(missing_docs)]
+    fn compare<Rhs: Unsigned>(self, _: Rhs) -> Self::Cmp<Rhs> {
+        Self::Cmp::<Rhs>::new()
     }
 }
 
@@ -514,84 +637,60 @@ mod fmt_tests {
     }
 }
 
+macro_rules! delegate_unsigned_binary_impls {
+    // `type` is the rust operation trait name, `custom_type` is the custom trait name associated with the operation,
+    // and fn_name the name of the function in this trait
+    ($($type:ident, $custom_type:ident, $fn_name:ident,)*) => {
+        $(
+            // Implementation for UTerm
+            impl<Rhs: IntoUnsigned> $type<Rhs> for UTerm {
+                // Delegate the implementation
+                type Output = <Self as Unsigned>::$type<Rhs::IntoUnsigned>;
+                #[inline]
+                fn $fn_name(self, rhs: Rhs) -> Self::Output {
+                    <Self as Unsigned>::$fn_name(self, rhs.into_unsigned())
+                }
+            }
+            // Implementation for UInt<U, B>
+            impl<U: Unsigned, B: Bit, Rhs: IntoUnsigned> $type<Rhs> for UInt<U, B> {
+                // Delegate the implementation
+                type Output = <Self as Unsigned>::$type<Rhs::IntoUnsigned>;
+                #[inline]
+                fn $fn_name(self, rhs: Rhs) -> Self::Output {
+                    <Self as Unsigned>::$fn_name(self, rhs.into_unsigned())
+                }
+            }
+            // Implementation of custom trait
+            impl<U: Unsigned, Rhs: IntoUnsigned> $custom_type<Rhs> for U {
+                // Delegate the implementation
+                type Output = <Self as Unsigned>::$type<Rhs::IntoUnsigned>;
+                #[inline]
+                fn $fn_name(self, rhs: Rhs) -> Self::Output {
+                    <Self as Unsigned>::$fn_name(self, rhs.into_unsigned())
+                }
+            }
+        )*
+    };
+    ($($custom_type:ident, $fn_name:ident,)*) => {
+        $(
+            // Implementation of custom trait
+            impl<U: Unsigned, Rhs: IntoUnsigned> $custom_type<Rhs> for U {
+                // Delegate the implementation
+                type Output = <Self as Unsigned>::$custom_type<Rhs::IntoUnsigned>;
+                #[inline]
+                fn $fn_name(self, rhs: Rhs) -> Self::Output {
+                    <Self as Unsigned>::$fn_name(self, rhs.into_unsigned())
+                }
+            }
+        )*
+    };
+}
+
 // ---------------------------------------------------------------------------------------
 // Adding bits to unsigned integers
 
-/// `UTerm + B0 = UTerm`
-impl Add<B0> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn add(self, _: B0) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `U + B0 = U`
-impl<U: Unsigned, B: Bit> Add<B0> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn add(self, _: B0) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UTerm + B1 = UInt<UTerm, B1>`
-impl Add<B1> for UTerm {
-    type Output = UInt<UTerm, B1>;
-    #[inline]
-    fn add(self, _: B1) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UInt<U, B0> + B1 = UInt<U + B1>`
-impl<U: Unsigned> Add<B1> for UInt<U, B0> {
-    type Output = UInt<U, B1>;
-    #[inline]
-    fn add(self, _: B1) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UInt<U, B1> + B1 = UInt<U + B1, B0>`
-impl<U: Unsigned> Add<B1> for UInt<U, B1>
-where
-    U: Add<B1>,
-    Add1<U>: Unsigned,
-{
-    type Output = UInt<Add1<U>, B0>;
-    #[inline]
-    fn add(self, _: B1) -> Self::Output {
-        UInt::new()
-    }
-}
-
-// ---------------------------------------------------------------------------------------
-// Adding unsigned integers
-
-/// `UTerm + U = U`
-impl<U: Unsigned> Add<U> for UTerm {
-    type Output = <Self as Unsigned>::Add<U>;
-    #[inline]
-    fn add(self, rhs: U) -> Self::Output {
-        <Self as Unsigned>::add(self, rhs)
-    }
-}
-
-impl<Rhs: Unsigned, Ul: Unsigned, Bl: Bit> Add<Rhs> for UInt<Ul, Bl> {
-    type Output = <Self as Unsigned>::Add<Rhs>;
-    #[inline]
-    fn add(self, rhs: Rhs) -> Self::Output {
-        <Self as Unsigned>::add(self, rhs)
-    }
-}
-
-impl<Rhs: Unsigned, U: Unsigned> TypeAdd<Rhs> for U {
-    type Output = <Self as Unsigned>::Add<Rhs>;
-    #[inline]
-    fn add(self, rhs: Rhs) -> Self::Output {
-        <Self as Unsigned>::add(self, rhs)
-    }
+delegate_unsigned_binary_impls! {
+    Add, TypeAdd, add,
 }
 
 // ---------------------------------------------------------------------------------------
@@ -749,546 +848,54 @@ where
 // ---------------------------------------------------------------------------------------
 // And unsigned integers
 
-/// 0 & X = 0
-impl<Ur: Unsigned> BitAnd<Ur> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn bitand(self, _: Ur) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Anding unsigned integers.
-/// We use our `PrivateAnd` operator and then `Trim` the output.
-impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitAnd<Ur> for UInt<Ul, Bl>
-where
-    UInt<Ul, Bl>: PrivateAnd<Ur>,
-    PrivateAndOut<UInt<Ul, Bl>, Ur>: Trim,
-{
-    type Output = TrimOut<PrivateAndOut<UInt<Ul, Bl>, Ur>>;
-    #[inline]
-    fn bitand(self, rhs: Ur) -> Self::Output {
-        self.private_and(rhs).trim()
-    }
-}
-
-/// `UTerm & X = UTerm`
-impl<U: Unsigned> PrivateAnd<U> for UTerm {
-    type Output = UTerm;
-
-    #[inline]
-    fn private_and(self, _: U) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `X & UTerm = UTerm`
-impl<B: Bit, U: Unsigned> PrivateAnd<UTerm> for UInt<U, B> {
-    type Output = UTerm;
-
-    #[inline]
-    fn private_and(self, _: UTerm) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UInt<Ul, Bl> & UInt<Ur, Br> = UInt<Ul & Ur, Bl & Br>`
-impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> PrivateAnd<UInt<Ur, Br>> for UInt<Ul, Bl>
-where
-    Ul: PrivateAnd<Ur>,
-{
-    type Output = UInt<PrivateAndOut<Ul, Ur>, Bl::BitAnd<Br>>;
-
-    #[inline]
-    fn private_and(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_and(rhs.msb),
-            lsb: <Bl::BitAnd<Br> as Bit>::new(),
-        }
-    }
+delegate_unsigned_binary_impls! {
+    BitAnd, TypeBitAnd, bitand,
 }
 
 // ---------------------------------------------------------------------------------------
 // Or unsigned integers
 
-/// `UTerm | X = X`
-impl<U: Unsigned> BitOr<U> for UTerm {
-    type Output = U;
-    #[inline]
-    fn bitor(self, rhs: U) -> Self::Output {
-        rhs
-    }
-}
-
-///  `X | UTerm = X`
-impl<B: Bit, U: Unsigned> BitOr<UTerm> for UInt<U, B> {
-    type Output = Self;
-    #[inline]
-    fn bitor(self, _: UTerm) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UInt<Ul, Bl> | UInt<Ur, Br> = UInt<Ul | Ur, Bl | Br>`
-impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> BitOr<UInt<Ur, Br>> for UInt<Ul, Bl>
-where
-    Ul: BitOr<Ur>,
-{
-    type Output = UInt<<Ul as BitOr<Ur>>::Output, Bl::BitOr<Br>>;
-    #[inline]
-    fn bitor(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        UInt {
-            msb: self.msb.bitor(rhs.msb),
-            lsb: <Bl::BitOr<Br> as Bit>::new(),
-        }
-    }
+delegate_unsigned_binary_impls! {
+    BitOr, TypeBitOr, bitor,
 }
 
 // ---------------------------------------------------------------------------------------
 // Xor unsigned integers
 
-/// 0 ^ X = X
-impl<Ur: Unsigned> BitXor<Ur> for UTerm {
-    type Output = Ur;
-    #[inline]
-    fn bitxor(self, rhs: Ur) -> Self::Output {
-        rhs
-    }
-}
-
-/// Xoring unsigned integers.
-/// We use our `PrivateXor` operator and then `Trim` the output.
-impl<Ul: Unsigned, Bl: Bit, Ur: Unsigned> BitXor<Ur> for UInt<Ul, Bl>
-where
-    UInt<Ul, Bl>: PrivateXor<Ur>,
-    PrivateXorOut<UInt<Ul, Bl>, Ur>: Trim,
-{
-    type Output = TrimOut<PrivateXorOut<UInt<Ul, Bl>, Ur>>;
-    #[inline]
-    fn bitxor(self, rhs: Ur) -> Self::Output {
-        self.private_xor(rhs).trim()
-    }
-}
-
-/// `UTerm ^ X = X`
-impl<U: Unsigned> PrivateXor<U> for UTerm {
-    type Output = U;
-
-    #[inline]
-    fn private_xor(self, rhs: U) -> Self::Output {
-        rhs
-    }
-}
-
-/// `X ^ UTerm = X`
-impl<B: Bit, U: Unsigned> PrivateXor<UTerm> for UInt<U, B> {
-    type Output = Self;
-
-    #[inline]
-    fn private_xor(self, _: UTerm) -> Self::Output {
-        self
-    }
-}
-
-/// `UInt<Ul, Bl> ^ UInt<Ur, Br> = UInt<Ul ^ Ur, Bl ^ Br>`
-impl<Ul: Unsigned, Ur: Unsigned, Bl: Bit, Br: Bit> PrivateXor<UInt<Ur, Br>> for UInt<Ul, Bl>
-where
-    Ul: PrivateXor<Ur>,
-{
-    type Output = UInt<PrivateXorOut<Ul, Ur>, Bl::BitXor<Br>>;
-
-    #[inline]
-    fn private_xor(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        UInt {
-            msb: self.msb.private_xor(rhs.msb),
-            lsb: <Bl::BitXor<Br> as Bit>::new(),
-        }
-    }
+delegate_unsigned_binary_impls! {
+    BitXor, TypeBitXor, bitxor,
 }
 
 // ---------------------------------------------------------------------------------------
 // Shl unsigned integers
 
-/// Shifting `UTerm` by a 0 bit: `UTerm << B0 = UTerm`
-impl Shl<B0> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shl(self, _: B0) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting `UTerm` by a 1 bit: `UTerm << B1 = UTerm`
-impl Shl<B1> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shl(self, _: B1) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting left any unsigned by a zero bit: `U << B0 = U`
-impl<U: Unsigned, B: Bit> Shl<B0> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn shl(self, _: B0) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting left a `UInt` by a one bit: `UInt<U, B> << B1 = UInt<UInt<U, B>, B0>`
-impl<U: Unsigned, B: Bit> Shl<B1> for UInt<U, B> {
-    type Output = UInt<UInt<U, B>, B0>;
-    #[inline]
-    fn shl(self, _: B1) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting left `UInt` by `UTerm`: `UInt<U, B> << UTerm = UInt<U, B>`
-impl<U: Unsigned, B: Bit> Shl<UTerm> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn shl(self, _: UTerm) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting left `UTerm` by an unsigned integer: `UTerm << U = UTerm`
-impl<U: Unsigned> Shl<U> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shl(self, _: U) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting left `UInt` by `UInt`: `X << Y` = `UInt(X, B0) << (Y - 1)`
-impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shl<UInt<Ur, Br>> for UInt<U, B>
-where
-    UInt<Ur, Br>: Sub<B1>,
-    UInt<UInt<U, B>, B0>: Shl<Sub1<UInt<Ur, Br>>>,
-{
-    type Output = Shleft<UInt<UInt<U, B>, B0>, Sub1<UInt<Ur, Br>>>;
-    #[inline]
-    fn shl(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        #[allow(clippy::suspicious_arithmetic_impl)]
-        (UInt { msb: self, lsb: B0 }).shl(rhs - B1)
-    }
+delegate_unsigned_binary_impls! {
+    Shl, TypeShl, shl,
 }
 
 // ---------------------------------------------------------------------------------------
 // Shr unsigned integers
 
-/// Shifting right a `UTerm` by an unsigned integer: `UTerm >> U = UTerm`
-impl<U: Unsigned> Shr<U> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shr(self, _: U) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting right `UInt` by `UTerm`: `UInt<U, B> >> UTerm = UInt<U, B>`
-impl<U: Unsigned, B: Bit> Shr<UTerm> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn shr(self, _: UTerm) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting right `UTerm` by a 0 bit: `UTerm >> B0 = UTerm`
-impl Shr<B0> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shr(self, _: B0) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting right `UTerm` by a 1 bit: `UTerm >> B1 = UTerm`
-impl Shr<B1> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn shr(self, _: B1) -> Self::Output {
-        UTerm
-    }
-}
-
-/// Shifting right any unsigned by a zero bit: `U >> B0 = U`
-impl<U: Unsigned, B: Bit> Shr<B0> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn shr(self, _: B0) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// Shifting right a `UInt` by a 1 bit: `UInt<U, B> >> B1 = U`
-impl<U: Unsigned, B: Bit> Shr<B1> for UInt<U, B> {
-    type Output = U;
-    #[inline]
-    fn shr(self, _: B1) -> Self::Output {
-        self.msb
-    }
-}
-
-/// Shifting right `UInt` by `UInt`: `UInt(U, B) >> Y` = `U >> (Y - 1)`
-impl<U: Unsigned, B: Bit, Ur: Unsigned, Br: Bit> Shr<UInt<Ur, Br>> for UInt<U, B> {
-    type Output = <Self as Unsigned>::Shr<UInt<Ur, Br>>;
-    #[inline]
-    fn shr(self, rhs: UInt<Ur, Br>) -> Self::Output {
-        <Self as Unsigned>::shr(self, rhs)
-    }
-}
-
-impl<Rhs: Unsigned, U: Unsigned> TypeShr<Rhs> for U {
-    type Output = <Self as Unsigned>::Shr<Rhs>;
-    #[inline]
-    fn shr(self, rhs: Rhs) -> Self::Output {
-        <Self as Unsigned>::shr(self, rhs)
-    }
+delegate_unsigned_binary_impls! {
+    Shr, TypeShr, shr,
 }
 
 // ---------------------------------------------------------------------------------------
 // Multiply unsigned integers
 
-/// `UInt * B0 = UTerm`
-impl<U: Unsigned, B: Bit> Mul<B0> for UInt<U, B> {
-    type Output = UTerm;
-    #[inline]
-    fn mul(self, _: B0) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UTerm * B0 = UTerm`
-impl Mul<B0> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn mul(self, _: B0) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UTerm * B1 = UTerm`
-impl Mul<B1> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn mul(self, _: B1) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UInt * B1 = UInt`
-impl<U: Unsigned, B: Bit> Mul<B1> for UInt<U, B> {
-    type Output = UInt<U, B>;
-    #[inline]
-    fn mul(self, _: B1) -> Self::Output {
-        UInt::new()
-    }
-}
-
-/// `UInt<U, B> * UTerm = UTerm`
-impl<U: Unsigned, B: Bit> Mul<UTerm> for UInt<U, B> {
-    type Output = UTerm;
-    #[inline]
-    fn mul(self, _: UTerm) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UTerm * U = UTerm`
-impl<U: Unsigned> Mul<U> for UTerm {
-    type Output = UTerm;
-    #[inline]
-    fn mul(self, _: U) -> Self::Output {
-        UTerm
-    }
-}
-
-/// `UInt<Ul, B0> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0>`
-impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B0>
-where
-    Ul: Mul<UInt<Ur, B>>,
-{
-    type Output = UInt<Prod<Ul, UInt<Ur, B>>, B0>;
-    #[inline]
-    fn mul(self, rhs: UInt<Ur, B>) -> Self::Output {
-        UInt {
-            msb: self.msb * rhs,
-            lsb: B0,
-        }
-    }
-}
-
-/// `UInt<Ul, B1> * UInt<Ur, B> = UInt<(Ul * UInt<Ur, B>), B0> + UInt<Ur, B>`
-impl<Ul: Unsigned, B: Bit, Ur: Unsigned> Mul<UInt<Ur, B>> for UInt<Ul, B1>
-where
-    Ul: Mul<UInt<Ur, B>>,
-    UInt<Prod<Ul, UInt<Ur, B>>, B0>: Add<UInt<Ur, B>>,
-{
-    type Output = Sum<UInt<Prod<Ul, UInt<Ur, B>>, B0>, UInt<Ur, B>>;
-    #[inline]
-    fn mul(self, rhs: UInt<Ur, B>) -> Self::Output {
-        UInt {
-            msb: self.msb * rhs,
-            lsb: B0,
-        } + rhs
-    }
+delegate_unsigned_binary_impls! {
+    Mul, TypeMul, mul,
 }
 
 // ---------------------------------------------------------------------------------------
 // Compare unsigned integers
 
-/// Zero == Zero
-impl Cmp<UTerm> for UTerm {
-    type Output = Equal;
-
+impl<U: Unsigned, Rhs: IntoUnsigned> Cmp<Rhs> for U {
+    // Delegate the implementation
+    type Output = <Self as Unsigned>::Cmp<Rhs::IntoUnsigned>;
     #[inline]
-    fn compare<IM: InternalMarker>(&self, _: &UTerm) -> Self::Output {
-        Equal
-    }
-}
-
-/// Nonzero > Zero
-impl<U: Unsigned, B: Bit> Cmp<UTerm> for UInt<U, B> {
-    type Output = Greater;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, _: &UTerm) -> Self::Output {
-        Greater
-    }
-}
-
-/// Zero < Nonzero
-impl<U: Unsigned, B: Bit> Cmp<UInt<U, B>> for UTerm {
-    type Output = Less;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, _: &UInt<U, B>) -> Self::Output {
-        Less
-    }
-}
-
-/// `UInt<Ul, B>` cmp with `UInt<Ur, B>`: `SoFar` is `Equal`
-impl<Ul: Unsigned, Ur: Unsigned, B> Cmp<UInt<Ur, B>> for UInt<Ul, B>
-where
-    Ul: PrivateCmp<Ur, Equal>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Equal>;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B>) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Equal)
-    }
-}
-
-/// `UInt<Ul, B0>` cmp with `UInt<Ur, B1>`: `SoFar` is `Less`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B1>> for UInt<Ul, B0>
-where
-    Ul: PrivateCmp<Ur, Less>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Less>;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B1>) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Less)
-    }
-}
-
-/// `UInt<Ul, B1>` cmp with `UInt<Ur, B0>`: `SoFar` is `Greater`
-impl<Ul: Unsigned, Ur: Unsigned> Cmp<UInt<Ur, B0>> for UInt<Ul, B1>
-where
-    Ul: PrivateCmp<Ur, Greater>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Greater>;
-
-    #[inline]
-    fn compare<IM: InternalMarker>(&self, rhs: &UInt<Ur, B0>) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Greater)
-    }
-}
-
-/// Comparing non-terimal bits, with both having the same bit.
-/// These are `Equal`, so we propagate `SoFar`.
-impl<Ul, Ur, SoFar, B> PrivateCmp<UInt<Ur, B>, SoFar> for UInt<Ul, B>
-where
-    Ul: Unsigned,
-    Ur: Unsigned,
-    SoFar: Ord,
-    Ul: PrivateCmp<Ur, SoFar>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, SoFar>;
-
-    #[inline]
-    fn private_cmp(&self, rhs: &UInt<Ur, B>, so_far: SoFar) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, so_far)
-    }
-}
-
-/// Comparing non-terimal bits, with `Lhs` having bit `B0` and `Rhs` having bit `B1`.
-/// `SoFar`, Lhs is `Less`.
-impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B1>, SoFar> for UInt<Ul, B0>
-where
-    Ul: Unsigned,
-    Ur: Unsigned,
-    SoFar: Ord,
-    Ul: PrivateCmp<Ur, Less>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Less>;
-
-    #[inline]
-    fn private_cmp(&self, rhs: &UInt<Ur, B1>, _: SoFar) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Less)
-    }
-}
-
-/// Comparing non-terimal bits, with `Lhs` having bit `B1` and `Rhs` having bit `B0`.
-/// `SoFar`, Lhs is `Greater`.
-impl<Ul, Ur, SoFar> PrivateCmp<UInt<Ur, B0>, SoFar> for UInt<Ul, B1>
-where
-    Ul: Unsigned,
-    Ur: Unsigned,
-    SoFar: Ord,
-    Ul: PrivateCmp<Ur, Greater>,
-{
-    type Output = PrivateCmpOut<Ul, Ur, Greater>;
-
-    #[inline]
-    fn private_cmp(&self, rhs: &UInt<Ur, B0>, _: SoFar) -> Self::Output {
-        self.msb.private_cmp(&rhs.msb, Greater)
-    }
-}
-
-/// Got to the end of just the `Lhs`. It's `Less`.
-impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UInt<U, B>, SoFar> for UTerm {
-    type Output = Less;
-
-    #[inline]
-    fn private_cmp(&self, _: &UInt<U, B>, _: SoFar) -> Self::Output {
-        Less
-    }
-}
-
-/// Got to the end of just the `Rhs`. `Lhs` is `Greater`.
-impl<U: Unsigned, B: Bit, SoFar: Ord> PrivateCmp<UTerm, SoFar> for UInt<U, B> {
-    type Output = Greater;
-
-    #[inline]
-    fn private_cmp(&self, _: &UTerm, _: SoFar) -> Self::Output {
-        Greater
-    }
-}
-
-/// Got to the end of both! Return `SoFar`
-impl<SoFar: Ord> PrivateCmp<UTerm, SoFar> for UTerm {
-    type Output = SoFar;
-
-    #[inline]
-    fn private_cmp(&self, _: &UTerm, so_far: SoFar) -> Self::Output {
-        so_far
+    fn compare<Im: InternalMarker>(&self, _: &Rhs) -> Self::Output {
+        <Self as Unsigned>::Cmp::<Rhs::IntoUnsigned>::new()
     }
 }
 
@@ -2102,147 +1709,19 @@ where
 }
 
 // -----------------------------------------
-// PrivateMin
-use crate::private::{PrivateMin, PrivateMinOut};
-
-impl<U, B, Ur> PrivateMin<Ur, Equal> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = UInt<U, B>;
-    #[inline]
-    fn private_min(self, _: Ur) -> Self::Output {
-        self
-    }
-}
-
-impl<U, B, Ur> PrivateMin<Ur, Less> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = UInt<U, B>;
-    #[inline]
-    fn private_min(self, _: Ur) -> Self::Output {
-        self
-    }
-}
-
-impl<U, B, Ur> PrivateMin<Ur, Greater> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = Ur;
-    #[inline]
-    fn private_min(self, rhs: Ur) -> Self::Output {
-        rhs
-    }
-}
-
-// -----------------------------------------
 // Min
 use crate::Min;
 
-impl<U> Min<U> for UTerm
-where
-    U: Unsigned,
-{
-    type Output = UTerm;
-    #[inline]
-    fn min(self, _: U) -> Self::Output {
-        self
-    }
-}
-
-impl<U, B, Ur> Min<Ur> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-    Ur: Unsigned,
-    UInt<U, B>: Cmp<Ur> + PrivateMin<Ur, Compare<UInt<U, B>, Ur>>,
-{
-    type Output = PrivateMinOut<UInt<U, B>, Ur, Compare<UInt<U, B>, Ur>>;
-    #[inline]
-    fn min(self, rhs: Ur) -> Self::Output {
-        self.private_min(rhs)
-    }
-}
-
-// -----------------------------------------
-// PrivateMax
-use crate::private::{PrivateMax, PrivateMaxOut};
-
-impl<U, B, Ur> PrivateMax<Ur, Equal> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = UInt<U, B>;
-    #[inline]
-    fn private_max(self, _: Ur) -> Self::Output {
-        self
-    }
-}
-
-impl<U, B, Ur> PrivateMax<Ur, Less> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = Ur;
-    #[inline]
-    fn private_max(self, rhs: Ur) -> Self::Output {
-        rhs
-    }
-}
-
-impl<U, B, Ur> PrivateMax<Ur, Greater> for UInt<U, B>
-where
-    Ur: Unsigned,
-    U: Unsigned,
-    B: Bit,
-{
-    type Output = UInt<U, B>;
-    #[inline]
-    fn private_max(self, _: Ur) -> Self::Output {
-        self
-    }
+delegate_unsigned_binary_impls! {
+    Min, min,
 }
 
 // -----------------------------------------
 // Max
 use crate::Max;
 
-impl<U> Max<U> for UTerm
-where
-    U: Unsigned,
-{
-    type Output = U;
-    #[inline]
-    fn max(self, rhs: U) -> Self::Output {
-        rhs
-    }
-}
-
-impl<U, B, Ur> Max<Ur> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-    Ur: Unsigned,
-    UInt<U, B>: Cmp<Ur> + PrivateMax<Ur, Compare<UInt<U, B>, Ur>>,
-{
-    type Output = PrivateMaxOut<UInt<U, B>, Ur, Compare<UInt<U, B>, Ur>>;
-    #[inline]
-    fn max(self, rhs: Ur) -> Self::Output {
-        self.private_max(rhs)
-    }
+delegate_unsigned_binary_impls! {
+    Max, max,
 }
 
 // -----------------------------------------
@@ -2358,7 +1837,7 @@ where
 // -----------------------------------------
 // ToInt
 
-impl ToInt<i8> for UTerm {
+impl<U: Unsigned> ToInt<i8> for U {
     #[inline]
     fn to_int() -> i8 {
         Self::I8
@@ -2366,7 +1845,7 @@ impl ToInt<i8> for UTerm {
     const INT: i8 = Self::I8;
 }
 
-impl ToInt<i16> for UTerm {
+impl<U: Unsigned> ToInt<i16> for U {
     #[inline]
     fn to_int() -> i16 {
         Self::I16
@@ -2374,7 +1853,7 @@ impl ToInt<i16> for UTerm {
     const INT: i16 = Self::I16;
 }
 
-impl ToInt<i32> for UTerm {
+impl<U: Unsigned> ToInt<i32> for U {
     #[inline]
     fn to_int() -> i32 {
         Self::I32
@@ -2382,7 +1861,7 @@ impl ToInt<i32> for UTerm {
     const INT: i32 = Self::I32;
 }
 
-impl ToInt<i64> for UTerm {
+impl<U: Unsigned> ToInt<i64> for U {
     #[inline]
     fn to_int() -> i64 {
         Self::I64
@@ -2390,7 +1869,7 @@ impl ToInt<i64> for UTerm {
     const INT: i64 = Self::I64;
 }
 
-impl ToInt<isize> for UTerm {
+impl<U: Unsigned> ToInt<isize> for U {
     #[inline]
     fn to_int() -> isize {
         Self::ISIZE
@@ -2399,7 +1878,7 @@ impl ToInt<isize> for UTerm {
 }
 
 #[cfg(feature = "i128")]
-impl ToInt<i128> for UTerm {
+impl<U: Unsigned> ToInt<i128> for U {
     #[inline]
     fn to_int() -> i128 {
         Self::I128
@@ -2407,7 +1886,7 @@ impl ToInt<i128> for UTerm {
     const INT: i128 = Self::I128;
 }
 
-impl ToInt<u8> for UTerm {
+impl<U: Unsigned> ToInt<u8> for U {
     #[inline]
     fn to_int() -> u8 {
         Self::U8
@@ -2415,7 +1894,7 @@ impl ToInt<u8> for UTerm {
     const INT: u8 = Self::U8;
 }
 
-impl ToInt<u16> for UTerm {
+impl<U: Unsigned> ToInt<u16> for U {
     #[inline]
     fn to_int() -> u16 {
         Self::U16
@@ -2423,7 +1902,7 @@ impl ToInt<u16> for UTerm {
     const INT: u16 = Self::U16;
 }
 
-impl ToInt<u32> for UTerm {
+impl<U: Unsigned> ToInt<u32> for U {
     #[inline]
     fn to_int() -> u32 {
         Self::U32
@@ -2431,7 +1910,7 @@ impl ToInt<u32> for UTerm {
     const INT: u32 = Self::U32;
 }
 
-impl ToInt<u64> for UTerm {
+impl<U: Unsigned> ToInt<u64> for U {
     #[inline]
     fn to_int() -> u64 {
         Self::U64
@@ -2439,7 +1918,7 @@ impl ToInt<u64> for UTerm {
     const INT: u64 = Self::U64;
 }
 
-impl ToInt<usize> for UTerm {
+impl<U: Unsigned> ToInt<usize> for U {
     #[inline]
     fn to_int() -> usize {
         Self::USIZE
@@ -2448,153 +1927,7 @@ impl ToInt<usize> for UTerm {
 }
 
 #[cfg(feature = "i128")]
-impl ToInt<u128> for UTerm {
-    #[inline]
-    fn to_int() -> u128 {
-        Self::U128
-    }
-    const INT: u128 = Self::U128;
-}
-
-impl<U, B> ToInt<i8> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> i8 {
-        Self::I8
-    }
-    const INT: i8 = Self::I8;
-}
-
-impl<U, B> ToInt<i16> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> i16 {
-        Self::I16
-    }
-    const INT: i16 = Self::I16;
-}
-
-impl<U, B> ToInt<i32> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> i32 {
-        Self::I32
-    }
-    const INT: i32 = Self::I32;
-}
-
-impl<U, B> ToInt<i64> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> i64 {
-        Self::I64
-    }
-    const INT: i64 = Self::I64;
-}
-
-impl<U, B> ToInt<isize> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> isize {
-        Self::ISIZE
-    }
-    const INT: isize = Self::ISIZE;
-}
-
-#[cfg(feature = "i128")]
-impl<U, B> ToInt<i128> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> i128 {
-        Self::I128
-    }
-    const INT: i128 = Self::I128;
-}
-
-impl<U, B> ToInt<u8> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> u8 {
-        Self::U8
-    }
-    const INT: u8 = Self::U8;
-}
-
-impl<U, B> ToInt<u16> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> u16 {
-        Self::U16
-    }
-    const INT: u16 = Self::U16;
-}
-
-impl<U, B> ToInt<u32> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> u32 {
-        Self::U32
-    }
-    const INT: u32 = Self::U32;
-}
-
-impl<U, B> ToInt<u64> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> u64 {
-        Self::U64
-    }
-    const INT: u64 = Self::U64;
-}
-
-impl<U, B> ToInt<usize> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
-    #[inline]
-    fn to_int() -> usize {
-        Self::USIZE
-    }
-    const INT: usize = Self::USIZE;
-}
-
-#[cfg(feature = "i128")]
-impl<U, B> ToInt<u128> for UInt<U, B>
-where
-    U: Unsigned,
-    B: Bit,
-{
+impl<U: Unsigned> ToInt<u128> for U {
     #[inline]
     fn to_int() -> u128 {
         Self::U128

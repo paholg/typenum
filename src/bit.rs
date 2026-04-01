@@ -12,6 +12,7 @@
 use crate::{
     private::InternalMarker, Cmp, Equal, Greater, Less, NonZero, Ord, PowerOfTwo, Unsigned, Zero,
 };
+use crate::{IntoUnsigned, U0, U1};
 use core::ops::{BitAnd, BitOr, BitXor, Not};
 
 pub use crate::marker_traits::Bit;
@@ -66,15 +67,29 @@ impl Bit for B0 {
 
     /// Comparison with 0 is Less if Rhs is 1, Equal otherwise
     type Cmp<Rhs: Bit> = Rhs::IfOrd<Less, Equal>;
+    #[inline]
+    fn compare<Rhs: Bit>(_: Rhs) -> Self::Cmp<Rhs> {
+        Rhs::if_ord(Less, Equal)
+    }
 
     /// If false then B
     type IfOrd<A: Ord, B: Ord> = B;
+    #[inline]
+    fn if_ord<A: Ord, B: Ord>(_: A, b: B) -> Self::IfOrd<A, B> {
+        b
+    }
 
     /// If false then B
     type IfUnsigned<A: Unsigned, B: Unsigned> = B;
     #[inline]
     fn if_unsigned<A: Unsigned, B: Unsigned>(_: A, b: B) -> Self::IfUnsigned<A, B> {
         b
+    }
+
+    type SelectShlUnsigned<S: Unsigned, N: Unsigned> = <S::Double as Unsigned>::Shl<N::Predecessor>;
+    #[allow(missing_docs)]
+    fn select_shl_unsigned<S: Unsigned, N: Unsigned>(s: S, n: N) -> Self::SelectShlUnsigned<S, N> {
+        s.double().shl(n.predecessor())
     }
 
     #[inline]
@@ -114,16 +129,30 @@ impl Bit for B1 {
     type Max<Rhs: Bit> = B1;
 
     /// Comparison with 1 is Equal if Rhs is 1, Greater otherwise
-    type Cmp<Rhs: Bit> = Rhs::IfOrd<Greater, Equal>;
+    type Cmp<Rhs: Bit> = Rhs::IfOrd<Equal, Greater>;
+    #[inline]
+    fn compare<Rhs: Bit>(_: Rhs) -> Self::Cmp<Rhs> {
+        Rhs::if_ord(Equal, Greater)
+    }
 
     /// If true then A
     type IfOrd<A: Ord, B: Ord> = A;
+    #[inline]
+    fn if_ord<A: Ord, B: Ord>(a: A, _: B) -> Self::IfOrd<A, B> {
+        a
+    }
 
     /// If true then A
     type IfUnsigned<A: Unsigned, B: Unsigned> = A;
     #[inline]
     fn if_unsigned<A: Unsigned, B: Unsigned>(a: A, _: B) -> Self::IfUnsigned<A, B> {
         a
+    }
+
+    type SelectShlUnsigned<S: Unsigned, N: Unsigned> = S;
+    #[inline]
+    fn select_shl_unsigned<S: Unsigned, N: Unsigned>(s: S, _: N) -> Self::SelectShlUnsigned<S, N> {
+        s
     }
 
     #[inline]
@@ -257,6 +286,24 @@ use crate::Min;
 delegate_bit_binary_impls! {
     Min, min,
     Max, max,
+}
+
+impl IntoUnsigned for B0 {
+    type IntoUnsigned = U0;
+
+    #[inline]
+    fn into_unsigned(self) -> Self::IntoUnsigned {
+        U0::new()
+    }
+}
+
+impl IntoUnsigned for B1 {
+    type IntoUnsigned = U1;
+
+    #[inline]
+    fn into_unsigned(self) -> Self::IntoUnsigned {
+        U1::new()
+    }
 }
 
 #[cfg(test)]

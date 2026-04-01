@@ -109,9 +109,15 @@ impl Ord for Greater {
     fn new() -> Self {
         Self
     }
+    type IsLess = B0;
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Greater
+    }
+    type Then<Rhs: Ord> = Greater;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Greater
     }
 }
 
@@ -121,9 +127,15 @@ impl Ord for Less {
     fn new() -> Self {
         Self
     }
+    type IsLess = B1;
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Less
+    }
+    type Then<Rhs: Ord> = Less;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Less
     }
 }
 
@@ -133,9 +145,15 @@ impl Ord for Equal {
     fn new() -> Self {
         Self
     }
+    type IsLess = B0;
     #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Equal
+    }
+    type Then<Rhs: Ord> = Rhs;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Rhs::new()
     }
 }
 
