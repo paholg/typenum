@@ -192,6 +192,16 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     #[allow(missing_docs)]
     fn is_zero(self) -> Self::IsZero;
 
+    /// Returns `B1` if `Self` is even.
+    type IsEven: Bit;
+    #[allow(missing_docs)]
+    fn is_even(self) -> Self::IsEven;
+
+    /// Returns `B1` if `Self` is odd.
+    type IsOdd: Bit;
+    #[allow(missing_docs)]
+    fn is_odd(self) -> Self::IsOdd;
+
     /// Minimum between `Self` and `Rhs`.
     type Min<Rhs: Unsigned>: Unsigned;
     #[allow(missing_docs)]
@@ -230,6 +240,15 @@ pub trait Unsigned: Sealed + Copy + Default + 'static {
     type Mul<Rhs: Unsigned>: Unsigned;
     #[allow(missing_docs)]
     fn mul<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Mul<Rhs>;
+
+    /// Computes `Self**Rhs`.
+    type Pow<Rhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn powi<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Pow<Rhs>;
+    /// Computes `Lhs**Self`.
+    type PowSelf<Lhs: Unsigned>: Unsigned;
+    #[allow(missing_docs)]
+    fn powi_self<Lhs: Unsigned>(self, lhs: Lhs) -> Self::PowSelf<Lhs>;
 
     /// Shift `Self` right by `Rhs`.
     type Shr<Rhs: Unsigned>: Unsigned;

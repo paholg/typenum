@@ -31,13 +31,12 @@ use crate::{
     bit::{Bit, B0, B1},
     consts::{U0, U1},
     private::{
-        BitDiff, BitDiffOut, Internal, InternalMarker, PrivateLogarithm2, PrivatePow,
-        PrivatePowOut, PrivateSquareRoot, PrivateSub, PrivateSubOut, Trim, TrimOut,
+        BitDiff, BitDiffOut, Internal, InternalMarker, PrivateLogarithm2, PrivateSquareRoot,
+        PrivateSub, PrivateSubOut, Trim, TrimOut,
     },
     Add1, Cmp, Double, Equal, Gcd, Gcf, GrEq, Greater, IntoUnsigned, IsGreaterOrEqual, Len, Length,
-    Less, Log2, Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Prod, Shleft, Sqrt, Square,
-    SquareRoot, Sub1, Sum, ToInt, TypeAdd, TypeBitAnd, TypeBitOr, TypeBitXor, TypeMul, TypeShl,
-    TypeShr, Zero,
+    Less, Log2, Logarithm2, Maximum, Minimum, NonZero, Ord, Pow, Shleft, Sqrt, Square, SquareRoot,
+    Sub1, Sum, ToInt, TypeAdd, TypeBitAnd, TypeBitOr, TypeBitXor, TypeMul, TypeShl, TypeShr, Zero,
 };
 use core::ops::{Add, BitAnd, BitOr, BitXor, Mul, Shl, Shr, Sub};
 
@@ -146,10 +145,10 @@ impl Unsigned for UTerm {
     }
 
     /// `0 - 1`,  SubstractOverflowError
-    type Predecessor = UInt<UTerm, B1>;
+    type Predecessor = UTerm; // TODO handle errors
     #[inline]
     fn predecessor(self) -> Self::Predecessor {
-        U1::new()
+        unreachable!()
     }
 
     /// `0` is already trimmed.
@@ -163,6 +162,18 @@ impl Unsigned for UTerm {
     #[inline]
     fn is_zero(self) -> Self::IsZero {
         B1
+    }
+
+    type IsEven = B1;
+    #[inline]
+    fn is_even(self) -> Self::IsEven {
+        B1
+    }
+
+    type IsOdd = B0;
+    #[inline]
+    fn is_odd(self) -> Self::IsOdd {
+        B0
     }
 
     /// `min(0, Rhs) = 0`
@@ -219,6 +230,19 @@ impl Unsigned for UTerm {
     #[allow(missing_docs)]
     fn mul<Rhs: Unsigned>(self, _: Rhs) -> Self::Mul<Rhs> {
         UTerm
+    }
+
+    /// `0 ** Rhs = if Rhs == 0 { 1 } else { 0 }`
+    type Pow<Rhs: Unsigned> = <Rhs::IsZero as Bit>::IfUnsigned<U1, U0>;
+    #[inline]
+    fn powi<Rhs: Unsigned>(self, _: Rhs) -> Self::Pow<Rhs> {
+        Rhs::IsZero::if_unsigned(U1::new(), UTerm)
+    }
+    /// `Lhs ** 0 = 1`
+    type PowSelf<Lhs: Unsigned> = U1;
+    #[inline]
+    fn powi_self<Lhs: Unsigned>(self, _: Lhs) -> Self::PowSelf<Lhs> {
+        U1::new()
     }
 
     /// `0 >> Rhs = 0`
@@ -412,6 +436,18 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
         B0
     }
 
+    type IsEven = B::Not;
+    #[inline]
+    fn is_even(self) -> Self::IsEven {
+        B::Not::new()
+    }
+
+    type IsOdd = B;
+    #[inline]
+    fn is_odd(self) -> Self::IsOdd {
+        B::new()
+    }
+
     type Min<Rhs: Unsigned> = <<Self::Cmp<Rhs> as Ord>::IsLess as Bit>::IfUnsigned<Self, Rhs>;
     #[inline]
     fn min<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Min<Rhs> {
@@ -480,6 +516,26 @@ impl<U: Unsigned, B: Bit> Unsigned for UInt<U, B> {
     #[allow(missing_docs)]
     fn mul<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Mul<Rhs> {
         Unsigned::add(B::if_unsigned(rhs, UTerm), self.get_msb().mul(rhs.double()))
+    }
+
+    type Pow<Rhs: Unsigned> = Rhs::PowSelf<Self>;
+    #[inline]
+    fn powi<Rhs: Unsigned>(self, rhs: Rhs) -> Self::Pow<Rhs> {
+        rhs.powi_self(self)
+    }
+
+    /// Lhs ** Self = if Rhs % 2 = 0 {
+    ///    (Lhs * Lhs) ** (Self / 2))
+    /// } else {
+    ///    ((Lhs * Lhs) ** (Self / 2)) * Lhs
+    /// }
+    type PowSelf<Lhs: Unsigned> = <Self::IsEven as Bit>::IfUnsigned<
+        <Lhs::Mul<Lhs> as Unsigned>::Pow<Self::Shr<U1>>,
+        Lhs::Mul<<Lhs::Mul<Lhs> as Unsigned>::Pow<Self::Shr<U1>>>,
+    >;
+    #[inline]
+    fn powi_self<Lhs: Unsigned>(self, _: Lhs) -> Self::PowSelf<Lhs> {
+        todo!()
     }
 
     /// `UInt<U, B> >> Rhs = if Rhs == 0 { Self } else { U >> (Rhs - 1) }`
@@ -934,65 +990,8 @@ where
 // ---------------------------------------------------------------------------------------
 // Powers of unsigned integers
 
-/// X^N
-impl<X: Unsigned, N: Unsigned> Pow<N> for X
-where
-    X: PrivatePow<U1, N>,
-{
-    type Output = PrivatePowOut<X, U1, N>;
-    #[inline]
-    fn powi(self, n: N) -> Self::Output {
-        self.private_pow(U1::new(), n)
-    }
-}
-
-impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U0> for X {
-    type Output = Y;
-
-    #[inline]
-    fn private_pow(self, y: Y, _: U0) -> Self::Output {
-        y
-    }
-}
-
-impl<Y: Unsigned, X: Unsigned> PrivatePow<Y, U1> for X
-where
-    X: Mul<Y>,
-{
-    type Output = Prod<X, Y>;
-
-    #[inline]
-    fn private_pow(self, y: Y, _: U1) -> Self::Output {
-        self * y
-    }
-}
-
-/// N is even
-impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B>, B0>> for X
-where
-    X: Mul,
-    Square<X>: PrivatePow<Y, UInt<U, B>>,
-{
-    type Output = PrivatePowOut<Square<X>, Y, UInt<U, B>>;
-
-    #[inline]
-    fn private_pow(self, y: Y, n: UInt<UInt<U, B>, B0>) -> Self::Output {
-        (self * self).private_pow(y, n.msb)
-    }
-}
-
-/// N is odd
-impl<Y: Unsigned, U: Unsigned, B: Bit, X: Unsigned> PrivatePow<Y, UInt<UInt<U, B>, B1>> for X
-where
-    X: Mul + Mul<Y>,
-    Square<X>: PrivatePow<Prod<X, Y>, UInt<U, B>>,
-{
-    type Output = PrivatePowOut<Square<X>, Prod<X, Y>, UInt<U, B>>;
-
-    #[inline]
-    fn private_pow(self, y: Y, n: UInt<UInt<U, B>, B1>) -> Self::Output {
-        (self * self).private_pow(self * y, n.msb)
-    }
+delegate_unsigned_binary_impls! {
+    Pow, powi,
 }
 
 //------------------------------------------
