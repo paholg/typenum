@@ -63,6 +63,7 @@ pub mod type_operators;
 pub mod uint;
 
 pub mod array;
+pub mod tuple;
 
 pub use crate::{
     array::{ATerm, TArr},

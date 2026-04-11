@@ -9,6 +9,7 @@ against this Rust version.
 - [removed] Removed `no_std` feature flag (deprecated since 1.3.0)
 - [removed] Removed `force_unix_path_separator` feature flag (deprecated since 1.17.0)
 - [changed] Replaced `build.rs` script with pre-generated test files
+- [added] Indexing into tuples 
 
 ### 1.19.0 (2025-10-01)
 - [fixed] Conflicting trait implementations with the `const-generics` feature
