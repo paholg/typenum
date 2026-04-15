@@ -1,7 +1,7 @@
 //! [`tuple`] operations.
 //!
 //! # Indexing
-//! `tuple` types (with up to twelve elements) allow access to values by index, because they implement the [`std::ops::Index`] and [`std::ops::IndexMut`] traits:
+//! `tuple` types (with up to twelve elements) allow access to values by index, because they implement the [`core::ops::Index`] and [`core::ops::IndexMut`] traits:
 //!
 //! ```rust
 //! use std::ops::{Index, IndexMut};
