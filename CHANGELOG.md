@@ -10,6 +10,7 @@ against this Rust version.
 - [removed] Removed `force_unix_path_separator` feature flag (deprecated since 1.17.0)
 - [changed] Replaced `build.rs` script with pre-generated test files
 - [added] Indexing into tuples 
+- [changed] MSRV now 1.41.0
 
 ### 1.19.0 (2025-10-01)
 - [fixed] Conflicting trait implementations with the `const-generics` feature
