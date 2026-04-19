@@ -12,7 +12,7 @@ description = """Typenum is a Rust library for type-level numbers evaluated at
     implementation is incomplete."""
 categories = ["no-std"]
 edition = "2018"
-rust-version = "1.37.0"
+rust-version = "1.41.0"
 exclude = ["/.github/", "/clippy.toml", "/flake.lock", "/flake.nix", "/justfile", "/.envrc"]
 
 [dependencies]
