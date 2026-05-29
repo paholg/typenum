@@ -23,7 +23,7 @@ fn gen_int(i: i64) -> IntCode {
 
     match i.cmp(&0) {
         Greater => IntCode::Pos(Box::new(gen_uint(i as u64))),
-        Less => IntCode::Neg(Box::new(gen_uint(i.abs() as u64))),
+        Less => IntCode::Neg(Box::new(gen_uint(i.unsigned_abs()))),
         Equal => IntCode::Zero,
     }
 }

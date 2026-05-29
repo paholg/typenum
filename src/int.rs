@@ -30,7 +30,7 @@ pub use crate::marker_traits::Integer;
 use crate::{
     bit::{Bit, B0, B1},
     consts::{N1, P1, U0, U1},
-    private::{Internal, InternalMarker, PrivateDivInt, PrivateIntegerAdd, PrivateRem},
+    private::{InternalMarker, PrivateDivInt, PrivateIntegerAdd, PrivateRem},
     uint::{UInt, Unsigned},
     Cmp, Equal, Greater, Less, NonZero, Pow, PowerOfTwo, ToInt, Zero,
 };
@@ -305,14 +305,14 @@ where
 /// `P(Ul) + N(Ur)`: We resolve this with our `PrivateAdd`
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<NInt<Ur>> for PInt<Ul>
 where
-    Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
+    Ul: PrivateIntegerAdd<Ul::Cmp<Ur>, Ur>,
 {
-    type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
+    type Output = <Ul as PrivateIntegerAdd<Ul::Cmp<Ur>, Ur>>::Output;
     #[inline]
     fn add(self, rhs: NInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
-        let lhs_cmp_rhs = lhs.compare::<Internal>(&rhs);
+        let lhs_cmp_rhs = lhs.compare(rhs);
         lhs.private_integer_add(lhs_cmp_rhs, rhs)
     }
 }
@@ -321,14 +321,14 @@ where
 // We just do the same thing as above, swapping Lhs and Rhs
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Add<PInt<Ur>> for NInt<Ul>
 where
-    Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
+    Ur: Cmp<Ul> + PrivateIntegerAdd<Ur::Cmp<Ul>, Ul>,
 {
-    type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
+    type Output = <Ur as PrivateIntegerAdd<Ur::Cmp<Ul>, Ul>>::Output;
     #[inline]
     fn add(self, rhs: PInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
-        let rhs_cmp_lhs = rhs.compare::<Internal>(&lhs);
+        let rhs_cmp_lhs = rhs.compare(lhs);
         rhs.private_integer_add(rhs_cmp_lhs, lhs)
     }
 }
@@ -448,14 +448,14 @@ where
 /// `P(Ul) - P(Ur)`: We resolve this with our `PrivateAdd`
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<PInt<Ur>> for PInt<Ul>
 where
-    Ul: Cmp<Ur> + PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>,
+    Ul: Cmp<Ur> + PrivateIntegerAdd<Ul::Cmp<Ur>, Ur>,
 {
-    type Output = <Ul as PrivateIntegerAdd<<Ul as Cmp<Ur>>::Output, Ur>>::Output;
+    type Output = <Ul as PrivateIntegerAdd<Ul::Cmp<Ur>, Ur>>::Output;
     #[inline]
     fn sub(self, rhs: PInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
-        let lhs_cmp_rhs = lhs.compare::<Internal>(&rhs);
+        let lhs_cmp_rhs = lhs.compare(rhs);
         lhs.private_integer_add(lhs_cmp_rhs, rhs)
     }
 }
@@ -464,14 +464,14 @@ where
 // We just do the same thing as above, swapping Lhs and Rhs
 impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Sub<NInt<Ur>> for NInt<Ul>
 where
-    Ur: Cmp<Ul> + PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>,
+    Ur: Cmp<Ul> + PrivateIntegerAdd<Ur::Cmp<Ul>, Ul>,
 {
-    type Output = <Ur as PrivateIntegerAdd<<Ur as Cmp<Ul>>::Output, Ul>>::Output;
+    type Output = <Ur as PrivateIntegerAdd<Ur::Cmp<Ul>, Ul>>::Output;
     #[inline]
     fn sub(self, rhs: NInt<Ur>) -> Self::Output {
         let lhs = self.n;
         let rhs = rhs.n;
-        let rhs_cmp_lhs = rhs.compare::<Internal>(&lhs);
+        let rhs_cmp_lhs = rhs.compare(lhs);
         rhs.private_integer_add(rhs_cmp_lhs, lhs)
     }
 }
@@ -576,12 +576,12 @@ macro_rules! impl_int_div {
         impl<Ul: Unsigned + NonZero, Ur: Unsigned + NonZero> Div<$B<Ur>> for $A<Ul>
         where
             Ul: Cmp<Ur>,
-            $A<Ul>: PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>,
+            $A<Ul>: PrivateDivInt<Ul::Cmp<Ur>, $B<Ur>>,
         {
-            type Output = <$A<Ul> as PrivateDivInt<<Ul as Cmp<Ur>>::Output, $B<Ur>>>::Output;
+            type Output = <$A<Ul> as PrivateDivInt<Ul::Cmp<Ur>, $B<Ur>>>::Output;
             #[inline]
             fn div(self, rhs: $B<Ur>) -> Self::Output {
-                let lhs_cmp_rhs = self.n.compare::<Internal>(&rhs.n);
+                let lhs_cmp_rhs = self.n.compare(rhs.n);
                 self.private_div_int(lhs_cmp_rhs, rhs)
             }
         }
@@ -720,22 +720,22 @@ impl<P: Unsigned + NonZero, N: Unsigned + NonZero> Cmp<NInt<N>> for PInt<P> {
 }
 
 /// X <==> Y
-impl<Pl: Cmp<Pr> + Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for PInt<Pl> {
-    type Output = <Pl as Cmp<Pr>>::Output;
+impl<Pl: Unsigned + NonZero, Pr: Unsigned + NonZero> Cmp<PInt<Pr>> for PInt<Pl> {
+    type Output = Pl::Cmp<Pr>;
 
     #[inline]
     fn compare<IM: InternalMarker>(&self, rhs: &PInt<Pr>) -> Self::Output {
-        self.n.compare::<Internal>(&rhs.n)
+        self.n.compare(rhs.n)
     }
 }
 
 /// -X <==> -Y
-impl<Nl: Unsigned + NonZero, Nr: Cmp<Nl> + Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
-    type Output = <Nr as Cmp<Nl>>::Output;
+impl<Nl: Unsigned + NonZero, Nr: Unsigned + NonZero> Cmp<NInt<Nr>> for NInt<Nl> {
+    type Output = Nr::Cmp<Nl>;
 
     #[inline]
     fn compare<IM: InternalMarker>(&self, rhs: &NInt<Nr>) -> Self::Output {
-        rhs.n.compare::<Internal>(&self.n)
+        rhs.n.compare(self.n)
     }
 }
 
@@ -1047,7 +1047,7 @@ where
     #[inline]
     fn min(self, rhs: PInt<Ur>) -> Self::Output {
         PInt {
-            n: self.n.min(rhs.n),
+            n: Min::min(self.n, rhs.n),
         }
     }
 }
@@ -1086,7 +1086,7 @@ where
     #[inline]
     fn min(self, rhs: NInt<Ur>) -> Self::Output {
         NInt {
-            n: self.n.max(rhs.n),
+            n: Max::max(self.n, rhs.n),
         }
     }
 }
@@ -1156,7 +1156,7 @@ where
     #[inline]
     fn max(self, rhs: PInt<Ur>) -> Self::Output {
         PInt {
-            n: self.n.max(rhs.n),
+            n: Max::max(self.n, rhs.n),
         }
     }
 }
@@ -1195,7 +1195,7 @@ where
     #[inline]
     fn max(self, rhs: NInt<Ur>) -> Self::Output {
         NInt {
-            n: self.n.min(rhs.n),
+            n: Min::min(self.n, rhs.n),
         }
     }
 }
