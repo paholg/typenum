@@ -7,6 +7,9 @@ against this Rust version.
 
 ### Unreleased
 
+### 1.20.1 (2026-05-29)
+- [fixed] Fixed `tarr` import resolution 
+
 ### 1.20.0 (2026-04-18)
 - [removed] Removed `no_std` feature flag (deprecated since 1.3.0)
 - [removed] Removed `force_unix_path_separator` feature flag (deprecated since 1.17.0)
