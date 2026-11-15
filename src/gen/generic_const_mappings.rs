@@ -4159,6 +4159,11 @@ impl ToUInt for Const<3600> {
     type Output = U3600;
 }
 
+#[cfg(target_pointer_width = "64")]
+impl ToUInt for Const<18446744073709551615> {
+    type Output = U18446744073709551615;
+}
+
 impl ToUInt for Const<2047> {
     type Output = U2047;
 }
