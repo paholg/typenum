@@ -1396,8 +1396,14 @@ mod tests {
 
     #[test]
     fn to_ix_min() {
-        assert_eq!(N128::to_i8(), ::core::i8::MIN);
-        assert_eq!(N32768::to_i16(), ::core::i16::MIN);
+        // The replacement requires Rust 1.43.
+        #[allow(deprecated)]
+        const I8_MIN: i8 = ::core::i8::MIN;
+        #[allow(deprecated)]
+        const I16_MIN: i16 = ::core::i16::MIN;
+
+        assert_eq!(N128::to_i8(), I8_MIN);
+        assert_eq!(N32768::to_i16(), I16_MIN);
     }
 
     #[test]

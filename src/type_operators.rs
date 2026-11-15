@@ -257,19 +257,20 @@ fn pow_test() {
             assert_eq!($x.powi(u3), $x * $x * $x);
         };
         ($x:ident, $f:ident) => {
-            assert!((<$f as Pow<Z0>>::powi(*$x, z0) - 1.0).abs() < ::core::$f::EPSILON);
-            assert!((<$f as Pow<U0>>::powi(*$x, u0) - 1.0).abs() < ::core::$f::EPSILON);
+            // The replacement requires Rust 1.43.
+            #[allow(deprecated)]
+            const EPSILON: $f = ::core::$f::EPSILON;
 
-            assert!((<$f as Pow<P3>>::powi(*$x, p3) - $x * $x * $x).abs() < ::core::$f::EPSILON);
-            assert!((<$f as Pow<U3>>::powi(*$x, u3) - $x * $x * $x).abs() < ::core::$f::EPSILON);
+            assert!((<$f as Pow<Z0>>::powi(*$x, z0) - 1.0).abs() < EPSILON);
+            assert!((<$f as Pow<U0>>::powi(*$x, u0) - 1.0).abs() < EPSILON);
+
+            assert!((<$f as Pow<P3>>::powi(*$x, p3) - $x * $x * $x).abs() < EPSILON);
+            assert!((<$f as Pow<U3>>::powi(*$x, u3) - $x * $x * $x).abs() < EPSILON);
 
             if *$x == 0.0 {
                 assert!(<$f as Pow<N3>>::powi(*$x, n3).is_infinite());
             } else {
-                assert!(
-                    (<$f as Pow<N3>>::powi(*$x, n3) - 1. / $x / $x / $x).abs()
-                        < ::core::$f::EPSILON
-                );
+                assert!((<$f as Pow<N3>>::powi(*$x, n3) - 1. / $x / $x / $x).abs() < EPSILON);
             }
         };
     }

@@ -1,5 +1,5 @@
 # Generate code and run lints and tests
-test-local: gen lint test
+check: gen lint test
     @just test --features const-generics
 
 # Produce generated code
