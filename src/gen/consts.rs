@@ -5081,6 +5081,69 @@ pub type U3600 = UInt<
 >;
 pub type P3600 = PInt<U3600>;
 pub type N3600 = NInt<U3600>;
+pub type U1114111 = UInt<
+    UInt<
+        UInt<
+            UInt<
+                UInt<
+                    UInt<
+                        UInt<
+                            UInt<
+                                UInt<
+                                    UInt<
+                                        UInt<
+                                            UInt<
+                                                UInt<
+                                                    UInt<
+                                                        UInt<
+                                                            UInt<
+                                                                UInt<
+                                                                    UInt<
+                                                                        UInt<
+                                                                            UInt<
+                                                                                UInt<UTerm, B1>,
+                                                                                B0,
+                                                                            >,
+                                                                            B0,
+                                                                        >,
+                                                                        B0,
+                                                                    >,
+                                                                    B0,
+                                                                >,
+                                                                B1,
+                                                            >,
+                                                            B1,
+                                                        >,
+                                                        B1,
+                                                    >,
+                                                    B1,
+                                                >,
+                                                B1,
+                                            >,
+                                            B1,
+                                        >,
+                                        B1,
+                                    >,
+                                    B1,
+                                >,
+                                B1,
+                            >,
+                            B1,
+                        >,
+                        B1,
+                    >,
+                    B1,
+                >,
+                B1,
+            >,
+            B1,
+        >,
+        B1,
+    >,
+    B1,
+>;
+pub type P1114111 = PInt<U1114111>;
+pub type N1114111 = NInt<U1114111>;
 pub type U18446744073709551615 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>, B1>;
 pub type U2047 = UInt<
     UInt<

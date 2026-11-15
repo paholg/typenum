@@ -45,7 +45,7 @@ fn uints() -> impl Iterator<Item = u64> {
     let first2: u32 = (HIGHEST as f64).log(2.0).round() as u32 + 1;
     let first10: u32 = (HIGHEST as f64).log(10.0) as u32 + 1;
 
-    let other_constants = [3600, u64::MAX];
+    let other_constants = [3600, char::MAX as u64, u64::MAX];
     (0..(HIGHEST + 1))
         .chain(other_constants)
         .chain((first2..64).flat_map(|i| [2u64.pow(i) - 1, 2u64.pow(i)]))
