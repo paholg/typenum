@@ -352,5 +352,6 @@ use core::cmp::Ordering;
         }
     }
 
+    result.push('\n');
     result
 }

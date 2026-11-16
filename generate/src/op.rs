@@ -304,9 +304,9 @@ macro_rules! op {
     ($($tail:tt)*) => ( __op_internal__!($($tail)*) );
 }
 
-    #[doc(hidden)]
-    #[macro_export(local_inner_macros)]
-    macro_rules! __op_internal__ {
+#[doc(hidden)]
+#[macro_export(local_inner_macros)]
+macro_rules! __op_internal__ {
 ",
     );
 
@@ -523,7 +523,8 @@ macro_rules! op {
 
     result.push_str(
         "
-}",
+}
+",
     );
 
     result

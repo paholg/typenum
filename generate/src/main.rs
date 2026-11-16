@@ -64,6 +64,12 @@ fn gen_consts() -> String {
     result.push_str(&format!(
         "
 #![allow(missing_docs)]
+
+pub use crate::bit::{{B0, B1}};
+pub use crate::int::Z0;
+use crate::int::{{NInt, PInt}};
+use crate::uint::{{UInt, UTerm}};
+
 /**
 Type aliases for many constants.
 
@@ -117,11 +123,6 @@ use typenum::{{U774, N17, N10000, P1024, P4096}};
 
 We also define the aliases `False` and `True` for `B0` and `B1`, respectively.
 */
-use crate::uint::{{UInt, UTerm}};
-use crate::int::{{PInt, NInt}};
-
-pub use crate::bit::{{B0, B1}};
-pub use crate::int::Z0;
 
 pub type True = B1;
 pub type False = B0;
