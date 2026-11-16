@@ -63,12 +63,10 @@ pub trait ToUInt {
     for uint in uints() {
         result.push_str(&format!(
             "
-    {cfg}
-    impl ToUInt for Const<{uint}> {{
-        type Output = U{uint};
-    }}
-\
-            ",
+{cfg}impl ToUInt for Const<{uint}> {{
+    type Output = U{uint};
+}}
+",
             uint = uint,
             cfg = feature_gate_to_pointer_width(uint),
         ));
@@ -79,9 +77,11 @@ pub trait ToUInt {
 
 const fn feature_gate_to_pointer_width(uint: u64) -> &'static str {
     if uint > u32::MAX as u64 {
-        r#"#[cfg(target_pointer_width = "64")]"#
+        r#"#[cfg(target_pointer_width = "64")]
+"#
     } else if uint > u16::MAX as u64 {
-        r#"#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]"#
+        r#"#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+"#
     } else {
         ""
     }
