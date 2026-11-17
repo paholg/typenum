@@ -297,18 +297,18 @@ assert_type_eq!(op!({ex0}), {ex1});
         ));
     }
 
-    result.push_str(&format!(
+    result.push_str(
         "*/
 #[macro_export(local_inner_macros)]
-macro_rules! op {{
+macro_rules! op {
     ($($tail:tt)*) => ( __op_internal__!($($tail)*) );
-}}
+}
 
     #[doc(hidden)]
     #[macro_export(local_inner_macros)]
-    macro_rules! __op_internal__ {{
-"
-    ));
+    macro_rules! __op_internal__ {
+",
+    );
 
     // We first us the shunting-yard algorithm to produce our tokens in Polish notation.
     // See: https://en.wikipedia.org/wiki/Shunting-yard_algorithm

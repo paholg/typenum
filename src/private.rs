@@ -126,7 +126,7 @@ pub type ShiftDiffOut<A, Rhs> = <A as ShiftDiff<Rhs>>::Output;
 
 /// Gives `SizeOf(Lhs) - SizeOf(Rhs)`
 pub trait BitDiff<Rhs> {
-    type Output;
+    type Output: Unsigned;
 }
 pub type BitDiffOut<A, Rhs> = <A as BitDiff<Rhs>>::Output;
 

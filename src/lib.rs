@@ -107,24 +107,54 @@ pub struct Equal;
 /// Returns `core::cmp::Ordering::Greater`
 impl Ord for Greater {
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    type IsLess = B0;
+    #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Greater
+    }
+    type Then<Rhs: Ord> = Greater;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Greater
     }
 }
 
 /// Returns `core::cmp::Ordering::Less`
 impl Ord for Less {
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    type IsLess = B1;
+    #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Less
+    }
+    type Then<Rhs: Ord> = Less;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Less
     }
 }
 
 /// Returns `core::cmp::Ordering::Equal`
 impl Ord for Equal {
     #[inline]
+    fn new() -> Self {
+        Self
+    }
+    type IsLess = B0;
+    #[inline]
     fn to_ordering() -> Ordering {
         Ordering::Equal
+    }
+    type Then<Rhs: Ord> = Rhs;
+    #[inline]
+    fn then<Rhs: Ord>() -> Self::Then<Rhs> {
+        Rhs::new()
     }
 }
 

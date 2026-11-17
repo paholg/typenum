@@ -125,7 +125,7 @@ pub type False = B0;
 
     for u in uints() {
         result.push_str(&format!("pub type U{} = {};\n", u, gen_uint(u)));
-        if u <= ::std::i64::MAX as u64 && u != 0 {
+        if u <= i64::MAX as u64 && u != 0 {
             let i = u as i64;
             result.push_str(&format!(
                 "pub type P{i} = PInt<U{i}>;\npub type N{i} = NInt<U{i}>;\n",
